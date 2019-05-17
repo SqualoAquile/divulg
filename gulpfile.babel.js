@@ -49,7 +49,7 @@ const reload = (done) => {
 
 const serve = (done) => {
     server.init({
-        proxy: 'localhost/generico'
+        proxy: 'localhost/exemplo1'
     });
     done();
 }

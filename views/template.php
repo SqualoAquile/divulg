@@ -253,10 +253,10 @@
                </button>
             </li>
             <li class="flex-grow-0"> <!--Nome da Empresa-->
-               <!-- <a class="navbar-brand mx-3" href="<?php //echo BASE_URL ?>/home"><?php //echo trim(NOME_EMPRESA);?></a> -->
-               <a class="navbar-brand mx-3" href="<?php echo BASE_URL ?>/home">
+               <a class="navbar-brand mx-3" href="<?php echo BASE_URL ?>/home"><?php echo trim(NOME_EMPRESA);?></a>
+               <!-- <a class="navbar-brand mx-3" href="<?php echo BASE_URL ?>/home">
                   <img class="" src="<?php echo BASE_URL?>/assets/images/IDFX.png">
-               </a>
+               </a> -->
             </li>
          </ul>
          <ul class="navbar-nav">
