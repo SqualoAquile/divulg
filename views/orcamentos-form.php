@@ -175,6 +175,7 @@
                                     <?php elseif(array_key_exists("type", $value["Comment"]) && $value["Comment"]["type"] == "dropdown"): ?>
                                         <div class="relacional-dropdown-wrapper dropdown">
                                             <label class="d-none"><span><?php echo array_key_exists("label", $value["Comment"]) ? $value["Comment"]["label"] : ucwords(str_replace("_", " ", $value['Field'])) ?></span></label>
+
                                             <input 
                                             id="<?php echo $value['Field'] ?>" 
                                             name="<?php echo $value['Field'] ?>" 
@@ -195,9 +196,11 @@
                                                 data-podeZero="<?php echo array_key_exists("pode_zero", $value["Comment"]) && $value["Comment"]["pode_zero"]  == 'true' ? 'true' : 'false' ?>"
                                             <?php endif?> 
                                             />
+
                                             <label data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent" for="<?php echo $value['Field'] ?>" class="btn btn-sm text-secondary icon-dropdown m-0 toggle-btn dropdown-toggle" tabindex="-1">
                                                 <i class="fas fa-caret-down"></i>
                                             </label>
+                                            
                                             <div class="dropdown-menu w-100 p-0 list-group-flush relacional-dropdown" aria-labelledby="<?php echo $value["Field"] ?>">
                                                 <div class="p-3 nenhum-result d-none">Nenhum resultado encontrado</div>
                                                 <div class="dropdown-menu-wrapper"></div>

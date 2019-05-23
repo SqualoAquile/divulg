@@ -1140,7 +1140,7 @@ $(function () {
     // Eventos responsáveis pelo: Select Dropdown com Pesquisa
     $(document)
         .ready(function () {
-
+            // popula a  div com os elementos da tabela e campo escolhidos
             $('.relacional-dropdown-input').each(function () {
 
                 var $this = $(this),
@@ -1176,6 +1176,7 @@ $(function () {
                 });
             });
         })
+        // seta o valor do input igual ao valor da div clicada
         .on('click', '.relacional-dropdown-element', function () {
 
             var $this = $(this),
@@ -1185,6 +1186,7 @@ $(function () {
                 .val($this.text())
                 .change();
         })
+        // durante a digitação vai filtrando os elemnetos que foram carregados na div de opções
         .on('keyup', '.relacional-dropdown-input', function (event) {
 
             var code = event.keyCode || event.which;
@@ -1225,7 +1227,7 @@ $(function () {
 
         });
 
-    $('.relacional-dropdown-input')
+    $('.relacional-dropdown-input') // no click ele abre as opçoes do dropdown
         .click(function () {
             var $this = $(this)
             if ($this.parents('.dropdown').hasClass('show')) {
@@ -1243,7 +1245,7 @@ $(function () {
 
                 $dropdownMenu.find('.nenhum-result').addClass('d-none');
                 $('.relacional-dropdown-element').show();
-
+                //filtra os elemento opção de acordo co o valor do input
                 $filtereds = $dropdownMenu.find('.relacional-dropdown-element').filter(function () {
                     return $(this).text().toLowerCase().indexOf($this.val().toLowerCase()) != -1;
                 });

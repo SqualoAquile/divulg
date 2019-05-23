@@ -1,245 +1,85 @@
 $(function () {
 
-    //
-    // Escuta o clique dos radios CPF/CPNJ pra mostra e esconder os inputs de CPF/CNPJ
-    //
-    $('[name=tipo_pessoa]').change(function () {
-        if ($(this).is(':checked')) {
+console.log('carreguei a página');
 
-            var $input = $('[name=cpf_cnpj]'),
-                $contatosForm = $('#contatos-form'),
-                $hiddenContatos = $('[name=contatos]'),
-                $nome = $('[name=nome]'),
-                $dtNascimento = $('[name=data_nascimento]'),
-                $razaoSocial = $('[name=razao_social]');
-                $telefone = $('[name=telefone]');
-                $celular = $('[name=celular]');
+var availableTags = [
+    "ActionScript",
+    "AppleScript",
+    "Asp",
+    "BASIC",
+    "C",
+    "C++",
+    "Clojure",
+    "COBOL",
+    "ColdFusion",
+    "Erlang",
+    "Fortran",
+    "Groovy",
+    "Haskell",
+    "Java",
+    "JavaScript",
+    "Lisp",
+    "Perl",
+    "PHP",
+    "Python",
+    "Ruby",
+    "Scala",
+    "Scheme"
+  ];
+  $( "#nome1" ).autocomplete({
+    source: availableTags
+  });
 
-            $input.removeClass('is-valid is-invalid');
-            $input.siblings('.invalid-feedback').remove();
-
-            if ($input.attr('data-anterior-aux') == undefined) {
-                $input.attr('data-anterior-aux', $input.val());
-            } else {
-                $input
-                    .val($input.attr('data-anterior-aux'))
-                    .change();
+  $( "#nome" ).autocomplete({
+        source: function( request, response ) {
+        $.ajax( {
+            url: baselink + '/ajax/nomeClientes',
+            type:"POST",
+            dataType: "json",
+            data: {
+            term: request.term
+            },
+            success: function( data ) {
+                console.log('resposta:', data);
+                response( data );
             }
-
-            if ($(this).attr('id') == 'pj') {
-
-                $input
-                    .mask('00.000.000/0000-00')
-                    .siblings('label')
-                    .find('span')
-                    .text('CNPJ');
-
-                    // Telefone é obrigatório para PJ, celular não
-                $telefone
-                    .attr('required');
-                $telefone
-                    .siblings('label')
-                    .addClass('font-weight-bold')
-                    .find('i')
-                    .show();
-
-                $celular
-                    .removeAttr('required');
-                $celular
-                    .siblings('label')
-                    .removeClass('font-weight-bold')
-                    .find('i')
-                    .hide();
-
-                var dadosAnteriores = '';
-                if ($hiddenContatos.attr('data-anterior-aux') != undefined) {
-                    dadosAnteriores = $hiddenContatos.attr('data-anterior-aux');
-                } else {
-                    dadosAnteriores = $hiddenContatos.attr('data-anterior');
+        } );
+        },
+        // source: availableTags,
+        minLength: 2,
+        select: function( event, ui ) {
+            console.log('disparou pq cliquei no item das opções')
+        console.log( "Selected: " + ui.item.value + " aka " + ui.item.id + " tipoPessoa: " + ui.item.tipo_pessoa );
+        },
+        response: function( event, ui ) {
+            for (var i = 0; i < ui.content.length; i++){
+                if(ui.content[i].label.toLowerCase() == "Calhas Venezianas".toLowerCase() ){
+                    console.log('a posição desse cara é: ',i, ui.content[i].label);
                 }
-
-                $contatosForm.show();
-                $hiddenContatos.val(dadosAnteriores);
-
-                $nome
-                    .siblings('label')
-                    .find('span')
-                    .text('Nome Fantasia');
-
-                $razaoSocial
-                    .parents('[class^=col-]')
-                    .show();
-
-                $dtNascimento
-                    .parents('[class^=col-]')
-                    .hide();
-
-                } else {
                     
-                    $input
-                        .mask('000.000.000-00')
-                        .siblings('label')
-                        .find('span')
-                        .text('CPF');
-                    
-                    $telefone
-                        .removeAttr('required')
-
-                    $telefone
-                        .siblings('label')
-                        .removeClass('font-weight-bold')
-                        .find('i')
-                        .hide();
-                        
-
-                    // Celular é obrigatório para PF, telefone não
-                    $celular
-                        .attr('required');
-                    $celular
-                        .siblings('label')  
-                        .addClass('font-weight-bold')
-                        .find('i')
-                        .show();             
-
-                    $contatosForm.hide();
-                    $contatosForm[0].reset();
-
-                    $contatosForm
-                        .find('.disabled')
-                        .removeClass('disabled')
-
-                    $('table#contatos thead tr[role=form]')
-                        .removeAttr('data-current-id')
-                        .find('[data-anterior]')
-                        .removeAttr('data-anterior');
-
-                    $hiddenContatos.val('');
-
-                    $nome
-                        .siblings('label')
-                        .find('span')
-                        .text('Nome');
-
-                    $razaoSocial
-                        .parents('[class^=col-]')
-                        .hide();
-
-                    $dtNascimento
-                        .parents('[class^=col-]')
-                        .show();
-
+                
             }
+            console.log('fonte:', ui.content);
         }
-    }).change();
+    }).focus(function(event) {
+      var termo = "";
+      termo = $(this).val().trim();
+      $(this).autocomplete( "search" , termo );
+    });
+  
+  
+  $( "#nome" ).parent('div').addClass('ui-widget');
 
-    var $cpf_cnpj = $('[name=cpf_cnpj]');
+  $("#nome").on('blur',function(){
+    console.log('disparou o blur');
+  });
+  
+  $("#nome").on('change',function(){
+    console.log('disparou o change');
+  });
+  
+  $("#nome").on('click',function(){
+    $("#nome").keyup();
+  }); 
 
-    $cpf_cnpj
-        .blur(function () {
-
-            var $this = $(this);
-
-            $this.removeClass('is-valid is-invalid');
-            $this.siblings('.invalid-feedback').remove();
-
-            if ($this.val()) {
-                if ($this.attr('data-anterior') != $this.val()) {
-                    if ($('[name=tipo_pessoa]:checked').val() == 'pj') {
-                        // Cnpj
-                        if ($this.validationLength(18)) {
-                            // Valido
-                            if ($this.attr('data-unico')) {
-                                $this.unico(function (json) {
-                                    if (!json.length) {
-
-                                        // Não existe, pode seguir
-                                        $this
-                                            .removeClass('is-invalid')
-                                            .addClass('is-valid');
-
-                                        $this[0].setCustomValidity('');
-
-                                    } else {
-
-                                        // Já existe, erro
-                                        var text_label = $this.siblings('label').find('span').text();
-
-                                        $this
-                                            .removeClass('is-valid')
-                                            .addClass('is-invalid');
-
-                                        $this[0].setCustomValidity('invalid');
-
-                                        $this.after('<div class="invalid-feedback">Este ' + text_label.toLowerCase() + ' já está sendo usado</div>');
-                                    }
-                                });
-                            } else {
-                                $this
-                                    .removeClass('is-invalid')
-                                    .addClass('is-valid');
-
-                                $this[0].setCustomValidity('');
-                            }
-                        } else {
-                            // Inválido
-                            $this
-                                .removeClass('is-valid')
-                                .addClass('is-invalid');
-
-                            $this[0].setCustomValidity('invalid');
-
-                            $this.after('<div class="invalid-feedback">Preencha o campo no formato: 00.000.000/0000-00</div>');
-                        }
-                    } else {
-                        // Cpf
-                        if ($this.validationLength(14)) {
-                            // Valido
-                            if ($this.attr('data-unico')) {
-                                $this.unico(function (json) {
-                                    if (!json.length) {
-
-                                        // Não existe, pode seguir
-                                        $this
-                                            .removeClass('is-invalid')
-                                            .addClass('is-valid');
-
-                                        $this[0].setCustomValidity('');
-
-                                    } else {
-
-                                        // Já existe, erro
-                                        var text_label = $this.siblings('label').find('span').text();
-
-                                        $this
-                                            .removeClass('is-valid')
-                                            .addClass('is-invalid');
-
-                                        $this[0].setCustomValidity('invalid');
-
-                                        $this.after('<div class="invalid-feedback">Este ' + text_label.toLowerCase() + ' já está sendo usado</div>');
-                                    }
-                                });
-                            } else {
-                                $this
-                                    .removeClass('is-invalid')
-                                    .addClass('is-valid');
-
-                                $this[0].setCustomValidity('');
-                            }
-                        } else {
-                            // Inválido
-                            $this
-                                .removeClass('is-valid')
-                                .addClass('is-invalid');
-
-                            $this[0].setCustomValidity('invalid');
-
-                            $this.after('<div class="invalid-feedback">Preencha o campo no formato: 000.000.000-00</div>');
-                        }
-                    }
-                }
-            }
-        });
-
-    $cpf_cnpj.addClass('has-validation');
 });

@@ -209,6 +209,7 @@
       
       <link href="<?php echo BASE_URL?>/assets/css/style.css" rel="stylesheet" type="text/css"/>
       <link href="<?php echo BASE_URL?>/assets/css/vendor/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css"/>
+      <link href="<?php echo BASE_URL?>/assets/css/vendor/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
 
       <style>
          .form-control.is-invalid ~ .invalid-feedback:nth-of-type(2) {
@@ -243,6 +244,7 @@
       
    </head>
    <body class="d-flex flex-column h-100 bg-light <?php echo $viewName ?>">
+   <!-- Aqui começa o menu horizontal que fica fixo em cima -->
       <nav id="nav" class="navbar bg-white shadow-sm fixed-top flex-nowrap">
          <ul class="nav align-items-center">
             <li>
@@ -270,6 +272,7 @@
                   ?>
                   <span><?php echo ucfirst($nome) ?></span>
                </a>
+               <!-- div que aparece com o botão de sair -->
                <div class="dropdown-menu text-truncate dropdown-menu-right position-absolute" aria-labelledby="navbarDropdown">
                   <a class="dropdown-item text-danger" onclick="return confirm('Confirmar sua saída?')" href="<?php echo BASE_URL;?>/login/sair">Sair</a>
                </div>

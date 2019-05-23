@@ -744,6 +744,19 @@ class ajaxController extends controller{
     echo json_encode($dados);
   }
 
+  public function nomeClientes(){
+    $dados = array();
+    if(isset($_POST) && !empty($_POST)){
+      
+      $termo = trim(addslashes($_POST['term']));
+      $gn = new Generico();
+      $dados = $gn->nomeClientes($termo);
+      
+    }
+    echo json_encode($dados);
+  }
+
+  
   
 
 }   

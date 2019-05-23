@@ -207,4 +207,6 @@ class Clientes extends model {
 
        return $array;
     }
+
+    
 }

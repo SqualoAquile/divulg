@@ -4,8 +4,22 @@
         currentModule = '<?php echo $modulo ?>'
 </script>
 
+<style>
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+    /* IE 6 doesn't support max-height
+    * we use height instead, but this forces the menu to always be this tall
+    */
+    * html .ui-autocomplete {
+        height: 200px;
+  }</style>
 <!-- Chama o arquivo específico do módulo, caso não exista,  -->
 <!-- Este javaScript serve para fazer verificações inerentes à cada módulo, por exemplo o radio de Clientes -->
+<script src="<?php echo BASE_URL?>/assets/js/vendor/jquery-ui.min.js" type="text/javascript"></script>
 <script src="<?php echo BASE_URL?>/assets/js/<?php echo $modulo?>.js" type="text/javascript"></script>
 
 <header class="d-lg-flex align-items-center my-5">
@@ -249,6 +263,11 @@
         </div>
         <button id="main-form" class="d-none"></button>
     </form>
+    <!-- <div class="ui-widget">
+        <label for="tags">Tags: </label>
+        <input id="tags">
+    </div> -->
+
     <?php if($table) include "_contatos_form.php" ?>
     <div class="row">
         <div class="col-xl-2 col-lg-3">
