@@ -70,9 +70,10 @@
                             <?php echo $value["Null"] == "NO" ? "required" : "" ?>
                         />
                     <?php else: ?>
-                        <div    class="col-lg-<?php echo isset($value["Comment"]["column"]) ? $value["Comment"]["column"] : "12" ?>" 
-                                style="order:<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : 100 ?>;">
-                            <div class="form-group">
+                        <div 
+                            class="col-lg-<?php echo isset($value["Comment"]["column"]) ? $value["Comment"]["column"] : "12" ?>" 
+                            style="order:<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : 100 ?>;">
+                        <div class="form-group">
 
                                 <!-- Label Geral -->
                                 <label class="<?php echo $value["Null"] == "NO" ? "font-weight-bold" : "" ?>" for="<?php echo $value['Field'] ?>">
@@ -262,20 +263,16 @@
         </div>
         <button id="main-form" class="d-none"></button>
     </form>
-    <!-- <div class="ui-widget">
-        <label for="tags">Tags: </label>
-        <input id="tags">
-    </div> -->
-
+    
     <?php if($table) include "_contatos_form.php" ?>
     <div class="row">
         <div class="col-xl-2 col-lg-3">
             <label for="main-form" class="btn btn-primary btn-block" tabindex="0">Salvar</label>
         </div>
         <?php if (isset($item)): ?>
-        <div class="col-xl-2 col-lg-3">
-            <button class="btn btn-dark btn-block" type="button" data-toggle="collapse" data-target="#historico" aria-expanded="false" aria-controls="historico">Histórico de Alterações</button>
-        </div>
+            <div class="col-xl-2 col-lg-3">
+                <button class="btn btn-dark btn-block" type="button" data-toggle="collapse" data-target="#historico" aria-expanded="false" aria-controls="historico">Histórico de Alterações</button>
+            </div>
         <?php endif ?>
     </div>
     <?php include "_historico.php" ?>

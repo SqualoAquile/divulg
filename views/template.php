@@ -19,12 +19,6 @@
                "link" => "/clientes"
             ],
             [
-               "text" => "Fornecedores",
-               "icon" => "fas fa-truck",
-               "permissao" => "fornecedores_ver",
-               "link" => "/fornecedores"
-            ],
-            [
                "text" => "Funcionários",
                "icon" => "fas fa-users",
                "permissao" => "funcionarios_ver",
@@ -37,23 +31,11 @@
                "link" => "/produtos"
             ],
             [
-               "text" => "Serviços",
-               "icon" => "fas fa-hammer",
-               "permissao" => "servicos_ver",
-               "link" => "/servicos"
-            ],
-            [
                "text" => "Serviços Complementares",
                "icon" => "fas fa-toolbox",
                "permissao" => "servicoscomplementares_ver",
                "link" => "/servicoscomplementares"
-            ],
-            [
-               "text" => "Genérico",
-               "icon" => "fas fa-receipt",
-               "permissao" => "generico_ver",
-               "link" => "/generico"
-            ],
+            ]
          ]
       ],
       [
@@ -89,26 +71,6 @@
          ]
       ],
       [
-         "text" => "Operações",
-         "icon" => "fas fa-business-time",
-         "permissao" => "%",
-         "link" => "/#",
-         "filhos" => [
-            [
-               "text" => "Orçamentos",
-               "icon" => "fas fa-tasks",
-               "permissao" => "orcamentos_ver",
-               "link" => "/orcamentos"
-            ],
-            [
-               "text" => "Ordens de Serviço",
-               "icon" => "fas fa-file-signature",
-               "permissao" => "ordemservico_ver",
-               "link" => "/ordemservico"
-            ]
-         ]
-      ],
-      [
          "text" => "Relatórios",
          "icon" => "fas fa-table",
          "permissao" => "%",
@@ -125,24 +87,6 @@
                "icon" => "fas fa-dollar-sign",
                "permissao" => "relatoriosaldos_ver",
                "link" => "/relatoriosaldos"
-            ],
-            [
-               "text" => "Orçamentos",
-               "icon" => "fas fa-tasks",
-               "permissao" => "relatorioorcamentos_ver",
-               "link" => "/relatorioorcamentos"
-            ],
-            [
-               "text" => "Produtos e Serviços",
-               "icon" => "fas fa-boxes",
-               "permissao" => "relatorioorcamentositens_ver",
-               "link" => "/relatorioorcamentositens"
-            ],
-            [
-               "text" => "Ordens de Serviço",
-               "icon" => "fas fa-file-signature",
-               "permissao" => "relatorioordensservico_ver",
-               "link" => "/relatorioordensservico"
             ]
          ]
       ],
@@ -239,6 +183,7 @@
       <script src="<?php echo BASE_URL?>/assets/js/vendor/dataTables.searchHighlight.min.js" type="text/javascript"></script>
       <script src="<?php echo BASE_URL;?>/assets/js/vendor/loader.js" type="text/javascript"></script>
       <script src="<?php echo BASE_URL;?>/assets/js/vendor/Chart.bundle.min.js" type="text/javascript"></script>
+      <!-- <script src="<?php echo BASE_URL?>/assets/js/vendor/jquery-ui.min.js" type="text/javascript"></script> -->
       <script src="<?php echo BASE_URL?>/assets/js/validacoes.js" type="text/javascript"></script>
       <script src="<?php echo BASE_URL?>/assets/js/principal.js" type="text/javascript"></script>
       

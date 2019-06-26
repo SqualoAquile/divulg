@@ -80,6 +80,6 @@ var availableTags = [
   
   $("#nome").on('click',function(){
     $("#nome").keyup();
-  }); 
-
+  });
+  
 });

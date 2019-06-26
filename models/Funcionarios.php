@@ -35,6 +35,7 @@ class Funcionarios extends model {
 
         $keys = implode(",", array_keys($request));
 
+        // print_r($request); exit;
         $values = "'" . implode("','", array_values($this->shared->formataDadosParaBD($request))) . "'";
 
         $sql = "INSERT INTO " . $this->table . " (" . $keys . ") VALUES (" . $values . ")";
