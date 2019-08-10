@@ -2,6 +2,8 @@
 <script type="text/javascript">
     var baselink = '<?php echo BASE_URL ?>',
         currentModule = '<?php echo $modulo ?>',
+        campoPesquisa = '',
+        valorPesquisa = '',
         data_add = '<?php echo in_array($modulo . "_add", $_SESSION["permissoesUsuario"]) ? true : false ?>',
         data_edt = '<?php echo in_array($modulo . "_exc", $_SESSION["permissoesUsuario"]) ? true : false ?>',
         data_exc = '<?php echo in_array($modulo . "_edt", $_SESSION["permissoesUsuario"]) ? true : false ?>';

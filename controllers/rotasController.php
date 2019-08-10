@@ -1,8 +1,8 @@
 <?php
-class clientesController extends controller{
+class rotasController extends controller{
 
     // Protected - estas variaveis só podem ser usadas nesse arquivo
-    protected $table = "clientes";
+    protected $table = "rotas";
     protected $colunas;
     
     protected $model;
@@ -66,7 +66,6 @@ class clientesController extends controller{
             $dados["colunas"] = $this->colunas;
             $dados["viewInfo"] = ["title" => "Adicionar"];
             $dados["labelTabela"] = $this->shared->labelTabela();
-            // print_r($dados['colunas']); exit;
             $this->loadTemplate($this->table . "-form", $dados);
         }
     }

@@ -233,12 +233,10 @@ class Parametros extends model {
 
     }
 
-    public function buscaParametrosMaterial($requisicao){
+    public function buscaParametros(){
         $result = array();
-
-        $this->table = addslashes($requisicao['tabela']);
         
-        $sql = "SELECT parametro, valor FROM " . $this->table . " WHERE situacao = 'ativo'";
+        $sql = "SELECT parametro, valor FROM parametros WHERE situacao = 'ativo'";
         $sql = self::db()->query($sql);
 
         if ($sql->rowCount() > 0) {

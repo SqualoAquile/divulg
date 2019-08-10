@@ -36,6 +36,20 @@ class Usuarios extends model {
         return $array; 
     }
 
+    public function buscaEmaileID($nome) {
+        $array = array();
+        $arrayAux = array();
+
+        $sql = "SELECT * FROM " . $this->table . " WHERE nome='$nome' AND situacao = 'ativo'";      
+        $sql = self::db()->query($sql);
+
+        if($sql->rowCount()>0){
+            $array = $sql->fetch(PDO::FETCH_ASSOC);
+            $array = $this->shared->formataDadosDoBD($array);
+        }
+        return $array; 
+    }
+
     public function adicionar($request) {
         
         $req = array();

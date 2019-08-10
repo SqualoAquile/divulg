@@ -1,8 +1,8 @@
 <?php
-class clientesController extends controller{
+class vendedoresController extends controller{
 
     // Protected - estas variaveis só podem ser usadas nesse arquivo
-    protected $table = "clientes";
+    protected $table = "vendedores";
     protected $colunas;
     
     protected $model;
@@ -16,6 +16,8 @@ class clientesController extends controller{
         $tabela = ucfirst($this->table);
         $this->model = new $tabela();
         $this->usuario = new Usuarios();
+        $this->produto = new Produtos();
+        $this->rota = new Rotas();
     
         $this->colunas = $this->shared->nomeDasColunas();
 
@@ -60,13 +62,17 @@ class clientesController extends controller{
         $dados['infoUser'] = $_SESSION;
         
         if(isset($_POST) && !empty($_POST)){ 
+            
+            // print_r($_POST); exit;
             $this->model->adicionar($_POST);
             header("Location: " . BASE_URL . "/" . $this->table);
         }else{ 
             $dados["colunas"] = $this->colunas;
             $dados["viewInfo"] = ["title" => "Adicionar"];
             $dados["labelTabela"] = $this->shared->labelTabela();
-            // print_r($dados['colunas']); exit;
+            $dados["produtos"] = $this->produto->todosProdutos();
+            // print_r($dados["produtos"]); exit;
+            $dados["rotas"] = $this->rota->rotasVendedor($_SESSION["idUsuario"]);
             $this->loadTemplate($this->table . "-form", $dados);
         }
     }
@@ -91,6 +97,7 @@ class clientesController extends controller{
             $dados["colunas"] = $this->colunas;
             $dados["viewInfo"] = ["title" => "Editar"];
             $dados["labelTabela"] = $this->shared->labelTabela();
+            $dados["produtos"] = $this->produto->todosProdutos();
             $this->loadTemplate($this->table . "-form", $dados); 
         }
     }

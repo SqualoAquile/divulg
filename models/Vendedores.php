@@ -1,7 +1,7 @@
 <?php
-class Produtos extends model {
+class Vendedores extends model {
 
-    protected $table = "produtos";
+    protected $table = "vendedores";
     protected $permissoes;
     protected $shared;
 
@@ -26,21 +26,30 @@ class Produtos extends model {
         return $array; 
     }
 
-    public function todosProdutos() {
+    public function infoVendedor($id_usuario) {
         $array = array();
+        $arrayAux = array();
 
-        $sql = "SELECT * FROM " . $this->table . " WHERE situacao = 'ativo'";      
+        $id = addslashes(trim($id_usuario));
+        $sql = "SELECT * FROM " . $this->table . " WHERE id_usuario='$id' AND situacao = 'ativo'";      
         $sql = self::db()->query($sql);
 
         if($sql->rowCount()>0){
-            $array = $sql->fetchAll(PDO::FETCH_ASSOC);
+            $array = $sql->fetch(PDO::FETCH_ASSOC);
+            $array = $this->shared->formataDadosDoBD($array);
         }
         
         return $array; 
     }
 
     public function adicionar($request) {
-        
+        // print_r($request); exit;
+
+        // separando as informações vindas do $_POST
+        $requestAux = array_pop($request);
+        // print_r($requestAux); exit;
+        // preparando o primeiro array  - tabela principal
+
         $ipcliente = $this->permissoes->pegaIPcliente();
         $request["alteracoes"] = ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - CADASTRO";
         
@@ -51,12 +60,19 @@ class Produtos extends model {
         $values = "'" . implode("','", array_values($this->shared->formataDadosParaBD($request))) . "'";
 
         $sql = "INSERT INTO " . $this->table . " (" . $keys . ") VALUES (" . $values . ")";
-        
+
         self::db()->query($sql);
 
         $erro = self::db()->errorInfo();
 
+        // não sei se vai ser necessário fazer do jeito com tabelas relacionadas - parei aqui e fui verificar 
+        // se a tabela de pedidos consegue ser feita sem essa relação
+        //$idNovo = self::db()->lastInsertId();
+
         if (empty($erro[2])){
+            // o registro foi inserido com sucesso - tabela principal
+            
+
 
             $_SESSION["returnMessage"] = [
                 "mensagem" => "Registro inserido com sucesso!",
@@ -71,6 +87,10 @@ class Produtos extends model {
     }
 
     public function editar($id, $request) {
+        
+        // separando as informações vindas do $_POST
+        $requestAux = array_pop($request);
+        // print_r($request); exit;
 
         if(!empty($id)){
 
@@ -80,7 +100,7 @@ class Produtos extends model {
             $hist = explode("##", addslashes($request['alteracoes']));
 
             if(!empty($hist[1])){ 
-                $request['alteracoes'] = $hist[0]." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - ALTERAÇÃO >> ".$hist[1];     
+                $request['alteracoes'] = $hist[0]." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - ALTERAÇÃO >> ".$hist[1];
             }else{
                 $_SESSION["returnMessage"] = [
                     "mensagem" => "Houve uma falha, tente novamente! <br /> Registro sem histórico de alteração.",
@@ -101,7 +121,9 @@ class Produtos extends model {
             ));
 
             $sql = "UPDATE " . $this->table . " SET " . $output . " WHERE id='" . $id . "'";
-             
+            
+            // echo $sql; exit;
+
             self::db()->query($sql);
 
             $erro = self::db()->errorInfo();
@@ -157,4 +179,35 @@ class Produtos extends model {
             }
         }
     }
+
+    public function nomeClientes($termo){
+        // echo "aquiiii"; exit;
+        $array = array();
+        // 
+        $sql1 = "SELECT `id`, `nome` FROM `generico` WHERE situacao = 'ativo' AND nome LIKE '%$termo%' ORDER BY nome ASC";
+
+        $sql1 = self::db()->query($sql1);
+        $nomesAux = array();
+        $nomes = array();
+        if($sql1->rowCount() > 0){  
+            
+            $nomesAux = $sql1->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($nomesAux as $key => $value) {
+                $nomes[] = array(
+                    "id" => $value["id"],
+                    "label" => $value["nome"],
+                    "value" => $value["nome"]
+                );     
+            }
+
+        }
+
+        // fazer foreach e criar um array que cada elemento tenha id: label: e value:
+        // print_r($nomes); exit; 
+        $array = $nomes;
+
+       return $array;
+    }
+
 }

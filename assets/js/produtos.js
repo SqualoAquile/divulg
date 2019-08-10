@@ -31,9 +31,9 @@ $(function () {
         }
     }
     
-    $("#custo, #preco_venda").blur(function(){
+    $("#custo, #preco").blur(function(){
         var $custo = $("#custo");
-        var $preco = $("#preco_venda");
+        var $preco = $("#preco");
 
         if( $custo.val() != "" && $preco.val() == "" ){
 

@@ -2,10 +2,25 @@
 <script type="text/javascript">
     var baselink = '<?php echo BASE_URL;?>',
         currentModule = '<?php echo $modulo ?>',
-        campoPesquisa = '',
-        valorPesquisa = '';
+        campoPesquisa = 'id_usuario',
+        valorPesquisa = '<?php echo in_array('podetudo_ver', $_SESSION['permissoesUsuario']) ? "" : $_SESSION["idUsuario"]; ?>';
 </script>
 
+<style>
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        /* prevent horizontal scrollbar */
+        overflow-x: hidden;
+    }
+    /* IE 6 doesn't support max-height
+    * we use height instead, but this forces the menu to always be this tall
+    */
+    * html .ui-autocomplete {
+        height: 200px;
+  }</style>
+
+<script src="<?php echo BASE_URL?>/assets/js/vendor/jquery-ui.min.js" type="text/javascript"></script>
 <!-- Chama o arquivo específico do módulo, caso não exista,  -->
 <!-- Este javaScript serve para fazer verificações inerentes à cada módulo, por exemplo o radio de Clientes -->
 <script src="<?php echo BASE_URL?>/assets/js/<?php echo $modulo?>.js" type="text/javascript"></script>
@@ -26,8 +41,7 @@
         <div class="row">
             <?php foreach ($colunas as $key => $value): ?>
                 <?php if(isset($value["Comment"]) && array_key_exists("form", $value["Comment"]) && $value["Comment"]["form"] != "false") : ?>
-                    
-                    <!-- INÍCIO DOS TESTES PARA VER QUAL O TIPO DE CAMPO -->
+
                     <!-- CAMPOS DO TIPO TABELA - Ex: CONTATOS -->
                     <?php if(array_key_exists("type", $value["Comment"]) && $value["Comment"]["type"] == "table"): ?> 
 
@@ -35,7 +49,7 @@
                         <label class="d-none"><span><?php echo array_key_exists("label", $value["Comment"]) ? $value["Comment"]["label"] : ucwords(str_replace("_", " ", $value['Field'])) ?></span></label>
                         
                         <?php $table = true ?>
-
+                        
                         <input 
                             type="hidden" 
                             name="<?php echo $value["Field"] ?>" 
@@ -58,7 +72,8 @@
                             <?php echo $value["Null"] == "NO" ? "required" : "" ?>
                         />
                     <?php else: ?>
-                        <div class="col-lg-<?php echo isset($value["Comment"]["column"]) ? $value["Comment"]["column"] : "12" ?>">
+                        <div    class="col-lg-<?php echo isset($value["Comment"]["column"]) ? $value["Comment"]["column"] : "12" ?>" 
+                                style="order:<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : 100 ?>;">
                             <div class="form-group">
 
                                 <!-- Label Geral -->
@@ -68,7 +83,7 @@
                                     <?php if ($value["Null"] == "NO"): ?>
                                         <i class="font-weight-bold" data-toggle="tooltip" data-placement="top" title="Campo Obrigatório">*</i>
                                     <?php endif ?>
-                                    <span><?php echo array_key_exists("label", $value["Comment"]) ? $value["Comment"]["label"] : ucwords(str_replace("_", " ", $value['Field'])) ?></span>
+                                    <span><?php echo array_key_exists("label", $value["Comment"]) ? ucwords($value["Comment"]["label"]) : ucwords(str_replace("_", " ", $value['Field'])) ?></span>
                                 </label>
                                 
                                 <!-- CAMPOS DO TIPO RELACIONAL - SELECT -->
@@ -78,6 +93,7 @@
                                             name="<?php echo lcfirst($value['Field']);?>"
                                             class="form-control"
                                             data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
+                                            tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                             data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                             <?php echo $value['Null'] == "NO" ? "required" : "" ?>
                                             >
@@ -118,6 +134,7 @@
                                                         id="<?php echo $value["Comment"]['info_relacional']['resultado'][$j];?>" 
                                                         type="checkbox" 
                                                         class="form-check-input" 
+                                                        tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                                         value="<?php echo $value["Comment"]['info_relacional']['resultado'][$j];?>"
                                                         data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>" 
                                                         <?php
@@ -148,6 +165,7 @@
                                         class="form-control" 
                                         name="<?php echo lcfirst($value['Field']);?>" 
                                         data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
+                                        tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                         id="<?php echo lcfirst($value['Field']);?>"
                                         data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                         <?php echo $value['Null'] == "NO" ? "required" : "" ?>
@@ -164,6 +182,7 @@
                                                     id="<?php echo $valueRadio ?>" 
                                                     value="<?php echo $valueRadio ?>" 
                                                     name="<?php echo $value["Field"] ?>" 
+                                                    tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                                     data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
                                                     data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                                     class="form-check-input" 
@@ -218,7 +237,6 @@
                                         </div>
                                     </div>
                                 <?php else: ?>
-
                                     <!-- CAMPOS DO TIPO TEXT -->
                                     <input 
                                         type="text" 
@@ -230,23 +248,30 @@
                                         id="<?php echo $value['Field'] ?>"
                                         <?php echo $value['Null'] == "NO" ? "required" : "" ?>
                                         maxlength="<?php echo $value["tamanhoMax"] ?>"
+                                        tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                         data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                         <?php if( array_key_exists("mascara_validacao", $value["Comment"]) && 
                                                  ( $value["Comment"]["mascara_validacao"] == "monetario" || $value["Comment"]["mascara_validacao"] == "porcentagem" )):?>
                                             data-podeZero="<?php echo array_key_exists("pode_zero", $value["Comment"]) && $value["Comment"]["pode_zero"]  == 'true' ? 'true' : 'false' ?>"
-                                        <?php endif?>    
-                                        
+                                        <?php endif?>                                        
                                     />
                                 <?php endif ?>
                             </div>
                         </div>
                     <?php endif ?>
                 <?php endif ?>
-            <?php endforeach ?>
+            <?php endforeach ?>        
         </div>
         <button id="main-form" class="d-none"></button>
+
+        <?php if($table) include "_pedidosfixos_form.php" ?>
     </form>
-    <?php if($table) include "_contatos_form.php" ?>
+    <!-- <div class="ui-widget">
+        <label for="tags">Tags: </label>
+        <input id="tags">
+    </div> -->
+
+    
     <div class="row">
         <div class="col-xl-2 col-lg-3">
             <label for="main-form" class="btn btn-primary btn-block" tabindex="0">Salvar</label>
@@ -257,5 +282,5 @@
         </div>
         <?php endif ?>
     </div>
-    <?php include "_historico.php" ?>
+    <?php include "_historico1.php" ?>
 </section>

@@ -111,6 +111,14 @@ $(function () {
     // 
     // CONFIGURAÇÕES DO DATATABLE
     //
+    
+    if ( campoPesquisa != '' && campoPesquisa != undefined  && valorPesquisa != '' && valorPesquisa != undefined ){
+        campoPesq = campoPesquisa;
+        valorPesq = valorPesquisa;
+    }else{
+        campoPesq = '';
+        valorPesq = '';
+    }
     var dataTable = $('.dataTable').DataTable(
         {
             scrollX: true,
@@ -130,7 +138,9 @@ $(function () {
                 url: baselink + '/ajax/dataTableAjax',
                 type: 'POST',
                 data: {
-                    module: currentModule
+                    module: currentModule,
+                    campoPesq: campoPesq,
+                    valorPesq: valorPesq,
                 }
             },
             language: {
@@ -942,7 +952,7 @@ $(function () {
     // Função que valida as alterações necessárias para o submit
     //
     $('.needs-validation').submit(function (event) {
-
+        // console.log('disparou o submit do validacoes.js')
         // deixa o enter destivado para submitar o formulario    
         var form = this;
 
@@ -991,7 +1001,19 @@ $(function () {
                             } else if ($(el).attr('id') == 'senhaaux') {
                                 //não faz nada
 
-                            } else {
+                            } else if ($(el).attr('id') == 'rota') {
+                                console.log('entrou no if da rota');
+                                text_label = 'Rota de ' + $(el).parents('tr:eq(0) td:eq(0)').text().replace(':','').trim();
+                                campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
+                                console.log(campos_alterados);
+
+                            } else if ($(el).attr('id') == 'pedido') {
+                                console.log('entrou no if do pedido');
+                                text_label = 'Pedido de ' + $(el).closest('tr').find('td:eq(0)').text().replace(':','').trim() + ' Sabor: ' + $(el).parents('td').text().trim();
+                                campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
+                                console.log(campos_alterados);
+
+                            }else {
                                 campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
                             }
 

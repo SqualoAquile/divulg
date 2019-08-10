@@ -50,7 +50,7 @@ class Shared extends model {
         return $stringBtn;
     }
 
-    public function montaDataTable() {
+    public function montaDataTable($campoPesq = null, $valorPesq = null) {
 
         $index = 0;
 
@@ -161,7 +161,12 @@ class Shared extends model {
             
         };
 
-        return Ssp::complex($_POST, $this->config, $this->table, "id", $columns, null, "situacao='ativo'");
+        $clausulaWhere = "situacao='ativo'";
+        if($campoPesq != null && $valorPesq != null){
+            $clausulaWhere .= " AND $campoPesq = '$valorPesq'";
+        }
+
+        return Ssp::complex($_POST, $this->config, $this->table, "id", $columns, null, $clausulaWhere);
     }
 
     public function unico($campo, $valor) {
@@ -767,9 +772,10 @@ class Shared extends model {
             // busca o nome dos campos das colunas para ver qual o tipo a ser formatado
             $primeiroElemento = array_shift($nomeColunas); // usado só para retirar o primeiro elemento do array que é o ID
             $i=0;
-            // print_r($nomeColunas);
-            // print_r($registro); 
-            foreach ($registro as $chave => $valor) {
+            // print_r($nomeColunas); exit;
+            // print_r($registro); exit;
+            foreach ($registro as $chave => $valor){
+                // echo $chave.'  ----  '.$nomeColunas[$i]['Field'].'<br>';
                 //testo se é o valor referente ao mesmo campo do nome das colunas
                 if($nomeColunas[$i]['Field'] == $chave){ 
 

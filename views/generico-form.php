@@ -1,7 +1,9 @@
 <?php $modulo = str_replace("-form", "", basename(__FILE__, ".php")) ?>
 <script type="text/javascript">
     var baselink = '<?php echo BASE_URL;?>',
-        currentModule = '<?php echo $modulo ?>'
+        currentModule = '<?php echo $modulo ?>',
+        campoPesquisa = '', // aqui vai o campo de id-usuario caso seja necessário filtrar o datatable somente para os registros referentes ao usuário logado
+        valorPesquisa = '<?php echo in_array('podetudo_ver', $_SESSION['permissoesUsuario']) ? "" : $_SESSION["idUsuario"]; ?>';
 </script>
 
 <style>
@@ -249,9 +251,9 @@
                                         tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                         data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                         <?php if( array_key_exists("mascara_validacao", $value["Comment"]) && 
-                                                 ( $value["Comment"]["mascara_validacao"] == "monetario" || $value["Comment"]["mascara_validacao"] == "porcentagem" )):?>
+                                                 ( $value["Comment"]["mascara_validacao"] == "monetario" || $value["Comment"]["mascara_validacao"] == "porcentagem" || $value["Comment"]["mascara_validacao"] == "numero" ) ) :?>
                                             data-podeZero="<?php echo array_key_exists("pode_zero", $value["Comment"]) && $value["Comment"]["pode_zero"]  == 'true' ? 'true' : 'false' ?>"
-                                        <?php endif?>                                        
+                                        <?php endif?>                                          
                                     />
                                 <?php endif ?>
                             </div>

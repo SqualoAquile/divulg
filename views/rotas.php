@@ -8,7 +8,9 @@ require "_table_datatable.php";
 ?>
 <script type="text/javascript">
     var baselink = '<?php echo BASE_URL;?>',
-        currentModule = '<?php echo $modulo ?>',  // usa o nome da tabela como nome do módulo, necessário para outras interações
-        campoPesquisa = '', // aqui vai o campo de id-usuario caso seja necessário filtrar o datatable somente para os registros referentes ao usuário logado
+        currentModule = '<?php echo $modulo ?>'  // usa o nome da tabela como nome do módulo, necessário para outras interações
+        idUsuario ='<?php echo $_SESSION["idUsuario"]; ?>',
+        usuario ='<?php echo $_SESSION["nomeUsuario"]; ?>',
+        campoPesquisa = 'id_vendedor',
         valorPesquisa = '<?php echo in_array('podetudo_ver', $_SESSION['permissoesUsuario']) ? "" : $_SESSION["idUsuario"]; ?>';
 </script>

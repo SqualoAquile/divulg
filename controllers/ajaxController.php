@@ -339,9 +339,10 @@ class ajaxController extends controller{
   
   /////// PRODUTOS
   public function dataTableAjax(){
+    //  print_r($_POST['valorPesq']); exit;
       $shared = new Shared($_POST['module']);
       echo json_encode(
-        $shared->montaDataTable()
+        $shared->montaDataTable($_POST['campoPesq'], $_POST['valorPesq'])
       );
       //print_r($shared->montaDataTable() );exit;
   }
@@ -756,8 +757,56 @@ class ajaxController extends controller{
     echo json_encode($dados);
   }
 
+  public function buscaEmaileID(){
+    $dados = array();
+    if(isset($_POST) && !empty($_POST)){
+
+      $nome = trim(addslashes($_POST['nome']));
+
+      $us = new Usuarios();
+      $dados = $us->buscaEmaileID($nome);
+      
+    }
+    echo json_encode($dados);
+  }
   
+  public function jaExistePedido(){
+    $dados = array();
+    if(isset($_POST) && !empty($_POST)){
+
+      $dtentrega = $_POST['dtentrega'];
+      $idVend = trim(addslashes($_POST['idVend']));
+
+      $pd = new Pedidos();
+      $dados = $pd->jaExistePedido($dtentrega, $idVend);
+      
+    }
+    echo json_encode($dados);
+  }
+
+  public function sobrad0ontem(){
+    $dados = array();
+    if(isset($_POST) && !empty($_POST)){
+
+      $dtOntem = $_POST['dtOntem'];
+      $idVend = trim(addslashes($_POST['idVend']));
+
+      $pd = new Pedidos();
+      $dados = $pd->sobrad0ontem($dtOntem, $idVend);
+      
+    }
+    echo json_encode($dados);
+  }
   
+  public function buscaParametrosAdicao() {
+    $array = array();
+
+    if (isset($_POST) && !empty($_POST)) {
+      $param = new Parametros();
+      $array = $param->buscaParametrosAdicao($_POST);
+      echo json_encode($array);
+    }
+  }
 
 }   
 ?>

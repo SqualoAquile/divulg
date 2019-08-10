@@ -1,8 +1,8 @@
 <?php
-class clientesController extends controller{
+class pedidosController extends controller{
 
     // Protected - estas variaveis só podem ser usadas nesse arquivo
-    protected $table = "clientes";
+    protected $table = "pedidos";
     protected $colunas;
     
     protected $model;
@@ -16,6 +16,10 @@ class clientesController extends controller{
         $tabela = ucfirst($this->table);
         $this->model = new $tabela();
         $this->usuario = new Usuarios();
+        $this->produto = new Produtos();
+        $this->rota = new Rotas();
+        $this->vnd = new Vendedores();
+        $this->prmt = new Parametros();
     
         $this->colunas = $this->shared->nomeDasColunas();
 
@@ -60,13 +64,18 @@ class clientesController extends controller{
         $dados['infoUser'] = $_SESSION;
         
         if(isset($_POST) && !empty($_POST)){ 
+            
+            // print_r($_POST); exit;
             $this->model->adicionar($_POST);
             header("Location: " . BASE_URL . "/" . $this->table);
         }else{ 
             $dados["colunas"] = $this->colunas;
             $dados["viewInfo"] = ["title" => "Adicionar"];
             $dados["labelTabela"] = $this->shared->labelTabela();
-            // print_r($dados['colunas']); exit;
+            $dados["produtos"] = $this->produto->todosProdutos();
+            $dados["vendedor"] = $this->vnd->infoVendedor($_SESSION["idUsuario"]);
+            $dados["parametros"] = $this->prmt->buscaParametros();
+            // print_r($dados['parametros']); exit;
             $this->loadTemplate($this->table . "-form", $dados);
         }
     }
@@ -84,6 +93,7 @@ class clientesController extends controller{
         $dados['infoUser'] = $_SESSION;
         
         if(isset($_POST) && !empty($_POST)){
+            // print_r($_POST); exit;
             $this->model->editar($id, $_POST);
             header("Location: " . BASE_URL . "/" . $this->table); 
         }else{
@@ -91,6 +101,9 @@ class clientesController extends controller{
             $dados["colunas"] = $this->colunas;
             $dados["viewInfo"] = ["title" => "Editar"];
             $dados["labelTabela"] = $this->shared->labelTabela();
+            $dados["produtos"] = $this->produto->todosProdutos();
+            $dados["vendedor"] = $this->vnd->infoVendedor($_SESSION["idUsuario"]);
+            $dados["parametros"] = $this->prmt->buscaParametros();
             $this->loadTemplate($this->table . "-form", $dados); 
         }
     }

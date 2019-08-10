@@ -332,7 +332,7 @@ class Relatoriofluxocaixa extends model {
         }
 
         $metaAtingida = round($metaAtingida);
-
+        $meta1 = '11';
         $retorno[0] = $meta1;                   //meta
         $retorno[1] = $atingido1;               //faturamento atingido
         $retorno[2] = $metaAtingida;            //porcentagem da meta atingida

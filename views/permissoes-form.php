@@ -1,7 +1,9 @@
 <?php $modulo = str_replace("-form", "", basename(__FILE__, ".php")) ?>
 <script type="text/javascript">
     var baselink = '<?php echo BASE_URL ?>',
-        currentModule = '<?php echo $modulo ?>'
+        currentModule = '<?php echo $modulo ?>',
+        campoPesquisa = '',
+        valorPesquisa = '';
 </script>
 
 <!-- Chama o arquivo específico do módulo, caso não exista,  -->
