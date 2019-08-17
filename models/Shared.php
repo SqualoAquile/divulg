@@ -36,8 +36,10 @@ class Shared extends model {
                 $stringBtn .= '<input type="hidden" name="id" value="'. $id .'"><button type="submit" onclick="return confirm(\'Tem Certeza?\')" class="btn btn-sm btn-danger mx-1"><i class="fas fa-trash-alt"></i></button>';
             }
 
-            if(($this->table == "orcamentos") && in_array( $this->table.'_ver' , $_SESSION["permissoesUsuario"]) ){
-                $stringBtn .= '<button type="button" class="btn btn-warning btn-sm mx-1" data-id="' . $id . '" data-toggle="modal" data-target="#modalConfImp"><i class="fas fa-print"></i></button>';
+            // btn de check na entrega distribuidor
+            
+            if( in_array( $this->table.'_edt' , $_SESSION["permissoesUsuario"]) && in_array( 'podetudo_ver' , $_SESSION["permissoesUsuario"]) ){
+                $stringBtn .=  '<a href="' . BASE_URL . '/' . $this->table . '/check/' . $id . '" class="btn btn-warning btn-sm mx-1" onclick="return confirm(\'Tem Certeza?\')" ><i class="fas fa-check"></i></a>';
             }
 
             if(($this->table == "ordemservico") && in_array( $this->table.'_ver' , $_SESSION["permissoesUsuario"]) ){

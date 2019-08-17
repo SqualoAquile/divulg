@@ -1,5 +1,5 @@
 $(function () {
-
+    // console.log('carregou pedidos.js');
     // Adição
     // Calulo dos totais - ok 
     // Verificar se tem pedido d-1 - ok
@@ -11,26 +11,28 @@ $(function () {
     // Calculo das edições dos inputs da tabela - se alterar sobrad0tem que fazer sentido com a venda e doação... ok 
     // Verificar se tem pedido d-1 - ok
     // verificar se já tem pedido com essa data de entrega - ok
-    // Verificar se a edição do pedido está sendo feita até a data e hora limite correta
-    // verificar se os OK já foram dados e pode ou não editar?
-    // revisar o calculaoperacao, pra quando tiver na etapa de dar ok na entrega não calcular venda/sobras/doacoes...
+    // Verificar se a edição do pedido está sendo feita até a data e hora limite correta - ok
+    // verificar se os OK já foram dados e pode ou não editar? - ok
+    // revisar calculaoperacao, quando tiver na etapa de dar ok na entrega não calcular venda/sobras/doacoes... ok
 
     // Para o Form
     // criar colunas das informações do pedido/entrega facilitar a distribuição - ok
-    // criar o botão de check do vendedor e do distribuidor - brownser
-    // tirar todos os console.log 
-    // acertar como aparece o histórico das alterações
-    // separa a edição nos seguintes momentos
-    // edição do pedido
-    // edição da entrega
-    // edição das vendas/ sobras/doações e custos
-    // ver as informações e não poder editar mais
-    console.log('parametros disponíveis', 
-        $('#main-form').attr('data-diasantesadd'),
-        $('#main-form').attr('data-horalimiteadd'),
-        $('#main-form').attr('data-diasantesedt'),
-        $('#main-form').attr('data-horalimiteedt')
-    );
+    // criar o botão de check do vendedor e do distribuidor - brownser - ok
+    // fazer verificação das conferencias no brownser igual ao do form - ok
+    // separa a edição nos seguintes momentos - ok
+    // edição do pedido // edição da entrega // edição das vendas/ sobras/doações e custos // ver as informações e não poder editar mais - ok
+    // revisar quando vai dar o OK vnd ele atualiza a quantidade de venda e registra as vendas como se tivessem acontecido - ok
+    
+    // tirar todos os console.log - ok
+    // acertar como aparece o histórico das alterações - ok
+    // verificar na tabela pedidositens se as informações ficam corretas durante todo o fluxo de operação - ok
+    
+    // console.log('parametros disponíveis', 
+    //     $('#main-form').attr('data-diasantesadd'),
+    //     $('#main-form').attr('data-horalimiteadd'),
+    //     $('#main-form').attr('data-diasantesedt'),
+    //     $('#main-form').attr('data-horalimiteedt')
+    // );
 
     //preenche a tabela de operacao com o valor do input operacao
     var pedi = Pedidos();
@@ -70,11 +72,11 @@ $(function () {
         $("#data_entrega").attr('readonly','readonly').datepicker('destroy');
         atualizaSobrad0();
 
-        console.log('o PEDIDO pode ser alterado? :', OkDataLimiteAdicaoEdicaoPedido());
+        // console.log('o PEDIDO pode ser alterado? :', OkDataLimiteAdicaoEdicaoPedido());
 
         if( OkDataLimiteAdicaoEdicaoPedido() == true ){
             // enquanto o pedido puder ser editado
-            console.log('o pedido ainda pode ser editado');
+            // console.log('o pedido ainda pode ser editado');
 
             $('#conf_entrega_vnd').empty().attr('readonly','readonly').val('')
                 .append('<option value="" selected  >Selecione</option>'); 
@@ -91,24 +93,29 @@ $(function () {
 
         }else{
             // o pedido não pode mais ser editado
-            console.log('o pedido não pode mais ser editado');
-
-            console.log('Aqui conf dist', $('#conf_entrega_dist').val());
-            console.log('Aqui conf vnd', $('#conf_entrega_vnd').val());
+            // console.log('o pedido não pode mais ser editado');
+            // console.log('Aqui conf dist', $('#conf_entrega_dist').val());
+            // console.log('Aqui conf vnd', $('#conf_entrega_vnd').val());
             
             if( $('#data_entrega').val() == hoje() && $('#conf_entrega_dist').val() != 'SIM' ){
                 // hoje é o dia da entrega e o dist não OK na entrega - só pode editar a entrega e vn não pode dar OK
-                console.log('pedido não altera e dist não OK') 
+                // console.log('pedido não altera e dist não OK') 
                 $('#custo').val('0,00').attr('readonly','readonly');
 
                 $('#conf_entrega_vnd').empty().attr('readonly','readonly').val('')
                 .append('<option value="" selected  >Selecione</option>'); 
 
+                if( valorPesquisa != '' ){//significa que o usuário NÃO tem a permissão podetudo_ver
+                    $('#conf_entrega_dist').empty().attr('readonly','readonly').val('')
+                    .append('<option value="" selected  >Selecione</option>');   
+                
+                }else{
 
-                $('#conf_entrega_dist').empty()
-                .val('')
-                .append('<option value="" selected  >Selecione</option>')
-                .append('<option value="SIM"   >SIM</option>');
+                    $('#conf_entrega_dist').empty()
+                    .val('')
+                    .append('<option value="" selected  >Selecione</option>')
+                    .append('<option value="SIM"   >SIM</option>');
+                }
 
                 $('tbody tr#pedido td').find('input').attr('readonly','readonly');
                 $('tbody tr#venda td').find('input').val(0).attr('readonly','readonly');
@@ -117,12 +124,11 @@ $(function () {
                 $('tbody tr#doacao td').find('input').val(0).attr('readonly','readonly');
 
                 inicializaQtdEntrega();
-                console.log('input 1 entrega:', $('#tbody tr#entrega td:eq(2)').find('input').val() );
 
             }else if( $('#data_entrega').val() == hoje() && 
                       ( $('#conf_entrega_vnd').val() != 'SIM' && $('#conf_entrega_dist').val() == 'SIM' ) ){
                 // hoje é o dia da entrega e o dist OK na entrega - vnd só pode dar OK
-                console.log('pedido não altera e dist OK') 
+                // console.log('pedido não altera e dist OK') 
                 $('#custo').val('0,00').attr('readonly','readonly');
 
                 $('#conf_entrega_dist').empty().attr('readonly','readonly')
@@ -140,10 +146,12 @@ $(function () {
                 $('tbody tr#sobrad2 td').find('input').val(0).attr('readonly','readonly');
                 $('tbody tr#doacao td').find('input').val(0).attr('readonly','readonly');
 
+                inicializaQtdEntrega();
+
             }else if( $('#data_entrega').val() == hoje() && 
                       ( $('#conf_entrega_vnd').val() == 'SIM' && $('#conf_entrega_dist').val() == 'SIM' ) ){
                 // hoje é o dia da entrega, dist e vnd OK na entrega - vnd pode editar venda, custo, sobras, doação
-                console.log('pedido não altera. dist OK e vnd OK') 
+                // console.log('pedido não altera. dist OK e vnd OK') 
                 $('#custo').val('0,00');
 
                 $('#conf_entrega_vnd').empty().attr('readonly','readonly')
@@ -157,10 +165,11 @@ $(function () {
                 $('tbody tr#venda td').find('input').val(0).attr('readonly','readonly');
                         
                 calculaOperacao();
+
             }else if( maiorData( $('#data_entrega').val(),  hoje() ) == $('#data_entrega').val()  ){
 
                 // a data da entrega é posterior a hoje 
-                console.log('dt entrega é maior que hoje.');
+                // console.log('dt entrega é maior que hoje.');
 
                 $('#custo').val('0,00').attr('readonly','readonly');
 
@@ -179,7 +188,7 @@ $(function () {
 
             }else{
                 // se data de entrega for mais antiga que hoje
-                console.log('se data de entrega for mais antiga que hoje');
+                // console.log('se data de entrega for mais antiga que hoje');
                 $('#custo').attr('disabled','disabled');
                 $('#observacao').attr('disabled','disabled');
 
@@ -299,9 +308,17 @@ $(function () {
 
     // botao de salvar - quando clica
     $('label.btn.btn-primary.btn-block').on('click', function(e){
-        if($('label.btn.btn-primary.btn-block').attr('disabled') == 'disabled'){
-            if( OkDataLimiteAdicaoEdicaoPedido() == false) {
-                // aqui fazer teste se tá no prazo pra edição da entrega/venda/sobras/doacao
+        if($('label.btn.btn-primary.btn-block').attr('disabled') != 'disabled'){
+            if($("#vendedor").attr('data-anterior') == '' ){
+                // quando for adição de operação
+                if( OkDataLimiteAdicaoEdicaoPedido() == false) {
+                    alert('O prazo limite para salvar a operação foi ultrapassado.');
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+            }else{
+                // quando for edição de operação
                 if( OkDataLimiteEdicaoOperacao() == false){
                     alert('O prazo limite para salvar a operação foi ultrapassado.');
                     e.preventDefault();
@@ -312,8 +329,23 @@ $(function () {
         }    
     });
 
-    $('tbody tr#pedido .form-control').blur(function(){
+    $('tbody tr#pedido .form-control ').blur(function(){
         SetPedido(); 
+    });
+    $('tbody tr#sobrad0 .form-control, tr#sobrad2 .form-control, tr#doacao .form-control  ').blur(function(){
+        // calcula a operação
+        if( $('#conf_entrega_vnd').val() == 'SIM' && $('#conf_entrega_dist').val() == 'SIM'  ){
+            calculaOperacao();
+
+            // calcula o totalizador da linha e seta o input 
+            var idLinha = $(this).parents('tr').attr('id');
+            var $Tot = $('#qtd_'+idLinha);
+            var tot = 0;
+            for(var i = 1; i < $('tbody tr#'+idLinha+' td').length; i++ ){
+                tot = tot + parseInt( $('tbody tr#'+idLinha+' td:eq('+i+') input').val() );
+            }
+            $Tot.val(tot);
+        }
     });
  
     $('tbody .form-control').blur(function(){
@@ -325,24 +357,21 @@ $(function () {
        $(this).val( parseInt($(this).val()) );
          // atualiza o valor do campo hidden da operação
          SetInput();
-       
-         // calcula a operação
-         calculaOperacao();
 
-         // calcula o totalizador da linha e seta o input 
-         var idLinha = $(this).parents('tr').attr('id');
-         var $Tot = $('#qtd_'+idLinha);
-         var tot = 0;
-         for(var i = 1; i < $('tbody tr#'+idLinha+' td').length; i++ ){
-             tot = tot + parseInt( $('tbody tr#'+idLinha+' td:eq('+i+') input').val() );
-         }
-         $Tot.val(tot);
- 
+        // calcula o totalizador da linha e seta o input 
+        var idLinha = $(this).parents('tr').attr('id');
+        var $Tot = $('#qtd_'+idLinha);
+        var tot = 0;
+        for(var i = 1; i < $('tbody tr#'+idLinha+' td').length; i++ ){
+            tot = tot + parseInt( $('tbody tr#'+idLinha+' td:eq('+i+') input').val() );
+        }
+        $Tot.val(tot);
+         
          // atualiza o campo hidden do pedido
          SetPedido();
     });
  
-     $('input').keypress(function (event) {
+    $('input').keypress(function (event) {
      if (    event.keyCode == 13      ||   // tecla enter
              event.keyCode == 42      ||   // tecla  *
              event.keyCode == 123     ||   // tecla {
@@ -355,7 +384,22 @@ $(function () {
              event.stopPropagation();
              return false;
          }
-     });
+    });
+
+    $('#custo').blur(function(){
+        if( $(this).attr('data-anterior') != '' ){
+            if( $(this).val() == '' || parseInt( $(this).val()) == parseInt(0) ){
+                $(this).val( $(this).attr('data-anterior') ).removeClass('is-valid');
+            }
+        }
+    });
+
+    $('#conf_entrega_dist').blur(function(){
+        if( valorPesquisa != '' ){//significa que o usuário NÃO tem a permissão podetudo_ver
+         $(this).val( $(this).attr('data-anterior') );   
+        }
+        
+    });
 
 });
 
@@ -486,6 +530,7 @@ function dtEntregaOntem(dtEntrega){
 }
 
 function OkDataLimiteAdicaoEdicaoPedido(){
+    // console.log('disparou ok ADD')
     var dtentrega = $('#data_entrega').val();
     
     if(dtentrega != '' && dtentrega != undefined){
@@ -532,6 +577,7 @@ function OkDataLimiteAdicaoEdicaoPedido(){
 }
 
 function OkDataLimiteEdicaoOperacao(){
+    // console.log('disparou OK EDT')
     var dtentrega = $('#data_entrega').val();
     
     if(dtentrega != '' && dtentrega != undefined){
@@ -678,7 +724,7 @@ function atualizaSobrad0(){
             },
             dataType: 'json',
             success: function (dado) {
-                console.log('sobrad0:',dado);
+                // console.log('sobrad0:',dado);
 
                 var totd1 = 0;
                 for(var colunad1 = 0; colunad1 < dado.length; colunad1++ ){
@@ -704,7 +750,7 @@ function atualizaSobrad0(){
 }
 
 function inicializaQtdEntrega(){
-        console.log('dispaoru inicia qtd entrega')
+        // console.log('dispaoru inicia qtd entrega')
         var $qtdEntrega, totEntrega = 0;
         $qtdEntrega = $('#qtd_entrega');
 
@@ -713,17 +759,20 @@ function inicializaQtdEntrega(){
 
             qtdPedido = parseInt(  $('tbody tr#pedido td:eq('+colunaPedido+')').find('input').val() );
 
-            $('tbody tr#entrega td:eq('+colunaPedido+')').find('input').val(qtdPedido);
-            
-            totEntrega = parseInt( totEntrega + qtdPedido );
+            if( parseInt( $('tbody tr#entrega td:eq('+colunaPedido+')').find('input').attr('data-anterior') ) == 0 ){
+
+                $('tbody tr#entrega td:eq('+colunaPedido+')').find('input').val(qtdPedido);
+                totEntrega = parseInt( totEntrega + qtdPedido );
+                $qtdEntrega.val(totEntrega); 
+            }
             
         }
 
-        $qtdEntrega.val(totEntrega);                   
+                          
 }
 
 function calculaOperacao(){
-    console.log('dispaoru calcula OP');
+    // console.log('dispaoru calcula OP');
     $venda = $('#qtd_venda');
     $sobrad0 = $('#qtd_sobrad0');
     $sobrad2 = $('#qtd_sobrad2'),
@@ -731,64 +780,69 @@ function calculaOperacao(){
     var totSobrad0 = 0, totSobrad2 = 0 , totDoacao = 0, totVenda = 0;
     var qtdSobrad1, qtdEntrega, qtdSobrad0, qtdSobrad2, qtdDoacao, qtdVenda;
 
-    for(var coluna = 1 ; coluna < $('tbody tr:eq(1) td').length; coluna++){
-        // sobrad1 + entrega = venda + sobrad0 + sobrad2 + doacao
-        // venda = ( sobrad1 + entrega ) - ( sobrad0 + sobrad2 + doacao )
-        
-        qtdSobrad1 = parseInt(  $('tbody tr#sobrad1 td:eq('+coluna+')').find('input').val() );
-        qtdEntrega = parseInt(  $('tbody tr#entrega td:eq('+coluna+')').find('input').val() );
-        qtdSobrad0 = parseInt(  $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val() );
-        qtdSobrad2 = parseInt(  $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val() );
-        qtdDoacao = parseInt(  $('tbody tr#doacao td:eq('+coluna+')').find('input').val() );
+    if( $('#conf_entrega_vnd').attr('data-anterior') == 'SIM' && 
+        $('#conf_entrega_dist').attr('data-anterior') == 'SIM' ){
 
-        if( qtdSobrad1 < qtdSobrad2){
-            $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
-            qtdSobrad2 = parseInt(  $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val() );
-            alert('A sobra(D-2) não pode ser maior do que a sobra(D-1).');
-        }
-
-        if( qtdSobrad0 > qtdEntrega){
-            $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
-            qtdSobrad0 = parseInt(  $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val() );
-            alert('A sobra(D-0) não pode ser maior do que a entrega.');
-        }
-
-        if( (qtdSobrad1 + qtdEntrega ) >= (qtdSobrad0 + qtdSobrad2 + qtdDoacao) ){
-            qtdVenda = (qtdSobrad1 + qtdEntrega ) - (qtdSobrad0 + qtdSobrad2 + qtdDoacao);
-        
-        }else{
-            qtdVenda = (qtdSobrad1 + qtdEntrega ); 
-
-            $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
-            $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
-            $('tbody tr#doacao td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
-
+        for(var coluna = 1 ; coluna < $('tbody tr:eq(1) td').length; coluna++){
+            // sobrad1 + entrega = venda + sobrad0 + sobrad2 + doacao
+            // venda = ( sobrad1 + entrega ) - ( sobrad0 + sobrad2 + doacao )
+            
+            qtdSobrad1 = parseInt(  $('tbody tr#sobrad1 td:eq('+coluna+')').find('input').val() );
+            qtdEntrega = parseInt(  $('tbody tr#entrega td:eq('+coluna+')').find('input').val() );
             qtdSobrad0 = parseInt(  $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val() );
             qtdSobrad2 = parseInt(  $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val() );
             qtdDoacao = parseInt(  $('tbody tr#doacao td:eq('+coluna+')').find('input').val() );
-            
-            alert('A soma entre os valores da sobra(D-0), sobra(D-2) e Doação/Estorno não podem ser maiores do que a soma entre a sobra(D-1) e a Entrega.');
-        }
-        
 
-        $('tbody tr#venda td:eq('+coluna+')').find('input').val(qtdVenda);
+            if( qtdSobrad1 < qtdSobrad2){
+                $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
+                qtdSobrad2 = parseInt(  $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val() );
+                alert('A sobra(D-2) não pode ser maior do que a sobra(D-1).');
+            }
+
+            if( qtdSobrad0 > qtdEntrega){
+                $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
+                qtdSobrad0 = parseInt(  $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val() );
+                alert('A sobra(D-0) não pode ser maior do que a entrega.');
+            }
+
+            if( (qtdSobrad1 + qtdEntrega ) >= (qtdSobrad0 + qtdSobrad2 + qtdDoacao) ){
+                qtdVenda = (qtdSobrad1 + qtdEntrega ) - (qtdSobrad0 + qtdSobrad2 + qtdDoacao);
+            
+            }else{
+                qtdVenda = (qtdSobrad1 + qtdEntrega ); 
+
+                $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
+                $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
+                $('tbody tr#doacao td:eq('+coluna+')').find('input').val(0).removeClass('is-valid');
+
+                qtdSobrad0 = parseInt(  $('tbody tr#sobrad0 td:eq('+coluna+')').find('input').val() );
+                qtdSobrad2 = parseInt(  $('tbody tr#sobrad2 td:eq('+coluna+')').find('input').val() );
+                qtdDoacao = parseInt(  $('tbody tr#doacao td:eq('+coluna+')').find('input').val() );
+                
+                alert('A soma entre os valores da sobra(D-0), sobra(D-2) e Doação/Estorno não podem ser maiores do que a soma entre a sobra(D-1) e a Entrega.');
+            }
+            
+
+            $('tbody tr#venda td:eq('+coluna+')').find('input').val(qtdVenda);
+            
+            totVenda = parseInt( totVenda + qtdVenda );
+            totSobrad0 = parseInt( totSobrad0 + qtdSobrad0 );
+            totSobrad2 = parseInt( totSobrad2 + qtdSobrad2 );
+            totDoacao  = parseInt( totDoacao  + qtdDoacao  );
+
+        }
+
+        // console.log('venda: ', totVenda);
+        // console.log('sobrad0: ', totSobrad0);
+        // console.log('sobrad2: ', totSobrad2);
+        // console.log('doacao: ', totDoacao);
         
-        totVenda = parseInt( totVenda + qtdVenda );
-        totSobrad0 = parseInt( totSobrad0 + qtdSobrad0 );
-        totSobrad2 = parseInt( totSobrad2 + qtdSobrad2 );
-        totDoacao  = parseInt( totDoacao  + qtdDoacao  );
+        $venda.val(totVenda);
+        $sobrad0.val(totSobrad0);  
+        $sobrad2.val(totSobrad2);                     
+        $doacao.val(totDoacao);  
 
     }
-
-    // console.log('venda: ', totVenda);
-    // console.log('sobrad0: ', totSobrad0);
-    // console.log('sobrad2: ', totSobrad2);
-    // console.log('doacao: ', totDoacao);
-    
-    $venda.val(totVenda);
-    $sobrad0.val(totSobrad0);  
-    $sobrad2.val(totSobrad2);                     
-    $doacao.val(totDoacao);  
 }
 
 // Pega as linhas da tabela e manipula o hidden da operação

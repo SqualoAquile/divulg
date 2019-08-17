@@ -351,6 +351,62 @@ class Pedidos extends model {
         }
     }
 
+    public function check($id, $quem) {
+        
+        
+        if(!empty($id) && !empty($quem)){
+           
+            $idPedido = addslashes(trim($id));
+
+            $sqlA = "SELECT alteracoes FROM pedidos WHERE id='$idPedido' AND situacao='ativo'";
+
+            $sqlA = self::db()->query($sqlA);
+
+            if( $sqlA->rowCount() > 0 ){
+                
+                $alterRegistro = $sqlA->fetch(PDO::FETCH_ASSOC);
+                $alterRegistro = $alterRegistro['alteracoes'];
+            }
+
+            $ipcliente = $this->permissoes->pegaIPcliente();
+
+            if( $quem == 'dist'){
+
+                $alteracoes = $alterRegistro." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - ALTERAÇÃO >> {OK (DIST) de () para (SIM)}";
+
+                
+                $sql1 = "UPDATE " . $this->table . " SET conf_entrega_dist = 'SIM', alteracoes= '$alteracoes' WHERE id='" . $idPedido . "'";
+            }
+            
+            // echo $sql1; exit;
+            // montadas as 3 querys começa a transaction 
+            self::db()->query('START TRANSACTION;');
+            
+            // query para update da tabela principal
+            $updatePrimaria = self::db()->query($sql1);
+
+
+            if( $updatePrimaria->rowCount() == 1 ){
+            
+                self::db()->query('COMMIT;');
+                $_SESSION["returnMessage"] = [
+                    "mensagem" => "Registro editado com sucesso!",
+                    "class" => "alert-success"
+                ];
+                return;
+
+            }else{
+
+                self::db()->query('ROLLBACK;');
+                $_SESSION["returnMessage"] = [
+                    "mensagem" => "Houve uma falha, tente novamente! <br /> ",
+                    "class" => "alert-danger"
+                ];
+                return;
+            }
+        }
+    }
+
     public function excluir($id){
         if(!empty($id)) {
 
@@ -360,29 +416,49 @@ class Pedidos extends model {
             $sql = "SELECT alteracoes FROM ". $this->table ." WHERE id = '$id' AND situacao = 'ativo'";
             $sql = self::db()->query($sql);
             
-            if($sql->rowCount() > 0){  
+            $sql1 = "SELECT COUNT(*) as tot FROM pedidositens WHERE situacao = 'ativo' AND id_pedido='$id'";
+            $sql1 = self::db()->query($sql1);
+
+            if($sql->rowCount() > 0 && $sql1->rowCount() > 0 ){  
 
                 $sql = $sql->fetch();
                 $palter = $sql["alteracoes"];
+                
+                $sql1 = $sql1->fetch();
+                $itensPedido = intval( $sql1['tot'] );
+
                 $ipcliente = $this->permissoes->pegaIPcliente();
                 $palter = $palter." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - EXCLUSÃO";
 
                 $sqlA = "UPDATE ". $this->table ." SET alteracoes = '$palter', situacao = 'excluido' WHERE id = '$id' ";
-                self::db()->query($sqlA);
 
-                $erro = self::db()->errorInfo();
+                $sqlB = "UPDATE pedidositens SET alteracoes = '$palter', situacao = 'excluido' WHERE id_pedido = '$id' ";
 
-                if (empty($erro[2])){
+                self::db()->query('START TRANSACTION;');
 
+                // query para update da tabela principal
+                $updatePrimaria = self::db()->query($sqlA);
+                
+                // query para delete da tabela secundária
+                $updateSecundaria = self::db()->query($sqlB);
+
+                if( $updatePrimaria->rowCount() == 1 && $updateSecundaria->rowCount() == $itensPedido  ){
+                
+                    self::db()->query('COMMIT;');
                     $_SESSION["returnMessage"] = [
-                        "mensagem" => "Registro deletado com sucesso!",
+                        "mensagem" => "Registro editado com sucesso!",
                         "class" => "alert-success"
                     ];
-                } else {
+                    return;
+
+                }else{
+
+                    self::db()->query('ROLLBACK;');
                     $_SESSION["returnMessage"] = [
-                        "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
+                        "mensagem" => "Houve uma falha, tente novamente! <br /> ",
                         "class" => "alert-danger"
                     ];
+                    return;
                 }
             }
         }

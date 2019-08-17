@@ -51,6 +51,7 @@ class pedidosController extends controller{
         $dados['infoUser'] = $_SESSION;
         $dados["colunas"] = $this->colunas;
         $dados["labelTabela"] = $this->shared->labelTabela();
+        $dados["parametros"] = $this->prmt->buscaParametros();
 
         $this->loadTemplate($this->table, $dados);
     }
@@ -107,5 +108,29 @@ class pedidosController extends controller{
             $this->loadTemplate($this->table . "-form", $dados); 
         }
     }
+
+    public function check($id) {
+        
+        if(in_array($this->table . "_edt", $_SESSION["permissoesUsuario"]) == false || empty($id) || !isset($id)){
+            header("Location: " . BASE_URL . "/" . $this->table); 
+        }
+
+        if($this->shared->idAtivo($id) == false){
+            header("Location: " . BASE_URL . "/" . $this->table); 
+        }
+        
+        $dados['infoUser'] = $_SESSION;
+        if(isset($id)){
+            $id = addslashes($id);
+            
+            // btn de check na entrega vendedor e distribuidor
+            if( in_array( $this->table.'_edt' , $_SESSION["permissoesUsuario"]) && in_array( 'podetudo_ver' , $_SESSION["permissoesUsuario"]) ){
+                $quem = 'dist';
+                $this->model->check($id, $quem);
+            }
+        }
+        header("Location: " . BASE_URL . "/" . $this->table);
+    }
+
 }   
 ?>

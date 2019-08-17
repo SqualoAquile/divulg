@@ -25,7 +25,7 @@ function validaDat(valor) {
 }
 
 $(function () {
-
+    
     //
     // Campos Únicos
     //
@@ -952,7 +952,6 @@ $(function () {
     // Função que valida as alterações necessárias para o submit
     //
     $('.needs-validation').submit(function (event) {
-        // console.log('disparou o submit do validacoes.js')
         // deixa o enter destivado para submitar o formulario    
         var form = this;
 
@@ -1002,16 +1001,44 @@ $(function () {
                                 //não faz nada
 
                             } else if ($(el).attr('id') == 'rota') {
-                                console.log('entrou no if da rota');
                                 text_label = 'Rota de ' + $(el).parents('tr:eq(0) td:eq(0)').text().replace(':','').trim();
                                 campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
-                                console.log(campos_alterados);
 
                             } else if ($(el).attr('id') == 'pedido') {
-                                console.log('entrou no if do pedido');
-                                text_label = 'Pedido de ' + $(el).closest('tr').find('td:eq(0)').text().replace(':','').trim() + ' Sabor: ' + $(el).parents('td').text().trim();
+                                // e ver como não confundir com o id pedido - do cad vendedores e da operacao
+                                if( currentModule == 'vendedores' ){
+                                    text_label = 'Pedido de ' + $(el).closest('tr').find('td:eq(0)').text().replace(':','').trim() + ' Sabor: ' + $(el).parents('td').text().trim();
+                                    campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
+                                }
+                                if( currentModule == 'pedidos' ){
+                                    text_label = 'Pedido Sabor: ' + $(el).parents('td').text().trim();
+                                    campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
+                                }
+
+                            }else if ($(el).attr('id') == 'sobrad1') {
+                                text_label = 'Sobra(D-1) Sabor: ' + $(el).parents('td').text().trim();
                                 campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
-                                console.log(campos_alterados);
+
+                                
+                            }else if ($(el).attr('id') == 'entrega') {
+                                text_label = 'Entrega Sabor: ' + $(el).parents('td').text().trim();
+                                campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
+
+                            }else if ($(el).attr('id') == 'venda') {
+                                text_label = 'Venda Sabor: ' + $(el).parents('td').text().trim();
+                                campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
+
+                            }else if ($(el).attr('id') == 'sobrad0') {
+                                text_label = 'Sobra(D-0) Sabor: ' + $(el).parents('td').text().trim();
+                                campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
+
+                            }else if ($(el).attr('id') == 'sobrad2') {
+                                text_label = 'Sobra(D-2) Sabor: ' + $(el).parents('td').text().trim();
+                                campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
+
+                            }else if ($(el).attr('id') == 'doacao') {
+                                text_label = 'Entrega Sabor: ' + $(el).parents('td').text().trim();
+                                campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
 
                             }else {
                                 campos_alterados += '{' + text_label.toUpperCase() + ' de (' + $(el).attr('data-anterior') + ') para (' + $(el).val() + ')}';
