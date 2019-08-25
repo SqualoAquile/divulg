@@ -60,6 +60,7 @@ class fluxocaixaController extends controller{
         $dados['infoUser'] = $_SESSION;
 
         if(isset($_POST) && !empty($_POST)){  
+            
             $this->model->adicionar($_POST);
             header("Location: " . BASE_URL . "/" . $this->table ."/adicionar");
         }else{ 

@@ -42,6 +42,25 @@ class Vendedores extends model {
         return $array; 
     }
 
+    public function buscaVendedores() {
+        $array = array();
+        $arrayAux = array();
+        $sql = "SELECT * FROM " . $this->table . " WHERE situacao = 'ativo'";      
+        $sql = self::db()->query($sql);
+
+        if($sql->rowCount()>0){
+            $arrayAux = $sql->fetchAll(PDO::FETCH_ASSOC);
+            
+            foreach ($arrayAux as $key => $value) {
+                $array[] = array(
+                    "id" => $value["id"],
+                    "nome" => $value["nome"],
+                );     
+            }
+        }
+        return $array; 
+    }
+
     public function adicionar($request) {
         // print_r($request); exit;
 

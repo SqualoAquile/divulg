@@ -808,5 +808,44 @@ class ajaxController extends controller{
     }
   }
 
+  public function buscaVendedores() {
+    $array = array();
+
+    if (isset($_POST) && !empty($_POST)) {
+      $vnd = new Vendedores();
+      $array = $vnd->buscaVendedores();
+      echo json_encode($array);
+    }
+  }
+
+  public function buscaAnaliticas2() {
+    $array = array();
+
+    if (isset($_POST) && !empty($_POST)) {
+      
+      $sintetica = addslashes($_POST['nome']);
+      $fc = new FluxoCaixa();
+      $array = $fc->buscaAnaliticas2($sintetica);
+      echo json_encode($array);
+    }
+  }
+
+  public function resumoLancamentoVendedor() {
+    $array = array();
+
+    if (isset($_POST) && !empty($_POST)) {
+      // print_r($_POST); exit;
+      $dt1 = addslashes($_POST['dt1']);
+      $dt2 = addslashes($_POST['dt2']);
+      $id_vnd = addslashes($_POST['id_vnd']);
+
+      $fc = new FluxoCaixa();
+      $array = $fc->resumoLancamentoVendedor($dt1, $dt2, $id_vnd);
+      echo json_encode($array);
+    }
+  }
+
+  
+
 }   
 ?>

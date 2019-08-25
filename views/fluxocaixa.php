@@ -1,10 +1,15 @@
 <script src="<?php echo BASE_URL?>/assets/js/controlecaixa.js" type="text/javascript"></script>
+<script type="text/javascript">
+        campoPesquisa = '',
+        valorPesquisa = '';
+</script>
 <?php
 // Transforma o nome do arquivo para o nome do módulo
 $modulo = str_replace("-form", "", basename(__FILE__, ".php"));
 // Constroi o cabeçalho
 require "_header_browser_filtros.php";
 ?>
+
 <div class="collapse" id="collapseFluxocaixaResumo">
     <div class="card card-body">
         <div class="row mb-3" id="somasResumo">

@@ -71,10 +71,10 @@ class Produtos extends model {
     }
 
     public function editar($id, $request) {
-
         if(!empty($id)){
 
             $id = addslashes(trim($id));
+            $request["situacao"] = "ativo";
 
             $ipcliente = $this->permissoes->pegaIPcliente();
             $hist = explode("##", addslashes($request['alteracoes']));
@@ -89,8 +89,6 @@ class Produtos extends model {
                 return false;
             }
 
-            $request = $this->shared->formataDadosParaBD($request);
-
             // Cria a estrutura key = 'valor' para preparar a query do sql
             $output = implode(', ', array_map(
                 function ($value, $key) {
@@ -101,7 +99,7 @@ class Produtos extends model {
             ));
 
             $sql = "UPDATE " . $this->table . " SET " . $output . " WHERE id='" . $id . "'";
-             
+
             self::db()->query($sql);
 
             $erro = self::db()->errorInfo();

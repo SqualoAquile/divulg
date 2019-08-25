@@ -26,6 +26,35 @@ class Fluxocaixa extends model {
         return $array; 
     }
 
+    public function buscaAnaliticas2($sintetica) {
+        $array = array();
+        $arrayAux = array();
+        $sql = "SELECT id FROM setor WHERE nome= '$sintetica' AND situacao = 'ativo'";      
+        $sql = self::db()->query($sql);
+
+        if($sql->rowCount()>0){
+
+            $id_setor = $sql->fetch(PDO::FETCH_ASSOC);
+            $id_setor = $id_setor['id'];
+            
+            $sqlA = "SELECT * FROM categoria WHERE id_setor='$id_setor' AND situacao='ativo'";
+            $sqlA = self::db()->query($sqlA);
+
+            if($sqlA->rowCount()>0){
+                $arrayAux = $sqlA->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($arrayAux as $key => $value) {
+                    $array[] = array(
+                        "id" => $value["id"],
+                        "nome" => $value["nome"],
+                    );     
+                }
+            }else{
+                return $array;
+            }
+        }
+        return $array; 
+    }
+    
     public function quitar($request) {
 
         $data_quitacao = $request["data_quitacao"];
@@ -109,8 +138,10 @@ class Fluxocaixa extends model {
             $arrayRegistro["alteracoes"] = ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - CADASTRO";
             $arrayRegistro["situacao"] = "ativo";
             
-            $keys = implode(",", array_keys($arrayRegistro));
-            $values = "'" . implode("','", array_values($this->shared->formataDadosParaBD($arrayRegistro))) . "'";
+            // $keys = implode(",", array_keys($arrayRegistro));
+            $keys = implode(",", array_keys($this->shared->formataDadosParaBD2($arrayRegistro)));
+            // print_r($arrayRegistro); exit;
+            $values = "'" . implode("','", array_values($this->shared->formataDadosParaBD2($arrayRegistro))) . "'";
             
             $sql .= "INSERT INTO " . $this->table . " (" . $keys . ") VALUES (" . $values . ");";               
         }
@@ -443,5 +474,116 @@ class Fluxocaixa extends model {
         $array['proximo'] = $proximo;
 
        return $array;
+    }
+
+    
+    public function resumoLancamentoVendedor($dt1, $dt2, $id_vnd){
+        
+        $arrayRetorno = array();
+        if(!empty($dt1) && !empty($dt2) && !empty($id_vnd)){
+            $data1 = '';
+            $data2 = '';
+            
+            $data1 = explode("/", $dt1);
+            $data1 = $data1[2]."-".$data1[1]."-".$data1[0];
+
+            $data2 = explode("/", $dt2);
+            $data2 = $data2[2]."-".$data2[1]."-".$data2[0];
+
+            // echo 'dt1:  '.$data1. ' ---  dt2:  '.$data2. '  -----'; exit;
+            // buscar os parâmetros
+            $sqlA = "SELECT * FROM parametros WHERE parametro = 'comissao' AND situacao='ativo'";
+            $sqlA = self::db()->query($sqlA);
+
+            $sqlB = "SELECT * FROM bonificacao WHERE situacao='ativo'";
+            $sqlB = self::db()->query($sqlB);
+
+            if($sqlA->rowCount() > 0 && $sqlB->rowCount() > 0 ){  
+
+                $sqlA = $sqlA->fetch(PDO::FETCH_ASSOC);
+
+                $comissao = floatval( floatval($sqlA['valor']) / 100 );
+
+                $bonificacao = $sqlB->fetchAll(PDO::FETCH_ASSOC);
+                               
+                // Venda - Comissão - Sobras(D-2)
+                $sql1 = "SELECT pd.codigo, pd.preco, pd.custo, SUM( it.qtd_venda ) as vndtot, SUM( it.qtd_sobrad2 ) as sbd2tot, (pd.preco * SUM( it.qtd_venda )) as faturamento FROM produtos as pd INNER JOIN pedidositens as it WHERE pd.codigo = it.codigo AND it.id_usuario = '$id_vnd' AND it.situacao = 'ativo' AND it.data_entrega BETWEEN '$data1' AND '$data2' GROUP BY it.codigo";
+                // echo $sql1; exit;
+
+                $sql1 = self::db()->query($sql1);
+
+                if($sql1->rowCount() > 0){  
+                    $sql1 = $sql1->fetchAll(PDO::FETCH_ASSOC);
+                    // echo 'to aqui :'; print_r($sql1); exit;
+                    $venda_total = 0; $parte_venda = 0; $parte_pnp = 0; $pgto_sobrad2 = 0;
+                    $extras = 0; $maq_cartao = 0; $transporte = 0; 
+
+                    for($i = 0; $i < count($sql1); $i++){
+                        $venda_total += floatval( $sql1[$i]['faturamento'] );
+                        $pgto_sobrad2 += floatval( $sql1[$i]['sbd2tot'] * $sql1[$i]['custo'] );
+                    }
+
+                    $parte_pnp = $venda_total * floatval( 1 - $comissao );
+                    $parte_venda = $venda_total * $comissao;
+                    
+                    $arrayRetorno['faturamento'] = $venda_total;
+                    $arrayRetorno['comissao'] = $parte_venda;
+                    $arrayRetorno['sobra'] = $pgto_sobrad2;
+
+                }else{
+                    // não encontrou nenhum registro nos pedidos os valores são zero
+                    $arrayRetorno['faturamento'] = 0;
+                    $arrayRetorno['comissao'] = 0;
+                    $arrayRetorno['sobra'] = 0;
+                }    
+                
+                // Bonificação - Transporte - Extras - Máq. Cartão
+                $sql2 = "SELECT SUM(transporte) as trp, SUM(extra) as ext, SUM(maq_cartao) as maq, SUM(qtd_venda) as vnd FROM pedidos WHERE id_vendedor = '$id_vnd' AND situacao = 'ativo' AND data_entrega BETWEEN '$data1' AND '$data2'";
+
+                // echo $sql2; exit;
+                $sql2 = self::db()->query($sql2);
+
+                if($sql2->rowCount() > 0){  
+                    $sql2 = $sql2->fetch();
+
+                    $arrayRetorno['transporte'] = floatval($sql2['trp']);
+                    $arrayRetorno['extra'] = floatval($sql2['ext']);
+                    $arrayRetorno['maquinacartao'] = floatval($sql2['maq']);
+
+                    $vnd = floatval( $sql2['vnd'] );
+
+                    $arrayRetorno['bonificacao'] = 0;
+                    for( $i=0; $i < count($bonificacao); $i++ ){ 
+                        if($i < count($bonificacao) - 1){
+                            if( $vnd >= $bonificacao[$i]['qtd_min'] && $vnd < $bonificacao[$i+1]['qtd_min']){
+                                $arrayRetorno['bonificacao'] = floatval($bonificacao[$i]['valor']);
+                            } 
+                        }else{
+                            if( $vnd >= $bonificacao[$i]['qtd_min'] ){
+                                $arrayRetorno['bonificacao'] = floatval($bonificacao[$i]['valor']);
+                            } 
+                        }
+                    }                    
+
+                }else{
+                    $arrayRetorno['transporte'] = 0;
+                    $arrayRetorno['extra'] = 0;
+                    $arrayRetorno['maquinacartao'] = 0;
+                    $arrayRetorno['bonificacao'] = 0;
+                }    
+
+            }else{
+                // não encontrou PARÂMETROS e/ou  não encontrou a Bonificação
+                $arrayRetorno['faturamento'] = 0;
+                $arrayRetorno['comissao'] = 0;
+                $arrayRetorno['sobra'] = 0;
+                $arrayRetorno['transporte'] = 0;
+                $arrayRetorno['extra'] = 0;
+                $arrayRetorno['maquinacartao'] = 0;
+                $arrayRetorno['bonificacao'] = 0;
+            }                   
+        }
+            // print_r($arrayRetorno); exit;
+        return $arrayRetorno;
     }
 }

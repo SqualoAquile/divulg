@@ -815,6 +815,59 @@ class Shared extends model {
         }
     }
 
+    public function formataDadosParaBD2($registro) {
+        
+        if(isset($registro) && !empty($registro)){
+            $array = array();
+            $nomeColunas = $this->nomeDasColunas();
+            
+            $colunasAux = array();
+            $chavesRegistro = array();
+            foreach ($nomeColunas as $key => $value) {
+                $colunasAux[ $value['Field'] ] = $value['Type'];
+            }
+            $primerAux = array_shift($colunasAux);
+       
+            // busca o nome dos campos das colunas para ver qual o tipo a ser formatado
+            $primeiroElemento = array_shift($nomeColunas); // usado só para retirar o primeiro elemento do array que é o ID
+            $i=0;
+            // print_r($nomeColunas); exit;
+            // print_r($registro); exit;
+            $arrayRetorno = array();
+                    
+            foreach ($colunasAux as $keyCol => $valueCol) {
+                if( array_key_exists($keyCol, $registro) ){
+                    if($valueCol == 'date'){
+                        if(empty($registro[$keyCol])){
+                            
+                            $arrayRetorno[$keyCol] = "0000-00-00";    
+                        }else{
+                            //formatação de data padrão internacional
+                            $dtaux = explode("/",addslashes($registro[$keyCol]));
+                            $arrayRetorno[$keyCol] = $dtaux[2]."-".$dtaux[1]."-".$dtaux[0];
+                        }
+                        
+                    }elseif (substr_count($registro[$keyCol], "float") > 0){
+                        //formatação de float padrão internacional "." - divisor decimal e "," - divisor milhão
+                        $arrayRetorno[$keyCol]  = floatval(str_replace(",",".",str_replace(".", "",addslashes($registro[$keyCol]))));
+
+                    }elseif (substr_count($registro[$keyCol], "int") > 0 ){
+                        // formatação de inteiros    
+                        $arrayRetorno[$keyCol] = intval(addslashes($registro[$keyCol]));
+
+                    }else{
+                        // só aplica o addslashes nos registros do tipo varchar e text
+                        $arrayRetorno[$keyCol] = addslashes($registro[$keyCol]);
+                    } 
+                }else{
+                    $arrayRetorno[$keyCol] = '';
+                }
+            }
+            // print_r($arrayRetorno); exit;
+            return $arrayRetorno;
+        }
+    }
+
     public function formataDadosDoBD($registro) {
         if(isset($registro) && !empty($registro)){
             $array = array();

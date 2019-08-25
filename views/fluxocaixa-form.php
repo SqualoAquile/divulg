@@ -1,7 +1,11 @@
 <?php $modulo = str_replace("-form", "", basename(__FILE__, ".php")) ?>
 <script type="text/javascript">
     var baselink = '<?php echo BASE_URL;?>',
-        currentModule = '<?php echo $modulo ?>'
+        currentModule = '<?php echo $modulo ?>',
+        campoPesquisa = '',
+        valorPesquisa = '',
+        colunas = <?php echo json_encode($colunas);?>,
+        logado = '<?php echo $_SESSION['nomeUsuario']?>';
 </script>
 
 <!-- Chama o arquivo específico do módulo, caso não exista,  -->
@@ -39,6 +43,31 @@
 ?>
 
 <section class="mb-5">
+    <!-- aqui começa o "form" que vai fazer o lançamento automático dos vendedores -->
+    <div class="row p-1 pb-3 mb-5 border-bottom border-dark">
+        <div class="col-lg-2 mb-2">
+            <label class="font-weight-bold" for="dt1"> * Data Inicial</label>
+            <input type="text" class="form-control"  name="dt1"  value="" id="dt1" maxlength="" tabindex="" data-mascara_validacao = "data" />
+        </div>
+        <div class="col-lg-2 mb-2">
+            <label class="font-weight-bold" for="dt2"> * Data Final</label>
+            <input type="text" class="form-control"  name="dt2"  value="" id="dt2" maxlength="" tabindex="" data-mascara_validacao = "data" />
+        </div>
+        <div class="col-lg-2 mb-2">
+            <label class="font-weight-bold" for="dtvenc"> * Venc. Boleto</label>
+            <input type="text" class="form-control"  name="dtvenc"  value="" id="dtvenc" maxlength="" tabindex="" data-mascara_validacao = "data" />
+        </div>
+        <div class="col-lg-4 mb-2">
+            <label class="font-weight-bold" for="vnd"> * Vendedor</label>
+            <select id="vnd" name="vnd" class="form-control" tabindex="" data-mascara_validacao = "false">
+                <option value="" selected >Selecione</option>
+            </select>        
+        </div>
+        <div class="col-lg-2 mb-2 align-self-end">
+            <div class="btn btn-info btn-block " tabindex="" id="btn_lancavnd"> Lançar </div>
+        </div>
+    </div>
+
     <form id="form-principal<?php echo $formId ?>" method="DELETE" class="needs-validation" autocomplete="off" novalidate>
         <div class="row">
             <?php foreach ($colunas as $key => $value): ?>

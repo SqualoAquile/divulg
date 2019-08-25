@@ -53,7 +53,9 @@ $(function () {
         $("#qtd_venda").val(0);      
         $("#qtd_sobrad2").val(0);
         $("#qtd_doacao").val(0);
-        $('#custo').val(0).attr('readonly','readonly');
+        $('#transporte').val(0).attr('readonly','readonly');
+        $('#extra').val(0).attr('readonly','readonly');
+        $('#maq_cartao').val(0).attr('readonly','readonly');
 
         $('tbody tr#sobrad0 td input').attr('readonly','readonly');
         $('tbody tr#sobrad1 td input').attr('readonly','readonly');
@@ -89,7 +91,9 @@ $(function () {
             $('tbody tr#sobrad2 td').find('input').val(0).attr('readonly','readonly');
             $('tbody tr#doacao td').find('input').val(0).attr('readonly','readonly');
             
-            $('#custo').val('0,00').attr('readonly','readonly');
+            $('#transporte').val('0,00').attr('readonly','readonly');
+            $('#extra').val('0,00').attr('readonly','readonly');
+            $('#maq_cartao').val('0,00').attr('readonly','readonly');
 
         }else{
             // o pedido não pode mais ser editado
@@ -100,7 +104,9 @@ $(function () {
             if( $('#data_entrega').val() == hoje() && $('#conf_entrega_dist').val() != 'SIM' ){
                 // hoje é o dia da entrega e o dist não OK na entrega - só pode editar a entrega e vn não pode dar OK
                 // console.log('pedido não altera e dist não OK') 
-                $('#custo').val('0,00').attr('readonly','readonly');
+                $('#transporte').val('0,00').attr('readonly','readonly');
+                $('#extra').val('0,00').attr('readonly','readonly');
+                $('#maq_cartao').val('0,00').attr('readonly','readonly');
 
                 $('#conf_entrega_vnd').empty().attr('readonly','readonly').val('')
                 .append('<option value="" selected  >Selecione</option>'); 
@@ -129,7 +135,9 @@ $(function () {
                       ( $('#conf_entrega_vnd').val() != 'SIM' && $('#conf_entrega_dist').val() == 'SIM' ) ){
                 // hoje é o dia da entrega e o dist OK na entrega - vnd só pode dar OK
                 // console.log('pedido não altera e dist OK') 
-                $('#custo').val('0,00').attr('readonly','readonly');
+                $('#transporte').val('0,00').attr('readonly','readonly');
+                $('#extra').val('0,00').attr('readonly','readonly');
+                $('#maq_cartao').val('0,00').attr('readonly','readonly');
 
                 $('#conf_entrega_dist').empty().attr('readonly','readonly')
                     .val('SIM').append('<option value="SIM" selected >SIM</option>');;
@@ -152,7 +160,9 @@ $(function () {
                       ( $('#conf_entrega_vnd').val() == 'SIM' && $('#conf_entrega_dist').val() == 'SIM' ) ){
                 // hoje é o dia da entrega, dist e vnd OK na entrega - vnd pode editar venda, custo, sobras, doação
                 // console.log('pedido não altera. dist OK e vnd OK') 
-                $('#custo').val('0,00');
+                $('#transporte').val( $('#transporte').attr('data-anterior') );
+                $('#extra').val( $('#extra').attr('data-anterior') );
+                $('#maq_cartao').val( $('#maq_cartao').attr('data-anterior') );
 
                 $('#conf_entrega_vnd').empty().attr('readonly','readonly')
                     .val('SIM').append('<option value="SIM" selected >SIM</option>');
@@ -171,7 +181,9 @@ $(function () {
                 // a data da entrega é posterior a hoje 
                 // console.log('dt entrega é maior que hoje.');
 
-                $('#custo').val('0,00').attr('readonly','readonly');
+                $('#transporte').val('0,00').attr('readonly','readonly');
+                $('#extra').val('0,00').attr('readonly','readonly');
+                $('#maq_cartao').val('0,00').attr('readonly','readonly');
 
                 $('#conf_entrega_vnd').empty().attr('readonly','readonly')
                     .val('').append('<option value="" selected >Selecione</option>');
@@ -189,7 +201,10 @@ $(function () {
             }else{
                 // se data de entrega for mais antiga que hoje
                 // console.log('se data de entrega for mais antiga que hoje');
-                $('#custo').attr('disabled','disabled');
+                $('#transporte').attr('disabled','disabled');
+                $('#extra').attr('disabled','disabled');
+                $('#maq_cartao').attr('disabled','disabled');
+
                 $('#observacao').attr('disabled','disabled');
 
                 $('#conf_entrega_vnd').attr('disabled','disabled')
@@ -386,13 +401,18 @@ $(function () {
          }
     });
 
-    $('#custo').blur(function(){
+    $('#transporte, #extra, #maq_cartao').blur(function(){
         if( $(this).attr('data-anterior') != '' ){
-            if( $(this).val() == '' || parseInt( $(this).val()) == parseInt(0) ){
+            // if( $(this).val() == '' || parseInt( $(this).val()) == parseInt(0) ){
+            if( $(this).val() == '' ){    
                 $(this).val( $(this).attr('data-anterior') ).removeClass('is-valid');
+            }
+            if( parseInt( $(this).val()) == parseInt(0) ){
+                $(this).val('0,00');
             }
         }
     });
+    
 
     $('#conf_entrega_dist').blur(function(){
         if( valorPesquisa != '' ){//significa que o usuário NÃO tem a permissão podetudo_ver

@@ -22,6 +22,7 @@ class Parametros extends model {
             $infoTabela = $sqlB->fetchAll();
 
             foreach ($infoTabela as $key => $value) {
+
                 $infoTabela[$key]["Comment"] = json_decode($value["Comment"], true);
             }
 
@@ -187,11 +188,10 @@ class Parametros extends model {
         $sql = "SELECT * FROM " . $this->table . " WHERE situacao = 'ativo'";
         $sql = self::db()->query($sql);
         $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-
         foreach ($result as $key => $value) {
             $result[$key]["comentarios"] = json_decode($value["comentarios"], true);
         }
-
+        
         return $result;
     }
 
