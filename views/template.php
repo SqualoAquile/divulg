@@ -34,10 +34,16 @@
       ],
       [
          "text" => "Pedidos",
-         "icon" => "fas fa-table",
+         "icon" => "fas fa-bread-slice",
          "permissao" => "pedidos_ver",
          "link" => "/pedidos",
-         ],
+      ],
+      [
+         "text" => "Produção",
+         "icon" => "fas fa-table",
+         "permissao" => "producao_ver",
+         "link" => "/producao",
+      ],
       [
          "text" => "Financeiro",
          "icon" => "fas fa-money-bill-alt",

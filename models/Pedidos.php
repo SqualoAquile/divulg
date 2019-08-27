@@ -551,4 +551,125 @@ class Pedidos extends model {
        return $array;
     }
 
+    public function producaoSemana(){
+        
+        $array = array();
+        // mostrar sempre a produção da semana - previsto VS realizado
+        $hoje = getdate();
+        if( $hoje['wday'] == 0 ){
+             // domingp
+             $today = date('Y-m-d');    
+             $seg = date('Y-m-d', strtotime("-6 days", strtotime($today)));
+             $dom = date('Y-m-d', strtotime("0 days", strtotime($today)));
+        
+        }else if( $hoje['wday'] == 1 ){
+            // segunda
+            $today = date('Y-m-d');    
+            $seg = date('Y-m-d', strtotime("0 days", strtotime($today)));
+            $dom = date('Y-m-d', strtotime("+6 days", strtotime($today)));   
+
+        }else if( $hoje['wday'] == 2 ){
+            // terca
+            $today = date('Y-m-d');    
+            $seg = date('Y-m-d', strtotime("-1 days", strtotime($today)));
+            $dom = date('Y-m-d', strtotime("+5 days", strtotime($today)));   
+
+        }else if( $hoje['wday'] == 3 ){
+            // quarta
+            $today = date('Y-m-d');    
+            $seg = date('Y-m-d', strtotime("-2 days", strtotime($today)));
+            $dom = date('Y-m-d', strtotime("+4 days", strtotime($today)));  
+        }else if( $hoje['wday'] == 4 ){
+            // quinta
+            $today = date('Y-m-d');    
+            $seg = date('Y-m-d', strtotime("-3 days", strtotime($today)));
+            $dom = date('Y-m-d', strtotime("+3 days", strtotime($today)));  
+
+        }else if( $hoje['wday'] == 5 ){
+            // sexta
+            $today = date('Y-m-d');    
+            $seg = date('Y-m-d', strtotime("-4 days", strtotime($today)));
+            $dom = date('Y-m-d', strtotime("+2 days", strtotime($today)));  
+
+        }else if( $hoje['wday'] == 6 ){
+            // sabado
+            $today = date('Y-m-d');    
+            $seg = date('Y-m-d', strtotime("-5 days", strtotime($today)));
+            $dom = date('Y-m-d', strtotime("+1 days", strtotime($today)));  
+
+        }
+
+        $diasSemana = array();  
+        $diasSemana[1] = [ 'data' => $seg , 'diasem' => 'Segunda' ];
+        for ($i = 2; $i < 7; $i++){
+            
+            if( ($i) == 2 ){
+                $ds = 'Terça';
+            }else if( ($i) == 3 ){
+                $ds = 'Quarta';
+            }else if( ($i) == 4){
+                $ds = 'Quinta';
+            }else if( ($i) == 5 ){
+                $ds = 'Sexta';
+            }else if( ($i) == 6 ){
+                $ds = 'Sábado';   
+            }
+            $diasSemana[$i] = [ 'data' => date('Y-m-d', strtotime("+".($i-1)." days", strtotime($seg))),
+                                'diasem' => $ds  
+                            ];
+        }
+        $diasSemana[7] = [ 'data' => $dom , 'diasem' => 'Domingo' ];
+        
+        // print_r($diasSemana); exit;
+        $sql1 = "SELECT data_entrega, codigo, SUM(qtd_pedido) as pedTot, SUM(qtd_entrega) as entTot FROM pedidositens WHERE situacao = 'ativo' AND data_entrega BETWEEN '$seg' AND '$dom' GROUP BY data_entrega, codigo";
+
+        // echo $sql1; exit;
+        $sql1 = self::db()->query($sql1);
+        $op = array();
+        
+        if($sql1->rowCount() > 0){  
+            $op = $sql1->fetchAll(PDO::FETCH_ASSOC);
+            
+            // print_r($aux); exit;
+            $sql2 = "SELECT * FROM produtos WHERE situacao = 'ativo'";
+            // echo $sql2; exit;
+            $sql2 = self::db()->query($sql2);
+            
+            $prod = array();
+            if($sql2->rowCount() > 0){ 
+                $prod = $sql2->fetchAll(PDO::FETCH_ASSOC);
+                // print_r($aux2); exit;
+
+                $tab = array();
+                for($i=0; $i < count($prod); $i++ ){
+                    $dias = array();
+                    for($k=1; $k <= count($diasSemana); $k++){
+                        // sabor | seg | ter | qua | qui | sex | sab | dom
+                        $dias[ $diasSemana[$k]['data'] ] = [  'pedtotal' => 0, 'enttotal' => 0 ];
+                    }
+                    $tab[ $prod[$i]['codigo'] ] = $dias;
+                }
+                // print_r($tab); exit;
+
+                for( $j=0; $j < count($op); $j++ ){
+                    $tab[ $op[$j]['codigo'] ][ $op[$j]['data_entrega'] ][ 'pedtotal' ] = $op[$j]['pedTot'];
+                    $tab[ $op[$j]['codigo'] ][ $op[$j]['data_entrega'] ][ 'enttotal' ] = $op[$j]['entTot'];  
+                }
+                // print_r($tab); exit;
+            }
+        }else{
+            $tab = array();
+            $prod = array();
+        }
+        // echo 'aquiiii <br><br>';
+        // print_r($aux); exit; 
+
+        $array['semana'] = $diasSemana;
+        $array['operacao'] = $tab;
+        $array['sabores'] = $prod;
+
+    //    print_r($array); exit; 
+       return $array;
+    }
+
 }
