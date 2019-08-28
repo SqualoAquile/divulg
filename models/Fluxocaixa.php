@@ -142,7 +142,7 @@ class Fluxocaixa extends model {
             $keys = implode(",", array_keys($this->shared->formataDadosParaBD2($arrayRegistro)));
             // print_r($arrayRegistro); exit;
             $values = "'" . implode("','", array_values($this->shared->formataDadosParaBD2($arrayRegistro))) . "'";
-            
+            // print_r($values); exit;
             $sql .= "INSERT INTO " . $this->table . " (" . $keys . ") VALUES (" . $values . ");";               
         }
         // echo $sql; exit;

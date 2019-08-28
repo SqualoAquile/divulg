@@ -834,8 +834,9 @@ class Shared extends model {
             // print_r($nomeColunas); exit;
             // print_r($registro); exit;
             $arrayRetorno = array();
-                    
+                    // print_r($colunasAux); exit;
             foreach ($colunasAux as $keyCol => $valueCol) {
+                // echo 'chave: '.$keyCol.'   -   valor:  '.$valueCol.'<br><br>';
                 if( array_key_exists($keyCol, $registro) ){
                     if($valueCol == 'date'){
                         if(empty($registro[$keyCol])){
@@ -847,11 +848,13 @@ class Shared extends model {
                             $arrayRetorno[$keyCol] = $dtaux[2]."-".$dtaux[1]."-".$dtaux[0];
                         }
                         
-                    }elseif (substr_count($registro[$keyCol], "float") > 0){
+                    // }elseif (substr_count($registro[$keyCol], "float") > 0){
+                    }elseif (substr_count($valueCol, "float") > 0){ 
+                        // echo 'float aqui: '.$registro[$keyCol];
                         //formatação de float padrão internacional "." - divisor decimal e "," - divisor milhão
                         $arrayRetorno[$keyCol]  = floatval(str_replace(",",".",str_replace(".", "",addslashes($registro[$keyCol]))));
 
-                    }elseif (substr_count($registro[$keyCol], "int") > 0 ){
+                    }elseif (substr_count($valueCol, "int") > 0 ){
                         // formatação de inteiros    
                         $arrayRetorno[$keyCol] = intval(addslashes($registro[$keyCol]));
 
@@ -863,6 +866,7 @@ class Shared extends model {
                     $arrayRetorno[$keyCol] = '';
                 }
             }
+            
             // print_r($arrayRetorno); exit;
             return $arrayRetorno;
         }

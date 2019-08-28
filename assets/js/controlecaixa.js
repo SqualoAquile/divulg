@@ -45,11 +45,11 @@ $(function () {
         indexColumns = {
             acoes: 0,
             movimentacoes: 1,
-            data_operacao: 4,
-            valor_total: 5,
-            data_vencimento: 6,
-            status: 16,
-            observacao: 21
+            data_operacao: 5,
+            valor_total: 6,
+            data_vencimento: 7,
+            status: 15,
+            observacao: 18
         },
         $checados,
         $aQuiatares;

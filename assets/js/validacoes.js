@@ -111,7 +111,6 @@ $(function () {
     // 
     // CONFIGURAÇÕES DO DATATABLE
     //
-    
     if ( campoPesquisa != '' && campoPesquisa != undefined  && valorPesquisa != '' && valorPesquisa != undefined ){
         campoPesq = campoPesquisa;
         valorPesq = valorPesquisa;
