@@ -35,8 +35,17 @@
 </header>
 
 <section class="mb-5">
-    <?php if( !empty( $producao_semana['operacao'] ) ):?>
+    <div class="row">
+        <div class="col-lg-4 mb-3">
+        <label class="font-weight-bold" for="opcoes"> Dias da Semana </label>    
+        <select id="opcoes" name="opcoes" class="form-control" >
+                <option value="" selected >Todos os Dias</option>  
+        </select>
+        </div>
+    </div> 
     
+
+    <?php if( !empty( $producao_semana['operacao'] ) ):?>
     <div class="table-responsive mb-lg-5 mb-3" >
         <table id="prod_semana" class="table" style="max-height: 500px; overflow-y: auto; overflow-x:auto; width: 100%;">
             <thead>
@@ -55,6 +64,7 @@
             </thead>
             <tbody >
                 <?php foreach ($producao_semana['operacao'] as $chaveOp => $valorOp): ?>
+                    
                     <tr role="row" class="d-flex flex-column flex-lg-row text-center border-2">
                         <td class="col d-flex">
                             <label class="col font-weight-bold"><?php echo $chaveOp; ?></label>
@@ -65,7 +75,7 @@
                                     <?php echo $valorSab['pedtotal'].'  |  '.$valorSab['enttotal']; ?>
                                 </label>
                             </td>         
-                        <?php endforeach;?>                                                            
+                        <?php endforeach;?>                                                           
                     </tr>
                 <?php endforeach;?>
             </tbody>

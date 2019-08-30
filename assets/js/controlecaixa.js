@@ -303,34 +303,39 @@ $(function () {
                     alteracao += '{' + $(this).attr('data-placeholder').toUpperCase() + ' de (' + $(this).attr('data-anterior') + ') para (' + $(this).val() + ')}';
                 }
             });
-
-            $.ajax({
-                url: baselink + '/fluxocaixa/inlineEdit',
-                type: 'POST',
-                data: {
-                    id: $this.attr('data-id'),
-                    valor_total: $valorTotal.find('input').val(),
-                    data_vencimento: $dataVencimento.find('input').val(),
-                    observacao: $observacao.find('textarea').val(),
-                    alteracoes: '##' + alteracao
-                },
-                dataType: 'json',
-                success: function (data) {
-
-                    if (data[0] == '00000') {
-                        
-                        Toast({
-                            message: 'Lançamento editado com sucesso!',
-                            class: 'alert-success'
-                        });
-
-                        dataTable.ajax.reload();
-
+            if(alteracao != ''){
+                $.ajax({
+                    url: baselink + '/fluxocaixa/inlineEdit',
+                    type: 'POST',
+                    data: {
+                        id: $this.attr('data-id'),
+                        valor_total: $valorTotal.find('input').val(),
+                        data_vencimento: $dataVencimento.find('input').val(),
+                        observacao: $observacao.find('textarea').val(),
+                        alteracoes: '##' + alteracao
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+    
+                        if (data[0] == '00000') {
+                            
+                            Toast({
+                                message: 'Lançamento editado com sucesso!',
+                                class: 'alert-success'
+                            });
+    
+                            dataTable.ajax.reload();
+    
+                        }
+    
+                        $cardBodyFiltros.trigger('reset');
                     }
-
-                    $cardBodyFiltros.trigger('reset');
-                }
-            });
+                });
+            }else{
+                dataTable.ajax.reload();
+                alert('Não ocorreram alterações nesse lançamento.');
+            }
+           
         })
         .on('change', '.dataTables_wrapper [type=checkbox]', function () {
 

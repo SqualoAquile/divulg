@@ -21,5 +21,48 @@ $(function () {
     }    
 
     linhatot += `</tr>`;
-    $('tbody ').append(linhatot);               
+    $('tbody ').append(linhatot);         
+    
+    // clicar no botão e fazer um toggle de aparecer só o dia atual e aparecer todos os dias
+    
+
+    var dias = [];
+    for (var i = 1; i < $('thead tr th').length; i++ ){
+        var dia = '', aux = $('thead tr th:eq('+i+')').text();
+            dia = aux.split('|')[0];
+            dia = dia.substring(0, dia.length - 8).trim();
+        $('#opcoes').append('<option value="'+i+'" >'+dia+'</option>');
+    }
+    $('#opcoes').change(function(){
+
+        if( $('#opcoes').find(':selected').val() != '' ){
+            for(var col = 1; col < $('thead tr th').length; col++){
+                $('th:eq('+col+'), td:eq('+col+')').css('color','#000');
+                for( var lin = 0; lin < parseInt( $('tbody tr').length ); lin++ ){
+                    $('tbody tr:eq('+lin+') td:eq('+col+')').css('color','#000');                    
+                }
+                
+            }
+            
+            for(var col = 1; col < $('thead tr th').length; col++){
+                if( col != $('#opcoes').find(':selected').val() ){
+                    $('th:eq('+col+'), td:eq('+col+')').css('color','#f8f9fa');
+                    for( var lin = 0; lin < parseInt( $('tbody tr').length ); lin++ ){
+                        $('tbody tr:eq('+lin+') td:eq('+col+')').css('color','#f8f9fa');                    
+                    }
+                }
+            }   
+        }else{
+            for(var col = 1; col < $('thead tr th').length; col++){
+                $('th:eq('+col+'), td:eq('+col+')').css('color','#000');
+                for( var lin = 0; lin < parseInt( $('tbody tr').length ); lin++ ){
+                    $('tbody tr:eq('+lin+') td:eq('+col+')').css('color','#000');                    
+                }
+                
+            }   
+        }
+         
+
+    });
+    
 });

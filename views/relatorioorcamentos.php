@@ -1,3 +1,17 @@
+<?php
+// Cada relatório é composto por 3 partes
+
+// 1- _header_browser_relatorios.php - tem o cabeçalho com os filtros
+// 2- relatorio.php - tem o corpo, com os cards de resultados filtrados
+// 3- table_datatable.php - a tabela
+
+//fora isso tem o javascript mas aí é um carnaval
+?>
+
+
+
+
+
 <?php $modulo = str_replace("-form", "", basename(__FILE__, ".php")) ?>
 
 <script src="<?php echo BASE_URL?>/assets/js/relatorioorcamentos.js" type="text/javascript"></script>
