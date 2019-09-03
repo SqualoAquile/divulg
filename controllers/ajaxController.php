@@ -841,7 +841,9 @@ class ajaxController extends controller{
       $dt2 = addslashes($_POST['dt2']);
       $id_vnd = addslashes($_POST['id_vnd']);
 
-      $fc = new FluxoCaixa();
+      $tabela = ucfirst('fluxocaixa');
+      $fc = new $tabela();
+      // $fc = new FluxoCaixa();
       $array = $fc->resumoLancamentoVendedor($dt1, $dt2, $id_vnd);
       echo json_encode($array);
     }
