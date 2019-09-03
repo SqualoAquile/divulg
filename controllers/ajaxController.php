@@ -824,7 +824,9 @@ class ajaxController extends controller{
     if (isset($_POST) && !empty($_POST)) {
       
       $sintetica = addslashes($_POST['nome']);
-      $fc = new FluxoCaixa();
+      $tabela = ucfirst('fluxocaixa');
+      $fc = new $tabela();
+      // $fc = new FluxoCaixa();
       $array = $fc->buscaAnaliticas2($sintetica);
       echo json_encode($array);
     }
