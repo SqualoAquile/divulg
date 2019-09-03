@@ -740,7 +740,7 @@ $(function () {
         }
         
         sintetica = $("#conta_sintetica").find(":selected").val();
-        analitica = $("#conta_analitica").find(":selected").val();
+        analitica = $("#conta_analitica").find(":selected").text();
         contacorrente = $("#conta_corrente").find(":selected").val();
         detalhe = $("#detalhe").val();
         quemlancou = $("#quem_lancou").val();

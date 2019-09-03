@@ -72,11 +72,14 @@ function Ajax(url, callback, send = {}) {
 };
 
 function Popula($wrapper, data, campo) {
-
+     console.log('param sem acoes', parametrosSemAcoes);
+     
     var htmlContentSearch = '';
 
     data.forEach(element => {
-
+        console.log('foreach dentro do popula');
+        console.log('elemnet ', element);
+        console.log('element[campo]', element[campo]);
         var htmlAcoes = '';
 
         if (parametrosSemAcoes.indexOf(element[campo]) == -1) {
@@ -273,6 +276,9 @@ $(document)
         if (($this.val() && $this.attr('data-id')) || (!$this.val() && !$this.attr('data-id'))) {
 
             Ajax('listarParametros', function (data) {
+                console.log('conteudo pesquisado:', $contentSearchThis);
+                console.log('dados:', data);
+                console.log('campo:', campo);
 
                 Popula($contentSearchThis, data, campo);
 
@@ -295,7 +301,7 @@ $(document)
             id = $this.attr('data-id'),
             $searchBody = $this.parents('.search-body'),
             campo = $searchBody.attr('data-campo');
-        tabela = $searchBody.attr('id'),
+            tabela = $searchBody.attr('id'),
             $elAdd = $contentSearchThis.siblings('.elements-add'),
             $saveParametros = $searchBody.find('.salvar');
 

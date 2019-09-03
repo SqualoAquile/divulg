@@ -26,6 +26,7 @@ class parametrosController extends controller{
       
         $dados["infoUser"] = $_SESSION;
         $dados["tabelas"] = $this->model->index();
+        // print_r($dados["tabelas"]); exit;
         $dados["registros"] = $this->model->pegarFixos();
         $dados["labelTabela"] = $this->shared->labelTabela();
 

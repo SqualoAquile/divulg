@@ -18,6 +18,85 @@
 </header>
 
 <section class="mb-5">
+    <!-- Dropdowns Vinculados -->
+    <div class="row">
+        <?php foreach ($tabelas as $key => $value): ?>
+
+            <?php
+                $parametro = $value[0]["Name"];
+                $comment = $value[0]["Comment"];
+            ?>
+            
+            <?php if (isset($comment)): ?>
+
+                <?php if (array_key_exists("parametro", $comment) && $comment == ''): ?>
+
+                    <?php if (array_key_exists("parametro_campo", $comment)): ?>
+
+                        <?php
+                            //
+                            // Parametros com um input dependentes
+                            // Intacto 👌🏼
+                            //
+                        ?>
+                        <!-- campo que vai aparecer os itens da tabela nas opções do dropdown -->
+                        <?php $campo = $comment["parametro_campo"] ?>
+
+                        <?php if ($comment["parametro"] == "true"): ?>
+
+                            <div class="col-lg-<?php echo isset($comment["column"]) ? $comment["column"] : "12" ?>">
+
+                                <div class="card card-body my-3">
+
+                                    <label class="h3 text-capitalize">
+                                        <?php echo array_key_exists("label", $comment) ? $comment["label"] : $parametro ?>
+                                    </label>
+                                    
+                                    <ul id="<?php echo $parametro ?>" data-campo="<?php echo $campo ?>" class="search-body list-unstyled mt-2">
+                                        <li>
+                                            <div class="row">
+                                            <div class="col-lg">
+                                                    <div class="position-relative">
+                                                    <input id="parametroRelacional<?php echo $key ?>" type="text" class="form-control form-control-lg search-input" placeholder="Procure por <?php echo $parametro ?>">
+                                                    </div>
+                                            </div>            
+                                                <div class="col-lg">
+                                                    <div class="position-relative">
+                                                        <input id="parametroRelacional<?php echo $key ?>" type="text" class="form-control form-control-lg search-input" placeholder="Procure por <?php echo $parametro ?>">
+                                                        <div class="icons-search-input d-flex px-1">
+                                                            <button class="btn btn-sm down-btn" tabindex="-1">
+                                                                <i class="fas fa-caret-down"></i>
+                                                            </button>
+                                                            <button class="btn btn-sm text-secondary close-btn" tabindex="-1">
+                                                                <i class="fas fa-times-circle"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="list-group-filtereds-wrapper position-absolute w-100 shadow bg-white">
+                                                            <div class="elements-add"></div>
+                                                            <div class="list-group-filtereds list-group list-group-flush"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            
+                            </div>
+
+                        <?php endif ?>
+
+                    <?php elseif(array_key_exists("parametro_campos", $comment)): ?>
+
+                    <?php endif ?>
+                    
+                <?php endif ?>
+                
+            <?php endif ?>
+
+        <?php endforeach ?>
+    </div>
     <!-- Dropdowns -->
     <div class="row">
         <?php foreach ($tabelas as $key => $value): ?>
@@ -39,7 +118,7 @@
                             // Intacto 👌🏼
                             //
                         ?>
-                    
+                        <!-- campo que vai aparecer os itens da tabela nas opções do dropdown -->
                         <?php $campo = $comment["parametro_campo"] ?>
 
                         <?php if ($comment["parametro"] == "true"): ?>
