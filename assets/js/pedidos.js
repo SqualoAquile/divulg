@@ -312,7 +312,12 @@ $(function () {
     });
 
     // botao de salvar - quando passa o mouse em cima dele
+    $('label.btn.btn-primary.btn-block').on('mouseleave', function(){
+        $('label.btn.btn-primary.btn-block').removeClass('bg-dark');
+    });
+
     $('label.btn.btn-primary.btn-block').on('mouseenter', function(){
+        $('label.btn.btn-primary.btn-block').addClass('bg-dark');
         if($('label.btn.btn-primary.btn-block').attr('disabled') == 'disabled'){
             
             $('tbody tr:eq(3) td:eq(3) input').blur().removeClass('is-valid');
@@ -323,6 +328,7 @@ $(function () {
 
     // botao de salvar - quando clica
     $('label.btn.btn-primary.btn-block').on('click', function(e){
+        $('label.btn.btn-primary.btn-block').addClass('bg-dark');
         if($('label.btn.btn-primary.btn-block').attr('disabled') != 'disabled'){
             if($("#vendedor").attr('data-anterior') == '' ){
                 // quando for adição de operação
@@ -330,6 +336,7 @@ $(function () {
                     alert('O prazo limite para salvar a operação foi ultrapassado.');
                     e.preventDefault();
                     e.stopPropagation();
+                    $('label.btn.btn-primary.btn-block').removeClass('bg-dark');
                     return false;
                 }
             }else{
@@ -338,6 +345,7 @@ $(function () {
                     alert('O prazo limite para salvar a operação foi ultrapassado.');
                     e.preventDefault();
                     e.stopPropagation();
+                    $('label.btn.btn-primary.btn-block').removeClass('bg-dark');
                     return false;
                 }
             }
