@@ -90,15 +90,22 @@ class Produtos extends model {
             }
 
             // Cria a estrutura key = 'valor' para preparar a query do sql
+            // print_r($request); exit;
+            $formatado = array();
+            $formatado = $this->shared->formataDadosParaBD($request);
+            // print_r($arraytrab); exit;
+
             $output = implode(', ', array_map(
                 function ($value, $key) {
                     return sprintf("%s='%s'", $key, $value);
                 },
-                $request, //value
-                array_keys($request)  //key
+                $formatado, //value
+                array_keys($formatado)  //key
             ));
 
             $sql = "UPDATE " . $this->table . " SET " . $output . " WHERE id='" . $id . "'";
+
+            // echo $sql; exit;
 
             self::db()->query($sql);
 

@@ -5,17 +5,10 @@ class homeController extends controller{
 
       $usuario = new Usuarios();
       
-      // verifica se tem permissão para ver esse módulo
-      // if(in_array("relatoriofluxocaixa_ver", $_SESSION["permissoesUsuario"]) == false){
-         
-      // }
       // Verificar se está logado ou nao
       if( $usuario->isLogged() == false){
           header("Location: " . BASE_URL . "/login"); 
       }
-      // else{
-      //     header("Location: " . BASE_URL . "/home"); 
-      // }
     }
      
     public function index() {
@@ -27,12 +20,6 @@ class homeController extends controller{
       $dados['infoUser'] = $_SESSION;
       $dados["colunas"] = $sharedFinanceiro->nomeDasColunas();
       $dados["meta"] = $relatorioFinanceiro->meta();
-      
-      // $dir = dirname(__FILE__).'\bd';
-      // echo "<p>Full path to this dir: " . $dir . "</p>";
-      // file_put_contents('bd', 'testando a escrita de um arquivo');
-
-      // exit;
       $this->loadTemplate('home', $dados);
     }
 

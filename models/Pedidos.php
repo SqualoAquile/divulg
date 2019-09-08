@@ -262,7 +262,7 @@ class Pedidos extends model {
             $sql2 = "DELETE FROM `pedidositens` WHERE `id_pedido`= '$idPedido' ";
             
              // busca do cadastro dos sabores
-             $sqlS = "SELECT codigo, sabor FROM produtos WHERE situacao = 'ativo'";
+             $sqlS = "SELECT * FROM produtos WHERE situacao = 'ativo'";
 
              $sqlS = self::db()->query($sqlS);
              
@@ -272,12 +272,14 @@ class Pedidos extends model {
              if($sqlS->rowCount() > 0){  
                  $aux = $sqlS->fetchAll(PDO::FETCH_ASSOC);
                  foreach ($aux as $key => $value) {
-                     $produtos[ "'".$value["codigo"]."'" ] = $value["sabor"];     
+                     $produtos[ "'".$value["codigo"]."'" ] =  array( $value["sabor"], $value["custo"], $value['preco'] );     
                  }
              }
 
-            //montagem de insert da tabela secundaria
-            $sql3 = "INSERT INTO `pedidositens` (`id`, `id_usuario`, `id_pedido`, `vendedor`, `data_pedido`, `data_entrega`, `dia_semana`, `rota_endereco`, `sabor`, `codigo`, `qtd_sobrad1`, `qtd_pedido`, `qtd_entrega`, `qtd_venda`, `qtd_sobrad0`, `qtd_sobrad2`, `qtd_doacao`, `alteracoes`, `situacao`) VALUES ";
+            //  print_r($produtos); exit;
+
+            //montagem de insert da tabela 
+            $sql3 = "INSERT INTO `pedidositens` (`id`, `id_usuario`, `id_pedido`, `vendedor`, `data_pedido`, `data_entrega`, `dia_semana`, `rota_endereco`, `sabor`, `codigo`, `qtd_sobrad1`, `qtd_pedido`, `qtd_entrega`, `qtd_venda`, `qtd_sobrad0`, `qtd_sobrad2`, `qtd_doacao`, `custo`, `faturamento`, `alteracoes`, `situacao`) VALUES ";
             
             $dtpedido = $request['data_pedido'];
             $dtentrega = $request['data_entrega'];
@@ -291,7 +293,7 @@ class Pedidos extends model {
                     '$dtentrega',
                     '$request[dia_semana]', 
                     '$request[rota_endereco]','".
-                    $produtos[$key]."',".
+                    $produtos[$key][0]."',".
                     $key .",'" .  
                     $operacao['sobrad1'][$key] . "','". 
                     $operacao['pedido'][$key]."','". 
@@ -299,7 +301,9 @@ class Pedidos extends model {
                     $operacao['venda'][$key]."','". 
                     $operacao['sobrad0'][$key]."','". 
                     $operacao['sobrad2'][$key]."','". 
-                    $operacao['doacao'][$key]."',
+                    $operacao['doacao'][$key]."','". 
+                    floatval( $produtos[$key][1] * $operacao['venda'][$key] ) ."','". 
+                    floatval( $produtos[$key][2] * $operacao['venda'][$key] )."',
                     '$request[alteracoes]', 
                     'ativo' ), ";  
                            
