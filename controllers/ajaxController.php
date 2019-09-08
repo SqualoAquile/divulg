@@ -436,6 +436,11 @@ class ajaxController extends controller{
       echo json_encode($this->parametros->listar($_POST));
     }
   }
+  public function listarParametrosDependente() {
+    if (isset($_POST) && !empty($_POST)) {
+      echo json_encode($this->parametros->listarDependente($_POST));
+    }
+  }
 
   public function listarParametrosDoiscampos() {
     if (isset($_POST) && !empty($_POST)) {

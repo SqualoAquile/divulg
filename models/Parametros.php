@@ -8,7 +8,7 @@ class Parametros extends model {
         $this->permissoes = new Permissoes();
     }
 
-    public function index() {
+    public function indexOriginal() {
 
         $sql = "SHOW TABLES";
         $sql = self::db()->query($sql);
@@ -31,6 +31,57 @@ class Parametros extends model {
 
         return $infosTabelas;
     }
+    
+    public function index() {
+        $sql = "SHOW TABLES";
+        $sql = self::db()->query($sql);
+        $tabelas = $sql->fetchAll();
+        $infosTabelas = [];
+        foreach ($tabelas as $key => $value) {
+            $sqlB = "SHOW TABLE STATUS WHERE Name='" . $value[0] . "'";
+            $sqlB = self::db()->query($sqlB);
+            $infoTabela = $sqlB->fetchAll();
+            foreach ($infoTabela as $key => $value) {
+                $infoTabela[$key]["Comment"] = json_decode($value["Comment"], true);
+                
+                if( isset($infoTabela[$key]["Comment"]) && !empty($infoTabela[$key]["Comment"]) ){
+                    if( array_key_exists('info_relacao', $infoTabela[$key]["Comment"] )){
+
+                        // buscar na tabela relacionada os valores que vão ser usados no select
+                        $tabela =  lcfirst($infoTabela[$key]["Comment"]["info_relacao"]["tabela"]);
+                        $campo = lcfirst($infoTabela[$key]["Comment"]["info_relacao"]["campo"]);
+                        if( !empty($tabela) && !empty($campo) ){
+
+                            $sql = "SELECT id, ". $campo ." FROM  ". $tabela ." WHERE situacao = 'ativo'";      
+                            $sql = self::db()->query($sql);
+
+                            if($sql->rowCount()>0){
+                                $arrayAux = $sql->fetchAll(PDO::FETCH_ASSOC); 
+
+                                foreach ($arrayAux as $chave => $valor){
+                                    $lista[] = [
+                                        "id" => $valor["id"], 
+                                        "$campo" => trim(ucwords($valor["$campo"]))
+                                    ];
+                                }
+
+                                $infoTabela[$key]["Comment"]['info_relacao']['resultado'] = $lista;
+                            }
+
+                        }else{
+                            $infoTabela[$key]["Comment"]['info_relacao']['resultado'] = $lista;
+                        }
+                    }
+                }
+                
+            }
+            
+            array_push($infosTabelas, $infoTabela);
+        }
+        // print_r($infosTabelas); exit;
+        return $infosTabelas;
+    }
+    
 
     public function listar($request) {
         
@@ -55,6 +106,35 @@ class Parametros extends model {
         return $sql->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function listarDependente($request) {
+
+        $this->table = $request["tabela"];
+
+        $value_sql = "";
+        if ($request["value"] && $request["campo"]) {
+
+            $value = trim($request["value"]);
+            $value = addslashes($value);
+            
+            $campo = trim($request["campo"]);
+            $campo = addslashes($campo);
+
+            $value_sql = " AND " . $campo . " LIKE '%" . $value . "%'";
+        }
+
+        $chaveext = $request["chaveext"];
+        $idchaveext = $request["idtabfonte"];
+
+        $where = " WHERE $chaveext=$idchaveext AND situacao = 'ativo' ";
+
+        $sql = "SELECT * FROM " . $this->table . $where . $value_sql;
+
+        // echo $sql; exit;
+        $sql = self::db()->query($sql);
+        
+        return $sql->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function listarDoiscampos($request) {
 
         $sql = "SELECT * FROM " . $request["tabela"] . " WHERE situacao = 'ativo'";
@@ -65,18 +145,37 @@ class Parametros extends model {
     }
 
     public function adicionar($request) {
+        // print_r($request); exit;
         $this->table = $request["tabela"];
-        if ($request["value"] && $request["campo"]) {
-            $value = trim($request["value"]);
-            $value = addslashes($value);
-            
-            $campo = trim($request["campo"]);
-            $campo = addslashes($campo);
-        }
+        
+        if(empty($request['chaveext']) && empty($request['idtabfonte']) ){
+            if ($request["value"] && $request["campo"]) {
+                $value = trim($request["value"]);
+                $value = addslashes($value);
+                
+                $campo = trim($request["campo"]);
+                $campo = addslashes($campo);
+            }
+        }else{
+            if ($request["value"] && $request["campo"]) {
+                $valuuAux = trim($request["value"]);
+                $valuuAux = addslashes($valuuAux);
+
+                $value = `'`.trim($request["idtabfonte"])."','".$valuuAux.`'`;                
+                
+                $campoAux = trim($request["campo"]);
+                $campoAux = addslashes($campoAux);
+
+                $campo = trim($request["chaveext"]).','.$campoAux;
+                
+            }
+        }    
+        
         $ipcliente = $this->permissoes->pegaIPcliente();
         $alteracoes = ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - CADASTRO";
         $sql = "INSERT INTO " . $this->table . " (" . $campo . ", alteracoes, situacao) VALUES ('" . $value . "', '" . $alteracoes . "', 'ativo')";
         
+        // echo $sql; exit;
         self::db()->query($sql);
         return self::db()->errorInfo();
     }
@@ -131,6 +230,7 @@ class Parametros extends model {
             $palter = $palter." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - EXCLUSÃO";
 
             $sqlA = "UPDATE ". $this->table ." SET alteracoes = '$palter', situacao = 'excluido' WHERE id = '$id' ";
+            // echo $sqlA; exit;
             self::db()->query($sqlA);
         }
 
@@ -140,6 +240,7 @@ class Parametros extends model {
     public function editar($request, $id) {
         
         $this->table = $request["tabela"];
+
         if ($request["value"] && $request["campo"]) {
             $value = trim($request["value"]);
             $value = addslashes($value);
@@ -147,11 +248,25 @@ class Parametros extends model {
             $campo = trim($request["campo"]);
             $campo = addslashes($campo);
         }
+        
         $id = addslashes(trim($id));
-        $sql = "UPDATE " . $this->table . " SET " . $campo . " = '" . $value . "' WHERE id='" . $id . "'";
-             
-        self::db()->query($sql);
-        return self::db()->errorInfo();
+
+        $sqlW = "SELECT $campo, alteracoes FROM ". $this->table ." WHERE id = '$id' AND situacao = 'ativo'";
+        $sqlW = self::db()->query($sqlW);
+
+        if ($sqlW->rowCount() > 0) {
+            
+            $sqlW = $sqlW->fetch();
+            $palter = $sqlW["alteracoes"];
+            $valorAntigo = $sqlW[$campo];
+
+            $ipcliente = $this->permissoes->pegaIPcliente();
+            $palter = $palter." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - ALTERAÇÃO >> de ($valorAntigo) para ($value)";
+
+            $sql = "UPDATE " . $this->table . " SET " . $campo . " = '" . $value . "', alteracoes = '$palter' WHERE id='" . $id . "'";
+            self::db()->query($sql);
+            return self::db()->errorInfo();
+        } 
     }
 
     public function editarDoisCampos($request, $id) {
