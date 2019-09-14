@@ -493,6 +493,23 @@ class ajaxController extends controller{
   }
 
   //
+  // DESENVOLVIMENTO
+  //
+  public function buscaTabela() {
+    if (isset($_POST) && !empty($_POST)) {
+      $p = new Desenvolvimento();
+      echo json_encode($p->buscaTabela($_POST));
+    }
+  }
+
+  public function criaTabela() {
+    if (isset($_POST) && !empty($_POST)) {
+      $p = new Desenvolvimento();
+      echo json_encode($p->criaTabela($_POST));
+    }
+  }
+    
+  //
   // SERVICOS
   //
   public function editarServicos($id) {

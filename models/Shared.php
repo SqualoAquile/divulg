@@ -212,7 +212,7 @@ class Shared extends model {
         
         $sql = self::db()->query("SHOW FULL COLUMNS FROM " . $this->table);
         $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-        
+         
         foreach ($result as $key => $value) {
             $result[$key]["Comment"] = json_decode($result[$key]["Comment"], true);
                 
@@ -227,12 +227,14 @@ class Shared extends model {
             $lista = array();
             $arrayAux = array();
 
+            // echo '<br>nome coluna: '. $result[$key]['Field']. '<br>';
+            // echo '<br>tipo coluna: '. $result[$key]['type']. '<br>';
             if(array_key_exists("type", $result[$key]["Comment"]) && $result[$key]["Comment"]["type"] == "relacional"){
 
                 
                 $tabela =  lcfirst($result[$key]["Comment"]["info_relacional"]["tabela"]);
                 $campo = lcfirst($result[$key]["Comment"]["info_relacional"]["campo"]);
-                
+
                 if( !empty($tabela) && !empty($campo) ){
 
                     $sql = "SELECT id, ". $campo ." FROM  ". $tabela ." WHERE situacao = 'ativo'";      

@@ -8,4 +8,8 @@ file_put_contents($dir, $create, FILE_TEXT);
 
 exit;
 
-CREATE TABLE 'administradoras2' ( 'id' int(11) NOT NULL COMMENT '{"label": "Ações", "ver": "true", "form": "false", "type": "acoes"}', 'nome' varchar(60) NOT NULL COMMENT '{"ver": "true", "form": "true"}', 'alteracoes' text NOT NULL COMMENT '{"ver": "false", "add": "false", "edt": "false"}', 'situacao' varchar(8) NOT NULL COMMENT '{"ver": "false", "add": "false", "edt": "false"}' ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='{"labelBrowser": "Administradoras", "labelForm": "Administradora"}' ROW_FORMAT=COMPACT;
+CREATE TABLE 'administradoras2' ( 
+    'id' int(11) NOT NULL COMMENT '{"label": "Ações", "ver": "true", "form": "false", "type": "acoes"}', 
+    'nome' varchar(60) NOT NULL COMMENT '{"ver": "true", "form": "true"}', 
+    'alteracoes' text NOT NULL COMMENT '{"ver": "false", "add": "false", "edt": "false"}', 
+    'situacao' varchar(8) NOT NULL COMMENT '{"ver": "false", "add": "false", "edt": "false"}' ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='{"labelBrowser": "Administradoras", "labelForm": "Administradora"}' ROW_FORMAT=COMPACT;

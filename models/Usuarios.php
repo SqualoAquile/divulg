@@ -217,7 +217,6 @@ class Usuarios extends model {
 
             $sql = "SELECT * FROM ". $this->table ." WHERE email='$email' AND senha = '$senha' AND situacao = 'ativo'";
 
-
             $sql = self::db()->query($sql);
             if($sql->rowCount()>0){
                 $sql = $sql->fetch(PDO::FETCH_ASSOC);
