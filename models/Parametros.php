@@ -36,11 +36,13 @@ class Parametros extends model {
         $sql = "SHOW TABLES";
         $sql = self::db()->query($sql);
         $tabelas = $sql->fetchAll();
+        // print_r($tabelas); exit;
         $infosTabelas = [];
         foreach ($tabelas as $key => $value) {
             $sqlB = "SHOW TABLE STATUS WHERE Name='" . $value[0] . "'";
             $sqlB = self::db()->query($sqlB);
             $infoTabela = $sqlB->fetchAll();
+            // print_r($infoTabela); exit;
             foreach ($infoTabela as $key => $value) {
                 $infoTabela[$key]["Comment"] = json_decode($value["Comment"], true);
                 

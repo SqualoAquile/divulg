@@ -486,7 +486,7 @@ $(document)
             if ($inputSearch.attr('data-id') == undefined) {
 
                 Ajax('adicionarParametros', function (data) {
-                    if (data[0] == '00000') {
+                    if (data[0] == '00000' || data[2] == null) {
 
                         Toast({
                             message: 'Parâmetro incluso com sucesso!',

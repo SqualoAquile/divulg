@@ -508,7 +508,14 @@ class ajaxController extends controller{
       echo json_encode($p->criaTabela($_POST));
     }
   }
-    
+   
+  public function editaTabela() {
+    if (isset($_POST) && !empty($_POST)) {
+      $p = new Desenvolvimento();
+      echo json_encode($p->editaTabela($_POST));
+    }
+  }
+
   //
   // SERVICOS
   //

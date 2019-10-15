@@ -1,10 +1,10 @@
 <?php
-class relatoriofluxocaixaController extends controller{
+class relatoriogenericoController extends controller{
 
     // Protected - estas variaveis só podem ser usadas nesse arquivo
-    protected $table = "fluxocaixa";
-    protected $nome = "relatoriofluxocaixa";
-    protected $label = "Relatório de Fluxo de Caixa";
+    protected $table = "generico";
+    protected $nome = "relatoriogenerico";
+    protected $label = "Relatório Genérico";
     protected $colunas;
     
     protected $model;

@@ -16,15 +16,15 @@
 
 <header class="pt-4 pb-5"> <!-- Cabeçalho -->
     <div class="row align-items-center"> <!-- Alinhar as linhas -->
-        <div class="col-lg"> <!--Colunas da esquerda -->
+        <div class="col-lg-8"> <!--Colunas da esquerda -->
             <?php if($modulo == "relatoriofluxocaixa"): ?>
                 <h1 class="display-4 text-capitalize font-weight-bold">Relatório de Fluxo de Caixa</h1>
             <?php else : ?>
                 <h1 class="display-4 text-capitalize font-weight-bold"><?php echo isset($labelTabela["labelBrowser"]) && !empty($labelTabela["labelBrowser"]) ? $labelTabela["labelBrowser"] : $modulo ?></h1>
             <?php endif ?>
         </div>
-        <div class="col d-flex justify-content-end align-items-center">
-            <button id="graficos"  type="button" class="btn btn-warning cursor-pointer mr-2" data-toggle="collapse" data-target="#collapseGraficos2">Gráficos</button>         
+        <div class="col-lg d-flex justify-content-end align-items-center">
+            <!-- <button id="graficos"  type="button" class="btn btn-warning cursor-pointer mr-2" data-toggle="collapse" data-target="#collapseGraficos2">Gráficos</button>          -->
             <button class="btn btn-success" id="botaoRelatorio" data-toggle="collapse" data-target="#collapseFluxocaixaResumo">Gerar Relatório</button>
         </div>
     </div>

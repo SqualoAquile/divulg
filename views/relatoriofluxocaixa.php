@@ -1,56 +1,12 @@
 <?php $modulo = str_replace("-form", "", basename(__FILE__, ".php")) ?>
 
-<script src="<?php echo BASE_URL?>/assets/js/relatoriofluxocaixa.js" type="text/javascript"></script>
+<script src="<?php echo BASE_URL.'/assets/js/'.$modulo.'.js'?>" type="text/javascript"></script>
 
 <?php
 // Constroi o cabeçalho
 require "_header_browser_relatorios.php";
-require "_graficosNOVO.php";
+// require "_graficosNOVO.php";
 ?>
-
-<div class="collapse mb-5 show" id="collapseMeta">
-    <h5 class="text-center my-1 mb-3">Acompanhamento da Meta</h5>
-            <div class="col-lg">
-            <div class="row">
-
-                <div class="col-lg">
-                    <div class="card card-body h-100 text-dark text-center my-1 shadow justify-content-between ">
-                        <p class="card-title">Faturamento atual do mês</p>
-                        <p class="card-text h2"><?php echo $meta[1]?></p>
-                    </div>
-                </div>
-
-                <div class="col-lg">
-                    <div class="card card-body h-100 text-success text-center my-1 shadow justify-content-between">
-                        <p class="card-title"> Meta Mensal</p>
-                        <p class="card-text h2"><?php echo $meta[0]?></p>
-                    </div>
-                </div>
-
-                <div class="col-lg">
-                    <div class="card card-body h-100 text-danger text-center my-1 shadow justify-content-between">
-                    <p class="card-title"> Diferença </p>
-                    <p class="card-text h2"><?php echo $meta[3]?></p>
-                    </div>
-                </div>
-
-                <div class="col-lg">
-                    <div class="card card-body h-100 text-center my-1 shadow justify-content-between">
-                        <p class="card-title"> Dias para o fim do mês </p>
-                        <p class="card-text h2"><?php echo $meta[4]?></p>
-                    </div>
-                </div>
-
-                <div class="col-lg">
-                    <div class="card card-body h-100 text-dark text-center my-1 shadow justify-content-between">
-                        <p class="card-title"> Faturamento médio para atingir a meta </p>
-                        <p class="card-text h2"><?php echo $meta[5]?>/dia</h5>
-                    </div>
-                </div>
-                
-            </div>
-    </div>
-</div>
 
 <div class="collapse mb-5" id="collapseFluxocaixaResumo">
     <div class="card card-body">
@@ -139,5 +95,7 @@ require "_graficosNOVO.php";
 
 <script type="text/javascript">
     var baselink = '<?php echo BASE_URL;?>',
-        currentModule = '<?php echo $modulo ?>'  // usa o nome da tabela como nome do módulo, necessário para outras interações
+        currentModule = '<?php echo $modulo ?>',  // usa o nome da tabela como nome do módulo, necessário para outras interações
+        campoPesquisa = '',
+        valorPesquisa = ''
 </script>

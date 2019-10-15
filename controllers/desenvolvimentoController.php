@@ -34,6 +34,11 @@ class desenvolvimentoController extends controller{
         $dados['infoUser'] = $_SESSION;
         $dados["labelTabela"] = "Desenvolvimento";
 
+        $tabs = new Desenvolvimento();
+
+        $dados["tabelasDB"] = $tabs->buscaTabelasBD();
+        // print_r($dados["tabelasDB"]); exit;
+
         $this->loadTemplate($this->table, $dados);
     }
     

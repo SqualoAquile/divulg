@@ -2,6 +2,14 @@
 
 $(function () {
 
+    // Inicializando a estrutura da tabela como Sortable e checkbox estilizado
+    $( "#campos_tabela" ).sortable();
+    $( "#campos_tabela" ).disableSelection();
+
+    $( "input[type=checkbox]" ).checkboxradio({
+      icon: false
+    });
+
     // Validação se o nome da tabela já existe
     $('#nome_tabela').blur(function () {
         
@@ -99,7 +107,7 @@ $(function () {
                                 });
                             }else{
                                 Toast({
-                                    message: 'A tabela não foio criada!',
+                                    message: 'A tabela não foi criada!',
                                     class: 'alert-danger'
                                 });
                             }
@@ -111,34 +119,172 @@ $(function () {
         }
     });
 
+    $('#btn_editar').on('click', function(){
+        
+        if( $('#tabelas').find(':selected').val() == ''){
+            $('#tabelas').focus();
+            return false;
+        }else if( $('#campos_tabela li').length <= 0 ){
+            alert('A tabela deve ter pelo menos um campo.')
+            $('#nome_campo').focus();
+            return false;
+        }else{
+            if(confirm('Editar a Tabela?') === true){
+                // todos os requisitos estão OK para criar a tabela
+                var query1 = '', nomeTab = '', lblBr = '', lblFm = '';
+                nomeTab = $('#tabelas').find(':selected').val().trim().toLowerCase();
+
+                query1 = "ALTER TABLE `"+nomeTab+"` ";
+                    
+                //for em todas as <li>
+                for(var i = 0; i < $('#campos_tabela li').length; i++ ){
+                    var nomecampo = '', aux = '', coment = '';
+                    aux = $('#campos_tabela li:eq('+i+')').find('div.col-lg-11').text();
+                    aux = aux.split('`');
+                    console.log('splitado', aux)
+                    console.log(aux[3])
+                    nomecampo = aux[1].trim().toLocaleLowerCase();
+                    coment = aux[3];
+
+                    query1 += "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + aux[3]+ "',";
+                }
+
+                query1 = query1.slice(0, -1);
+                // console.log('query1:', query1);
+                // window.location.href = baselink + '/desenvolvimento';
+
+                if( query1 !== '' ){
+                    // ajax para executar a query e criar a tabela
+                    $.ajax({
+                        url: baselink + '/ajax/editaTabela',
+                        type: 'POST',
+                        data: {
+                            tabela: $('#tabelas').find(':selected').val(),
+                            query1: query1,
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if( data === true ){
+                                
+                                Toast({
+                                    message: 'Tabela editada com sucesso!',
+                                    class: 'alert-success'
+                                });
+                                window.location.href = baselink + '/desenvolvimento';
+                            }else{
+                                Toast({
+                                    message: 'A tabela não foi editada!',
+                                    class: 'alert-danger'
+                                });
+                            }
+                        }
+                    });
+                    // executar a função que cria o MVC dessa tabela
+                }        
+            }
+        }
+    });
+
+    // Adicionar Tabela
+    $('#criarTabela').on('show.bs.collapse', function () {
+        $('#btn_incluir').show();
+        if( $('#editarTabela').is('show') ){
+            $('#editarTabela').hide();
+        }
+    });
+    $('#criarTabela').on('hide.bs.collapse', function () {
+        $('#btn_incluir').hide();
+        if( $('#editarTabela').is('show') ){
+            $('#editarTabela').hide();
+        }
+    });
+
+    $('#myCollapsible').collapse({
+        toggle: false
+      })
+
     $('#btn_incluir').on('click', function(){
         // testa se tem algum elemento que NÃO tá preenchido
-        if( $('#nome_tabela').val() == '' || $('#lbl_brownser').val() == '' || $('#lbl_form').val() == '' ){
-            $('#nome_tabela').focus();
-            return false;
-
-        }else{
-            if ( formPreenchido() != '' ){
-                if( $('#campos_tabela li').length > 0 ){
-                    // testar se já existe o nome
-                    var nomelinha = [];
-                    for(var i=0; i< $('#campos_tabela li').length; i++){
-                        var aux = '', 
-                        aux = $('#campos_tabela li:eq('+i+')').find('.col-lg-11').text();
-                        nomelinha.push( aux.split('`')[1] );
-                    }
-                    if( nomelinha.indexOf( $('#nome_campo').val().trim() ) !== -1 ){
-                        alert('Esse nome de campo já foi utilizado. Mude!');
-                        $('#nome_campo').val('');
-                        return false;
-                    }else{
-                        $('#campos_tabela').append(formPreenchido());
-                    }
+        if ( formPreenchido() != '' ){
+            if( $('#campos_tabela li').length > 0 ){
+                // testar se já existe o nome
+                var nomelinha = [];
+                for(var i=0; i< $('#campos_tabela li').length; i++){
+                    var aux = '', 
+                    aux = $('#campos_tabela li:eq('+i+')').find('.col-lg-11').text();
+                    nomelinha.push( aux.split('`')[1] );
+                }
+                if( nomelinha.indexOf( $('#nome_campo').val().trim() ) !== -1 ){
+                    // alert('Esse nome de campo já foi utilizado. Mude!');
+                    // $('#nome_campo').val('');
+                    // return false;
+                    var nomecampo = $('#nome_campo').val().toLocaleLowerCase().trim();
+                    var nrolinha = nomelinha.indexOf( $('#nome_campo').val().trim() );
+                    console.log($('#'+nomecampo));
+                    console.log(nrolinha); 
+                    $('#'+nomecampo).after(formPreenchido());
+                    $('#campos_tabela li:eq('+nrolinha+')').remove();
                 }else{
                     $('#campos_tabela').append(formPreenchido());
                 }
+            }else{
+                $('#campos_tabela').append(formPreenchido());
+            }
+        }
+    });
+
+    $('#tabelas').on('change', function(){
+        // testa se tem algum elemento que NÃO tá preenchido
+        console.log( tabelasDB[$(this).find(':selected').val()] )
+        
+        $('#btn_form').attr('href', baselink+'/'+$(this).find(':selected').val()+'/adicionar');
+
+        if( $('#campos_tabela li').length > 0 ){
+            // limpar os campos da tabela
+            $('#campos_tabela').find('li').remove();
+            // remontar a tabela
+            for(var j=0; j < tabelasDB[$(this).find(':selected').val()].length; j++){
+                var linha = '', nomecampo = '', aux='';
+                aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
+                nomecampo = aux[1];
+                console.log(nomecampo);
+                if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
+                    linha = `<li class="ui-state-default">
+                                <div class="row" id="`+nomecampo+`">
+                                    <div class="col-lg-1">
+                                        <i class="btn btn-sm btn-primary fas fa-edit" onclick="edita(this)"></i>
+                                        <i class="btn btn-sm btn-danger fas fa-trash-alt" onclick="remove(this)"></i>
+                                    </div>
+                                    <div class="col-lg-11">`+tabelasDB[$(this).find(':selected').val()][j]+`</div>
+                                </div>
+                            </li>`;
+                    $('#campos_tabela').append(linha);
+                }
                 
             }
+
+        }else{
+            // montar a tabela
+            for(var j=0; j < tabelasDB[$(this).find(':selected').val()].length; j++){
+                var linha = '', nomecampo = '', aux='';
+                aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
+                nomecampo = aux[1];
+                console.log(nomecampo);
+                if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
+                    linha = `<li class="ui-state-default" id='`+nomecampo+`'>
+                                <div class="row">
+                                    <div class="col-lg-1">
+                                        <i class="btn btn-sm btn-primary fas fa-edit" onclick="edita(this)"></i>
+                                        <i class="btn btn-sm btn-danger fas fa-trash-alt" onclick="remove(this)"></i>
+                                    </div>
+                                    <div class="col-lg-11">`+tabelasDB[$(this).find(':selected').val()][j]+`</div>
+                                </div>
+                            </li>`;
+                    $('#campos_tabela').append(linha);
+                }
+                
+            }
+            
         }
         
     });
@@ -150,6 +296,107 @@ function remove(elemento){
     if(confirm('Quer excluir a linha?')){
         elemento.closest('li').remove();
     }
+};
+function edita(elemento){
+    
+    var texto = $(elemento).closest('div').siblings().text();
+    texto = texto.split('`');
+    // console.log(texto)
+    var nome = '', tipo = '', tamanho = '', comentario = '', obrigatorio = '', aux1 = '', aux2 = '';
+    nome = texto[1].trim();
+    aux1 = texto[2];
+    comentario = JSON.parse(texto[3]);
+
+    if ( aux1.indexOf(')') > 0 ){
+
+        aux2 = aux1.split('(');
+        tipo = aux2[0].trim();
+        tamanho = aux2[1].split(')')[0];
+    
+    }else{
+
+        tamanho = '';
+        if( aux1.indexOf('NOT') > 0 ){
+            aux2 = aux1.split('NOT');
+            tipo = aux2[0].trim();
+        }else{
+            aux2 = aux1.split('NULL');
+            tipo = aux2[0].trim();
+        }
+    }
+
+    if( aux1.indexOf('NOT') > 0 ){   
+        obrigatorio = true;     
+    }else{
+        obrigatorio = false;
+    }
+     
+    console.log('nome', nome)
+    console.log('tipo', tipo)
+    console.log('tamanho', tamanho)
+    console.log('obrigatorio', obrigatorio)
+    
+    console.log('comentario', comentario)
+    console.log('info relacional', JSON.stringify(comentario['info_relacional']) )
+    console.log('teste ver', JSON.parse(comentario['ver']))
+    console.log('label', )
+    
+    if ( ( comentario['type'] == 'relacional' || comentario['type'] == 'dropdown' ) && comentario['info_relacional'] != undefined && comentario['info_relacional'] != null  && comentario['info_relacional'] != '' ){
+        
+        $('#info_relacional').val("(" + comentario['info_relacional']['tabela'] + "," + comentario['info_relacional']['campo'] + ")" );
+        
+    }else if ( comentario['options'] != undefined && comentario['options'] != null  && comentario['options'] != '' &&  comentario['type'] == 'radio' ){
+
+        var conteudo =  JSON.stringify(comentario['options']);
+        // console.log(conteudo);
+        conteudo = conteudo.replace("{" , "(");
+        conteudo = conteudo.replace("}" , ")");
+        conteudo = conteudo.replace('"','').replace('"','').replace('"','').replace('"','');
+        conteudo = conteudo.replace('"','').replace('"','').replace('"','').replace('"','');
+        conteudo = conteudo.replace('"','').replace('"','').replace('"','').replace('"','');
+        conteudo = conteudo.replace('"','').replace('"','').replace('"','').replace('"','');
+
+        conteudo = conteudo.replace(",",")(").replace(",",")(").replace(",",")(").replace(",",")(");
+        conteudo = conteudo.replace(":",",").replace(":",",").replace(":",",").replace(":",",");
+        // console.log(conteudo);
+
+        $('#info_relacional').val(conteudo);
+
+    }else{
+
+        $('#info_relacional').val('');
+    }
+    
+    
+    $('#nome_campo').val(nome);
+    $('#nome_campo').attr('data-anterior', nome);
+    $('#tipo_campo').val(tipo);
+    $('#tamanho_campo').val(tamanho);
+    $('#label').val(comentario['label']);
+    $('#mascara_validacao').val(comentario['mascara_validacao']);
+    $('#column').val(comentario['column']);
+    $('#ordem_form').val(comentario['ordem_form']);
+    $('#type').val(comentario['type']);
+
+    $( "#obrigatorio" ).attr('checked', obrigatorio);
+    $( "#obrigatorio" ).checkboxradio( "refresh" );
+
+    $( "#ver" ).attr('checked', JSON.parse( comentario['ver'] ));
+    $( "#ver" ).checkboxradio( "refresh" );
+    
+
+    $( "#form" ).attr('checked', JSON.parse( comentario['form'] ));
+    $( "#form" ).checkboxradio( "refresh" );
+
+    $( "#unico" ).attr('checked', JSON.parse( comentario['unico'] ));
+    $( "#unico" ).checkboxradio( "refresh" );
+
+    $( "#pode_zero" ).attr('checked', JSON.parse( comentario['pode_zero'] ));
+    $( "#pode_zero" ).checkboxradio( "refresh" );
+
+    $( "#filtro_faixa" ).attr('checked', JSON.parse( comentario['filtro_faixa'] ));
+    $( "#filtro_faixa" ).checkboxradio( "refresh" );
+
 };
 
 // retorna a linha que deve ser incluida na tabela
@@ -190,7 +437,7 @@ function formPreenchido(){
         coment += ' DEFAULT NULL ';
     }
     
-    coment += " COMMENT '{ ";
+    coment += " COMMENT `{ ";
 
     if( $('#label').val() == '' ){
         $('#label').focus();
@@ -291,136 +538,23 @@ function formPreenchido(){
     });
 
     coment = coment.substr( 0 , coment.length - 2 );
-    coment += " }'";
+    coment += " }`";
 
     var linha = '';
     if( ok == true ){    
-        linha = `<li class="ui-state-default"><div class="row">
-            <div class="col-lg-1"><i class="btn btn-sm btn-danger fas fa-trash-alt" onclick="remove(this)"></i></div>    
-            <div class="col-lg-11">`+coment+`</div>
-        </div></li>`;
+
+        linha = `<li class="ui-state-default" id='`+$('#nome_campo').val().trim().toLowerCase()+`'>
+                    <div class="row">
+                        <div class="col-lg-1">
+                            <i class="btn btn-sm btn-primary fas fa-edit" onclick="edita(this)"></i>
+                            <i class="btn btn-sm btn-danger fas fa-trash-alt" onclick="remove(this)"></i>
+                        </div>
+                        <div class="col-lg-11">`+coment+`</div>
+                    </div>
+                </li>`;
     }
     
     return linha;
 };
-
-
-
-////////////////////////////
-////////////////////////////
-////////////////////////////
-
-// // Retorna um array de contatos puxados do campo hidden com o atributo nome igual a contatos
-// function Contatos() {
-//     var returnContatos = [];
-//     if ($('[name=contatos]') && $('[name=contatos]').val().length) {
-//         var contatos = $('[name=contatos]').val().split('[');
-//         for (var i = 0; i < contatos.length; i++) {
-//             var contato = contatos[i];
-//             if (contato.length) {
-//                 contato = contato.replace(']', '');
-//                 var dadosContato = contato.split(' * ');
-//                 returnContatos.push(dadosContato);
-//             }
-//         }
-//     };
-//     return returnContatos;
-// };
-
-// // Escreve o html na tabela
-// function Popula(values) {
-
-//     if (!values) return;
-
-//     var currentId = $formContatos.attr('data-current-id'),
-//         tds = '';
-
-//     // Coloca a tag html TD em volta de cada valor vindo do form de contatos
-//     values.forEach(value => tds += `<td class="col-lg-2 text-truncate">` + value + `</td>`);
-
-//     if (!currentId) {
-//         // Se for undefined então o contato está sendo criado
-
-//         // Auto incrementa os ID's dos contatos
-//         lastInsertId += 1;
-
-//         $('#contatos tbody')
-//             .prepend('<tr class="d-flex flex-column flex-lg-row" data-id="' + lastInsertId + '">' + tds + botoes + '</tr>');
-
-//     } else {
-//         // Caso tenha algum valor é por que o contato está sendo editado
-
-//         $('#contatos tbody tr[data-id="' + currentId + '"]')
-//             .html(tds + botoes);
-
-//         // Seta o data id como undefined para novos contatos poderem ser cadastrados
-//         $formContatos.removeAttr('data-current-id');
-//     }
-
-//     $('.editar-contato').bind('click', Edit);
-//     $('.excluir-contato').bind('click', Delete);
-// };
-
-// // Pega as linhas da tabela auxiliar e manipula o hidden de contatos
-// function SetInput() {
-//     var content = '';
-//     $('#contatos tbody tr').each(function () {
-//         var par = $(this).closest('tr');
-//         var tdNome = par.children("td:nth-child(1)");
-//         var tdSetor = par.children("td:nth-child(2)");
-//         var tdTelefone = par.children("td:nth-child(3)");
-//         var tdCelular = par.children("td:nth-child(4)");
-//         var tdEmail = par.children("td:nth-child(5)");
-
-//         content += '[' + tdNome.text() + ' * ' + tdSetor.text() + ' * ' + tdTelefone.text() + ' * ' + tdCelular.text() + ' * ' + tdEmail.text() + ']';
-//     });
-
-//     $('[name=contatos]')
-//         .val(content)
-//         .attr('data-anterior-aux', content)
-//         .change();
-// };
-
-// // Delete contato da tabela e do hidden
-// function Delete() {
-//     var par = $(this).closest('tr');
-//     par.remove();
-//     SetInput();
-// };
-
-// // Seta no form o contato clicado para editar, desabilita os botoes de ações deste contato e seta o id desse contato
-// // no form dos contatos
-// function Edit() {
-
-//     // Volta para válido todos os botoões de editar e excluir
-//     $('table#contatos tbody tr .btn')
-//         .removeClass('disabled');
-
-
-//     var $par = $(this).closest('tr'),
-//         tdNome = $par.children("td:nth-child(1)"),
-//         tdSetor = $par.children("td:nth-child(2)"),
-//         tdTelefone = $par.children("td:nth-child(3)"),
-//         tdCelular = $par.children("td:nth-child(4)"),
-//         tdEmail = $par.children("td:nth-child(5)");
-
-//     // Desabilita ele mesmo e os botões irmãos de editar e excluir da linha atual
-//     $par
-//         .find('.btn')
-//         .addClass('disabled');
-
-//     $('input[name=contato_nome]').val(tdNome.text()).attr('data-anterior', tdNome.text()).focus();
-//     $('input[name=contato_setor]').val(tdSetor.text()).attr('data-anterior', tdSetor.text());
-//     $('input[name=contato_telefone]').val(tdTelefone.text()).attr('data-anterior', tdTelefone.text());
-//     $('input[name=contato_celular]').val(tdCelular.text()).attr('data-anterior', tdCelular.text());
-//     $('input[name=contato_email]').val(tdEmail.text()).attr('data-anterior', tdEmail.text());
-
-//     $('table#contatos thead tr[role=form]')
-//         .attr('data-current-id', $par.attr('data-id'))
-//         .find('.is-valid, .is-invalid')
-//         .removeClass('is-valid is-invalid');
-// };
-
-
 
 
