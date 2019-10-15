@@ -52,6 +52,9 @@ class Parametros extends model {
                         // buscar na tabela relacionada os valores que vão ser usados no select
                         $tabela =  lcfirst($infoTabela[$key]["Comment"]["info_relacao"]["tabela"]);
                         $campo = lcfirst($infoTabela[$key]["Comment"]["info_relacao"]["campo"]);
+                        $lista = array();
+                        // echo '<br><br> tabela --- '. $value[0] .' <br><br>';
+                        // echo '<br><br>'. $tabela. ' ---- ' . $campo . '<br><br>';
                         if( !empty($tabela) && !empty($campo) ){
 
                             $sql = "SELECT id, ". $campo ." FROM  ". $tabela ." WHERE situacao = 'ativo'";      
