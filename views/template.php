@@ -122,14 +122,14 @@
                "link" => "/parametros"
             ],            
          ]
-         ],
-         [
-            "text" => "Desenvolvimento",
-            "icon" => "fas fa-laptop-code",
-            "permissao" => "desenvolvimento_ver",
-            "link" => "/desenvolvimento"
-            // "filhos" => []
          ]
+         // ,[
+         //    "text" => "Desenvolvimento",
+         //    "icon" => "fas fa-laptop-code",
+         //    "permissao" => "desenvolvimento_ver",
+         //    "link" => "/desenvolvimento"
+         //    // "filhos" => []
+         // ]
 
    ];
 ?>

@@ -36,13 +36,16 @@ class Desenvolvimento extends model {
         $sql = "SHOW TABLES";
         $sql = self::db()->query($sql);
         
+        $nome = $GLOBALS['config']['db'];
+        // echo print_r($GLOBALS); exit;
+         
         if($sql->rowCount()>0){
             $tabelas = $sql->fetchAll(PDO::FETCH_ASSOC);
             // print_r($tabelas); exit;
             $tabelasDB = array();
             foreach ($tabelas as $key => $value) {
                 $tabAtual = '';
-                $tabAtual = trim(strtolower( $value['Tables_in_pnp'] ));
+                $tabAtual = trim(strtolower( $value['Tables_in_'.$nome] ));
                 
                 $sql = self::db()->query("SHOW FULL COLUMNS FROM " . $tabAtual);
                 $result = $sql->fetchAll(PDO::FETCH_ASSOC);

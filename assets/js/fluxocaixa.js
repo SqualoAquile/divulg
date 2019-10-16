@@ -585,6 +585,14 @@ $(function () {
             $("#detalhe").focus();
             return;
         }
+        if( $("#nro_nf").val() != '' && $('#data_emissao_nf').val() == '' ){
+            $("#data_emissao_nf").focus();
+            return;
+        }else if( $("#nro_nf").val() == '' && $('#data_emissao_nf').val() != '' ){
+            $("#nro_nf").focus();
+            return;
+        }
+
         if( $("#quem_lancou").find(':selected').val() == "" ){
             $("#quem_lancou").focus();
             return;
