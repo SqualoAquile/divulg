@@ -6,44 +6,44 @@
          "permissao" => "%",
          "link" => "/home"
       ],
-      [
-         "text" => "Cadastros",
-         "icon" => "fas fa-save",
-         "permissao" => "%",
-         "link" => "/#",
-         "filhos" => [
-            [
-               "text" => "Vendedores",
-               "icon" => "fas fa-handshake",
-               "permissao" => "vendedores_ver",
-               "link" => "/vendedores"
-            ],
-            [
-               "text" => "Rotas",
-               "icon" => "fas fa-users",
-               "permissao" => "rotas_ver",
-               "link" => "/rotas"
-            ],
-            [
-               "text" => "Produtos",
-               "icon" => "fas fa-boxes",
-               "permissao" => "produtos_ver",
-               "link" => "/produtos"
-            ]
-         ]
-      ],
-      [
-         "text" => "Pedidos",
-         "icon" => "fas fa-bread-slice",
-         "permissao" => "pedidos_ver",
-         "link" => "/pedidos",
-      ],
-      [
-         "text" => "Produção",
-         "icon" => "fas fa-table",
-         "permissao" => "producao_ver",
-         "link" => "/producao",
-      ],
+      // [
+      //    "text" => "Cadastros",
+      //    "icon" => "fas fa-save",
+      //    "permissao" => "%",
+      //    "link" => "/#",
+      //    "filhos" => [
+      //       [
+      //          "text" => "Vendedores",
+      //          "icon" => "fas fa-handshake",
+      //          "permissao" => "vendedores_ver",
+      //          "link" => "/vendedores"
+      //       ],
+      //       [
+      //          "text" => "Rotas",
+      //          "icon" => "fas fa-users",
+      //          "permissao" => "rotas_ver",
+      //          "link" => "/rotas"
+      //       ],
+      //       [
+      //          "text" => "Produtos",
+      //          "icon" => "fas fa-boxes",
+      //          "permissao" => "produtos_ver",
+      //          "link" => "/produtos"
+      //       ]
+      //    ]
+      // ],
+      // [
+      //    "text" => "Pedidos",
+      //    "icon" => "fas fa-bread-slice",
+      //    "permissao" => "pedidos_ver",
+      //    "link" => "/pedidos",
+      // ],
+      // [
+      //    "text" => "Produção",
+      //    "icon" => "fas fa-table",
+      //    "permissao" => "producao_ver",
+      //    "link" => "/producao",
+      // ],
       [
          "text" => "Financeiro",
          "icon" => "fas fa-money-bill-alt",
@@ -77,26 +77,26 @@
       //       ]
          ]
       ],
-      [
-         "text" => "Relatórios",
-         "icon" => "fas fa-table",
-         "permissao" => "%",
-         "link" => "/#",
-         "filhos" => [
-            [
-               "text" => "Fluxo de Caixa",
-               "icon" => "fas fa-chart-line",
-               "permissao" => "relatoriofluxocaixa_ver",
-               "link" => "/relatoriofluxocaixa"
-            ],
-            [
-               "text" => "Produtos Pedidos",
-               "icon" => "fas fa-dollar-sign",
-               "permissao" => "relatoriopedidositens_ver",
-               "link" => "/relatoriopedidositens"
-            ]
-         ]
-      ],
+      // [
+      //    "text" => "Relatórios",
+      //    "icon" => "fas fa-table",
+      //    "permissao" => "%",
+      //    "link" => "/#",
+      //    "filhos" => [
+      //       [
+      //          "text" => "Fluxo de Caixa",
+      //          "icon" => "fas fa-chart-line",
+      //          "permissao" => "relatoriofluxocaixa_ver",
+      //          "link" => "/relatoriofluxocaixa"
+      //       ],
+      //       [
+      //          "text" => "Produtos Pedidos",
+      //          "icon" => "fas fa-dollar-sign",
+      //          "permissao" => "relatoriopedidositens_ver",
+      //          "link" => "/relatoriopedidositens"
+      //       ]
+      //    ]
+      // ],
       [
          "text" => "Configurações",
          "icon" => "fas fa-cogs",
