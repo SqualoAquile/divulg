@@ -43,31 +43,6 @@
 ?>
 
 <section class="mb-5">
-    <!-- aqui começa o "form" que vai fazer o lançamento automático dos vendedores -->
-    <div class="row p-1 pb-3 mb-5 border-bottom border-dark">
-        <div class="col-lg-2 mb-2">
-            <label class="font-weight-bold" for="dt1"> * Data Inicial</label>
-            <input type="text" class="form-control"  name="dt1"  value="" id="dt1" maxlength="" tabindex="" data-mascara_validacao = "data" />
-        </div>
-        <div class="col-lg-2 mb-2">
-            <label class="font-weight-bold" for="dt2"> * Data Final</label>
-            <input type="text" class="form-control"  name="dt2"  value="" id="dt2" maxlength="" tabindex="" data-mascara_validacao = "data" />
-        </div>
-        <div class="col-lg-2 mb-2">
-            <label class="font-weight-bold" for="dtvenc"> * Venc. Boleto</label>
-            <input type="text" class="form-control"  name="dtvenc"  value="" id="dtvenc" maxlength="" tabindex="" data-mascara_validacao = "data" />
-        </div>
-        <div class="col-lg-4 mb-2">
-            <label class="font-weight-bold" for="vnd"> * Vendedor</label>
-            <select id="vnd" name="vnd" class="form-control" tabindex="" data-mascara_validacao = "false">
-                <option value="" selected >Selecione</option>
-            </select>        
-        </div>
-        <div class="col-lg-2 mb-2 align-self-end">
-            <div class="btn btn-info btn-block " tabindex="" id="btn_lancavnd"> Lançar </div>
-        </div>
-    </div>
-
     <form id="form-principal<?php echo $formId ?>" method="DELETE" class="needs-validation" autocomplete="off" novalidate>
         <div class="row">
             <?php foreach ($colunas as $key => $value): ?>
@@ -331,9 +306,9 @@
                     <div class="btn btn-primary btn-block" tabindex="18" id="btn_incluir"> Incluir </div>                                                 
                  </div>                                       
             </div>
-            <div class="offset-xl-3 col-xl-3 col-lg-2 offset-lg-4 text-lg-right order-0 order-lg-1">
+            <div class="offset-xl-9 col-xl-3 col-lg-3 offset-lg-9 text-lg-right order-0 order-lg-0">
                 <div class="form-group">
-                    <div class="btn btn-secondary btn-block mb-5 mb-lg-0" tabindex="-1" role="button" aria-pressed="false" id="btn_limparCampos">
+                    <div class="btn btn-secondary btn-block mb-5 mb-lg-2" tabindex="-1" role="button" aria-pressed="false" id="btn_limparCampos">
                         <i class="fas fa-eraser mr-2"></i>
                         <span>Limpar Campos</span>
                     </div>

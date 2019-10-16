@@ -19,15 +19,15 @@ class Contasgerenciais extends model {
         return $array;
     }
     
-    public function pegarListaAnaliticas($idsintetica,$empresa){
+    public function pegarListaAnaliticas($id){
         $array = array();
-        if(!empty($idsintetica) && !empty($empresa)){
-            $sqlA = "SELECT id, nome FROM contaanalitica WHERE id_sintetica='$idsintetica' AND id_empresa = '$empresa' AND situacao='ativo'";
+        if(!empty($id) ){
+            $sqlA = "SELECT id, nome FROM centrodecustos WHERE id_mov ='$id' AND situacao='ativo'";
             $sqlA = self::db()->query($sqlA);
             if($sqlA->rowCount()>0){
                 $sqlA = $sqlA->fetchAll();
                 foreach ($sqlA as $chave => $valor){
-                    $array[$chave] = array("id" => $valor["id"], "nome" => utf8_encode(ucwords($valor["nome"])));
+                    $array[$chave] = array("id" => $valor["id"], "nome" => ucwords($valor["nome"]));
                 }   
             }
         }

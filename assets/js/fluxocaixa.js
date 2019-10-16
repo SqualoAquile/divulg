@@ -1,104 +1,39 @@
-//criar o input de setor - conta sintetica - ok
-// acertar a dependencia da categoria com o setor  - conta analitica, via ajax - ok
-// acertar a função fluxo de caixa para colocar valor e compor a tabela de lançamento de acordo com os itens que aparecem no form - ok
+
+// acertar a função fluxo de caixa para colocar valor e compor a tabela de lançamento de acordo com os itens que aparecem no form 
 // preencher o quem lançou de acordo com questiver logado - ok
 // fazer a parte de backend do fluxocaixa adicionar - ok
 // fazer a parte de backend do fluxocaixa editar - 
 // fazer a parte de backend do fluxocaixa excluir - 
-// fazer cadastro de bonificação quant e valor pra calcular o lançamento vnd
-// fazer cadastro de conta analitica vinculado a conta sintetica
 // tirar todos os console.log
-
+// dropdown do favorecido não tá automático - precisa acertar de acordo com o banco de dados linha 115
 var apareceLancamento = [];
 for( var i=0; i < colunas.length; i++ ){
     // console.log( colunas[i]['Field'],  colunas[i]['Comment']['form'],  colunas[i]['Comment']['ver'])  
-    if( colunas[i]['Comment']['form'] == 'true' && colunas[i]['Comment']['ver'] == 'true' ){
+    if( colunas[i]['Comment']['form'] == 'true' || colunas[i]['Comment']['ver'] == 'true' ){
         apareceLancamento.push(colunas[i]['Field']) ;
     }
 }
 
 $(function () {
     
-    // console.log('colunas e form: ', apareceLancamento)
-    // console.log('colunas e form: ', apareceLancamento.indexOf('conta_analitica')) 
-    // inicializa o "form" de lançamento dos vendedores
-    var nomePesq = 'vnd';
-    $.ajax({
-            url: baselink + '/ajax/buscaVendedores',
-            type: 'POST',
-            data: {
-                nome: nomePesq 
-            },
-            dataType: 'json',
-            success: function (dado) {
-                // console.log(dado);
+    console.log('colunas e form: ', apareceLancamento)
+    console.log('conta_analitica: ', apareceLancamento.indexOf('conta_analitica')) 
 
-                if(dado != ''){
-                    for(var i=0; i< dado.length; i++){
-                        $('#vnd').append("<option value='"+dado[i]['id']+"' >"+dado[i]['nome']+"</option>")
-                    }
-                }else{
-                    alert('Não foram encontrados Vendedores!');  
-                }
-                                                            
-        }
-    });
-
-    $('#dt1').on('change blur', function(){
-        $dt1 = $('#dt1'), $dt2 = $('#dt2'), $dtvenc = $('#dtvenc'), $vnd = $('#vnd');
+    $('input[type=radio]').on('change', function(){
+        var id_mov = '';
         
-        if( $dt1.val() != '' && $dt2.val() != '' ){
-            if ( maiorData($dt1.val(), $dt2.val()) == $dt1.val() || maiorData($dt1.val(), $dt2.val()) == 'iguais' ){
-                alert('A data Final deve ser maior do que a data Inicial.');
-                $dt2.val('').removeClass('is-valid is-invalid').blur();
-                return;
-            }
+        if( $('#Despesa').is(':checked') == true ){
+            id_mov = 1;
+        }else{
+            id_mov = 2;
         }
-    });
+        // console.log(id_mov)
 
-    $('#dt2').on('change blur', function(){
-        $dt1 = $('#dt1'), $dt2 = $('#dt2'), $dtvenc = $('#dtvenc'), $vnd = $('#vnd');
-        
-        if( $dt1.val() != '' && $dt2.val() != '' ){
-            if ( maiorData($dt1.val(), $dt2.val()) == $dt1.val() || maiorData($dt1.val(), $dt2.val()) == 'iguais' ){
-                alert('A data Final deve ser maior do que a data Inicial.');
-                $dt2.val('').removeClass('is-valid is-invalid').blur();
-                return;
-            }
-        }
-
-        if( $dtvenc.val() != '' && $dt2.val() != '' ){
-            if ( maiorData($dtvenc.val(), $dt2.val()) == $dt2.val() ){
-                alert('O Vencimento do Boleto deve ser maior ou igual a data Final.');
-                $dtvenc.val('').removeClass('is-valid is-invalid').blur();
-                return;
-            }
-        }
-    });
-
-    $('#dtvenc').on('change blur', function(){
-        $dt1 = $('#dt1'), $dt2 = $('#dt2'), $dtvenc = $('#dtvenc'), $vnd = $('#vnd');
-
-        if( $dtvenc.val() != '' && $dt2.val() != '' ){
-            if ( maiorData($dtvenc.val(), $dt2.val()) == $dt2.val() ){
-                alert('O Vencimento do Boleto deve ser maior ou igual a data Final.');
-                $dtvenc.val('').removeClass('is-valid is-invalid').blur();
-                return;
-            }
-        }
-    });
-
-    $('#btn_lancavnd').on('click', function(){
-        OkLancaVnd();
-    });
-
-    $('#conta_sintetica').on('change', function(){
-        var nomePesq = $('#conta_sintetica').val();
         $.ajax({
-                url: baselink + '/ajax/buscaAnaliticas2',
+                url: baselink + '/ajax/buscaAnaliticas',
                 type: 'POST',
                 data: {
-                    nome: nomePesq 
+                    id: id_mov 
                 },
                 dataType: 'json',
                 success: function (dado) {
@@ -109,7 +44,7 @@ $(function () {
                             $('#conta_analitica').append("<option value='"+dado[i]['id']+"' >"+dado[i]['nome']+"</option>")
                         }
                     }else{
-                        alert('Não foram encontradas categorias para esse setor. Cadastre-as!');  
+                        alert('Não foram encontrados centros de custos. Cadastre-os!');  
                     }
                                                                 
             }
@@ -217,7 +152,7 @@ $(function () {
                 var $this = $(this),
                     $relacionalDropdown = $this.parents('.relacional-dropdown-wrapper').find('.relacional-dropdown'),
                     campo = 'nome_fantasia';
-                tabela = 'fornecedores';
+                    tabela = 'fornecedores';
 
                 $.ajax({
                     url: baselink + '/ajax/getRelacionalDropdown',
@@ -634,10 +569,10 @@ $(function () {
 
     function confirmaPreenchimento() {
         // testa se o preenchimento dos campos necessários está ok
-        if( $("#conta_sintetica").find(':selected').val() == "" ){
-            $("#conta_sintetica").focus();
-            return;
-        }
+            // if( $("#conta_sintetica").find(':selected').val() == "" ){
+            //     $("#conta_sintetica").focus();
+            //     return;
+            // }
         if( $("#conta_analitica").find(':selected').val() == "" ){
             $("#conta_analitica").focus();
             return;
@@ -881,90 +816,6 @@ $(function () {
     });
 });
 
-    function OkLancaVnd(){
-        // console.log('foi acionado oklancavnd'); 
-       var $dt1 = $('#dt1'), $dt2 = $('#dt2'), $dtvenc = $('#dtvenc'), $vnd = $('#vnd');
-       
-       if( $dt1.val() != '' && $dt2.val() != '' && $dtvenc.val() != '' && $vnd.find(':selected').val() != '' ){
-                
-            /// busca as informações no banco de dados pra montar o lançamento em caixa
-            var dt1 = $dt1.val(), dt2 = $dt2.val(), id_vnd = $vnd.val();
-            $.ajax({
-                url: baselink + '/ajax/resumoLancamentoVendedor',
-                type: 'POST',
-                data: {
-                    dt1: dt1,
-                    dt2: dt2,
-                    id_vnd: id_vnd 
-                },
-                dataType: 'json',
-                success: function (dado) {
-                    // console.log('resumoVnd:',dado);
-
-                    if(dado != ''){
-                        // monta o lançamento de caixa;
-                        var linha = new Array();
-                        var k=0;
-                        if(parseFloat(dado['faturamento']) > 0 ){
-                            linha[k] = lancaFluxo('Receita', '', '', '', 'Comercial', 'Venda', 'Inter Bank', $vnd.find(':selected').text().trim() , logado, '', $dt2.val(), dado['faturamento'].toFixed(2), 'Boleto', 'Parcelado', 1, 10, '', '', '', 0, apareceLancamento, $dtvenc.val() ); 
-                            k++;
-                        }
-                        
-                        if(parseFloat(dado['comissao']) > 0 ){
-                            linha[k] = lancaFluxo('Despesa', '', '', '', 'Comercial', 'Comissão', 'Dinheiro', $vnd.find(':selected').text().trim() , logado, '', $dt2.val(), dado['comissao'].toFixed(2), 'Dinheiro', 'Parcelado', 1, 10, '', '', '', 0, apareceLancamento, $dtvenc.val() ); 
-                            k++;
-                        }   
-
-                        if(parseFloat(dado['transporte']) > 0 ){
-                            linha[k] = lancaFluxo('Despesa', '', '', '', 'Comercial', 'Transporte', 'Dinheiro', $vnd.find(':selected').text().trim() , logado, '', $dt2.val(), dado['transporte'].toFixed(2), 'Dinheiro', 'Parcelado', 1, 10, '', '', '', 0, apareceLancamento, $dtvenc.val() );
-                            k++;
-                        }
-                         
-                        if(parseFloat(dado['bonificacao']) > 0 ){
-                            linha[k] = lancaFluxo('Despesa', '', '', '', 'Comercial', 'Bonificação', 'Dinheiro', $vnd.find(':selected').text().trim() , logado, '', $dt2.val(), dado['bonificacao'].toFixed(2), 'Dinheiro', 'Parcelado', 1, 10, '', '', '', 0, apareceLancamento, $dtvenc.val() );
-                            k++;
-                        }
-
-                        if(parseFloat(dado['extra']) > 0 ){
-                            linha[k] = lancaFluxo('Despesa', '', '', '', 'Comercial', 'Material de Vendas', 'Dinheiro', $vnd.find(':selected').text().trim() , logado, '', $dt2.val(), dado['extra'].toFixed(2), 'Dinheiro', 'Parcelado', 1, 10, '', '', '', 0, apareceLancamento, $dtvenc.val() ); 
-                            k++;
-                        }
-
-                        if(parseFloat(dado['maquinacartao']) > 0 ){
-                            linha[k] = lancaFluxo('Despesa', '', '', '', 'Comercial', 'Máquina de Cartão', 'Dinheiro',$vnd.find(':selected').text().trim() , logado, '', $dt2.val(), dado['maquinacartao'].toFixed(2), 'Dinheiro', 'Parcelado', 1, 10, '', '', '', 0, apareceLancamento, $dtvenc.val() ); 
-                            k++;
-                        }                      
-
-                        if(k > 0){
-                            if (linha.length > 1) {
-                                for (var i = 0; i < linha.length; i++) {
-                                    $('#tabela_lancamento tbody').append(linha[i]);
-                                }
-                            }else{
-                                $('#tabela_lancamento tbody').append(linha[0]);
-                            }
-                
-                            botarMascaraInputs();
-                            cancelaEdicoes();
-                            formataTabela();
-                            calcularesumo();
-                            $('#tabela_lancamento').show().focus();
-                        
-                        }else{
-                            alert('Não foram encontradas Informações de Venda desse Vendedor nesse período!');  
-                        }
-                        
-                    }else{
-                        alert('Não foram encontradas Informações de Venda desse Vendedor nesse período!');  
-                    }                                           
-                }
-            });
-       }else{
-           alert('Preencha todos os campos de lançamento do Vendedor.');
-           return;
-       }
-    }
-
     function dataAtual(){
         var dt, dia, mes, ano, dtretorno;
         dt = new Date();
@@ -1106,14 +957,14 @@ $(function () {
                 mov = "";
                 recaux = 0;
                 despaux = 0;
-                mov = $(this).closest('tr').children('td:eq(1)').children('input:eq(0)').attr('value');
+                mov = $(this).closest('tr').children('td:eq('+apareceLancamento.indexOf('despesa_receita')+')').children('input:eq(0)').attr('value');
                 if (mov == "Despesa") {
-                    despaux = $(this).closest('tr').children('td:eq(6)').children('input:eq(0)').val();
+                    despaux = $(this).closest('tr').children('td:eq('+apareceLancamento.indexOf('valor_total')+')').children('input:eq(0)').val();
                     despaux = floatParaPadraoInternacional(despaux);
                     despaux = parseFloat(despaux);
                     despesa = despesa + despaux;
                 } else {
-                    recaux = $(this).closest('tr').children('td:eq(6)').children('input:eq(0)').val();
+                    recaux = $(this).closest('tr').children('td:eq('+apareceLancamento.indexOf('valor_total')+')').children('input:eq(0)').val();
                     recaux = floatParaPadraoInternacional(recaux);
                     recaux = parseFloat(recaux);
                     receita = receita + recaux;
@@ -1219,20 +1070,20 @@ $(function () {
                   $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq(0)').find('div.btn-success').find('i').removeClass('fas fa-save').addClass('fas fa-edit');
                   $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq(0)').find('div.btn-success').removeClass('btn-success').addClass('btn-primary');
                   
-                  val = $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq(6)').children('input:eq(0)').attr('data-anterior');
-                  $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq(6)').children('input:eq(0)')
+                  val = $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq('+apareceLancamento.indexOf('valor_total')+')').children('input:eq(0)').attr('data-anterior');
+                  $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq('+apareceLancamento.indexOf('valor_total')+')').children('input:eq(0)')
                           .attr('readonly','readonly').attr('disabled','disabled')
                           .removeClass('form-control').addClass('form-control-plaintext')
                           .val(val);
       
                           
-                  dtanterior = $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq(7)').children('input:eq(0)').attr('data-anterior');       
-                  $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq(7)').children('input:eq(0)')
+                  dtanterior = $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq('+apareceLancamento.indexOf('data_vencimento')+')').children('input:eq(0)').attr('data-anterior');       
+                  $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq('+apareceLancamento.indexOf('data_vencimento')+')').children('input:eq(0)')
                           .attr('readonly','readonly').attr('disabled','disabled')
                           .removeClass('form-control').addClass('form-control-plaintext')
                           .val(dtanterior);
       
-                  $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq(18)').children('input:eq(0)')
+                  $('#tabela_lancamento tbody').children('tr:eq(' + lin + ')').children('td:eq('+apareceLancamento.indexOf('observacao')+')').children('input:eq(0)')
                           .attr('readonly','readonly').attr('disabled','disabled')
                           .removeClass('form-control').addClass('form-control-plaintext');
 
@@ -1244,9 +1095,9 @@ $(function () {
 
     function botarMascaraInputs(){
         // inputs de valor total
-        $("#tabela_lancamento tbody tr td:eq(6) input:eq(0)").each(function () {
+        $("#tabela_lancamento tbody tr td:eq("+apareceLancamento.indexOf('valor_total')+") input:eq(0)").each(function () {
             
-            $('[data-mascara_validacao="monetario"]')
+            $('#tabela_lancamento tbody tr [data-mascara_validacao="monetario"]')
             .mask('#.##0,00', {
                 reverse: true
             })
@@ -1288,7 +1139,8 @@ $(function () {
             });
         });
 
-        $('[data-mascara_validacao="data"]')
+        $("#tabela_lancamento tbody tr td:eq("+apareceLancamento.indexOf('data_operacao')+") input:eq(0)").each(function () {
+            $('#tabela_lancamento tbody tr [data-mascara_validacao="data"]')
             .mask('00/00/0000')
             .datepicker()
             .on('change blur', function () {
@@ -1299,7 +1151,7 @@ $(function () {
                 
                 if (valor != '') {    
                 
-                    dtop = $this.closest('tr').children('td:eq(5)').children('input:eq(0)').val();
+                    dtop = $this.closest('tr').children('td:eq('+apareceLancamento.indexOf('data_operacao')+')').children('input:eq(0)').val();
                     dtop = dtop.split('/')[2] + dtop.split('/')[1] + dtop.split('/')[0];
                     dtop = parseInt(dtop);
 
@@ -1335,6 +1187,10 @@ $(function () {
                 }
                 
             });
+           
+        });
+
+        
     }
 
     function validaDat(valor) {
@@ -1369,27 +1225,27 @@ $(function () {
             $(obj).find('i').removeClass('fas fa-edit').addClass('fas fa-save');
             
             // input de valor total
-            $(obj).closest('tr').children('td:eq(6)').children('input:eq(0)')
+            $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('valor_total')+')').children('input:eq(0)')
                     .width(200)
                     .removeAttr('readonly').removeAttr('disabled')
                     .removeClass('form-control-plaintext').addClass('form-control').focus();
             
             // input de data de vencimento
-            $(obj).closest('tr').children('td:eq(7)').children('input:eq(0)')
+            $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('data_vencimento')+')').children('input:eq(0)')
                     .width(150)
                     .removeAttr('readonly').removeAttr('disabled')
                     .removeClass('form-control-plaintext').addClass('form-control');
             
             // input de observação
-            $(obj).closest('tr').children('td:eq(18)').children('input:eq(0)')
+            $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('observacao')+')').children('input:eq(0)')
                     .width(300)
                     .removeAttr('readonly').removeAttr('disabled')
                     .removeClass('form-control-plaintext').addClass('form-control');
 
         }else{ //botão de salvar
             
-            $(obj).closest('tr').children('td:eq(6)').children('input:eq(0)').blur();        
-            $(obj).closest('tr').children('td:eq(7)').children('input:eq(0)').blur();
+            $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('valor_total')+')').children('input:eq(0)').blur();        
+            $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('data_vencimento')+')').children('input:eq(0)').blur();
             
             // fazer a validação dos inputs se estão preenchidos
             botarMascaraInputs();
@@ -1398,23 +1254,23 @@ $(function () {
             $(obj).removeClass('btn-success').addClass('btn-primary');
             $(obj).find('i').removeClass('fas fa-save').addClass('fas fa-edit');
 
-            valor = $(obj).closest('tr').children('td:eq(6)').children('input:eq(0)').val();
+            valor = $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('valor_total')+')').children('input:eq(0)').val();
             
             // input de valor total
-            $(obj).closest('tr').children('td:eq(6)').children('input:eq(0)')
+            $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('valor_total')+')').children('input:eq(0)')
                     .attr('readonly','readonly').attr('disabled','disabled')
                     .removeClass('form-control').addClass('form-control-plaintext')
                     .attr('data-anterior', valor);
 
             // input de data vencimento
-            dtanteior = $(obj).closest('tr').children('td:eq(7)').children('input:eq(0)').val();       
-            $(obj).closest('tr').children('td:eq(7)').children('input:eq(0)')
+            dtanteior = $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('data_vencimento')+')').children('input:eq(0)').val();       
+            $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('data_vencimento')+')').children('input:eq(0)')
                     .attr('readonly','readonly').attr('disabled','disabled')
                     .removeClass('form-control').addClass('form-control-plaintext')
                     .attr('data-anterior', dtanteior);
             
             // input de observação
-            $(obj).closest('tr').children('td:eq(18)').children('input:eq(0)')
+            $(obj).closest('tr').children('td:eq('+apareceLancamento.indexOf('observacao')+')').children('input:eq(0)')
                     .attr('readonly','readonly').attr('disabled','disabled')
                     .removeClass('form-control').addClass('form-control-plaintext');
             

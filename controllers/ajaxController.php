@@ -89,9 +89,9 @@ class ajaxController extends controller{
   public function buscaAnaliticas(){
     $dados = array();
     $cg = new Contasgerenciais();
-    if(isset($_POST["q"]) && !empty($_POST["q"])){
-        $idsintetica = trim(addslashes($_POST["q"]));
-        $dados = $cg->pegarListaAnaliticas($idsintetica,$_SESSION["idEmpresaFuncionario"]);
+    if(isset($_POST["id"]) && !empty($_POST["id"])){
+        $id = trim(addslashes($_POST["id"]));
+        $dados = $cg->pegarListaAnaliticas($id);
     }
     echo json_encode($dados);
   }
