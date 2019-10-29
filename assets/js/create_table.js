@@ -75,7 +75,8 @@ $(function () {
                 
                 query1 += "`alteracoes` text NOT NULL COMMENT "+`'{"ver":"false","form":"true", "type":"hidden", "mascara_validacao":"false"}',`+" `situacao` varchar(8) NOT NULL COMMENT"+` '{"ver": "false", "form": "false"}') ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='{ "labelBrowser":"`+lblBr+`", "labelForm":"`+lblFm+`"}'`;
 
-                // console.log(query);
+                // console.log(query1);
+                
 
                 var query2 = '', query3 = '';
                 query2 = "ALTER TABLE `"+nomeTab+"` ADD PRIMARY KEY (`id`);";
@@ -85,6 +86,7 @@ $(function () {
 
                 if( query1 !== '' && query2 !== '' && query3 !== '' ){
                     // ajax para executar a query e criar a tabela
+                    
                     $.ajax({
                         url: baselink + '/ajax/criaTabela',
                         type: 'POST',
@@ -141,12 +143,12 @@ $(function () {
                     var nomecampo = '', aux = '', coment = '';
                     aux = $('#campos_tabela li:eq('+i+')').find('div.col-lg-11').text();
                     aux = aux.split('`');
-                    console.log('splitado', aux)
-                    console.log(aux[3])
+                    // console.log('splitado', aux)
+                    // console.log('aux3:  ', aux[3])
                     nomecampo = aux[1].trim().toLocaleLowerCase();
                     coment = aux[3];
-
-                    query1 += "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + aux[3]+ "',";
+                    // console.log('linha: ', "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + coment + "',")
+                    query1 += "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + coment + "',";
                 }
 
                 query1 = query1.slice(0, -1);
@@ -247,7 +249,9 @@ $(function () {
                 var linha = '', nomecampo = '', aux='';
                 aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
                 nomecampo = aux[1];
-                console.log(nomecampo);
+                console.log('nome campo:', nomecampo);
+                console.log('linha do DB: ', tabelasDB[$(this).find(':selected').val()][j] );
+
                 if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
                     linha = `<li class="ui-state-default">
                                 <div class="row" id="`+nomecampo+`">
@@ -437,7 +441,12 @@ function formPreenchido(){
         coment += ' DEFAULT NULL ';
     }
     
-    coment += " COMMENT `{ ";
+    if ( $('#tabelas').find(':selected').val() == '' || $('#tabelas').find(':selected').val() == undefined ){
+        coment += " COMMENT '{ ";
+    }else{
+        coment += " COMMENT `{ ";
+    }
+    
 
     if( $('#label').val() == '' ){
         $('#label').focus();
@@ -538,7 +547,12 @@ function formPreenchido(){
     });
 
     coment = coment.substr( 0 , coment.length - 2 );
-    coment += " }`";
+    if ( $('#tabelas').find(':selected').val() == '' || $('#tabelas').find(':selected').val() == undefined ){
+        coment += " }'";
+    }else{
+        coment += " }`";
+    }
+    
 
     var linha = '';
     if( ok == true ){    

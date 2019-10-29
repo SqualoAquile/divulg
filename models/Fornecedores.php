@@ -67,7 +67,7 @@ class Fornecedores extends model {
             $hist = explode("##", addslashes($request['alteracoes']));
 
             if(!empty($hist[1])){ 
-                $request['alteracoes'] = $hist[0]." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - ALTERAÇÃO >> ".$hist[1];     
+                $request['alteracoes'] = $hist[0]." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - ALTERAÇÃO >> ".$hist[1];
             }else{
                 $_SESSION["returnMessage"] = [
                     "mensagem" => "Houve uma falha, tente novamente! <br /> Registro sem histórico de alteração.",
@@ -144,4 +144,35 @@ class Fornecedores extends model {
             }
         }
     }
+
+    public function nomeClientes($termo){
+        // echo "aquiiii"; exit;
+        $array = array();
+        // 
+        $sql1 = "SELECT `id`, `nome` FROM `generico` WHERE situacao = 'ativo' AND nome LIKE '%$termo%' ORDER BY nome ASC";
+
+        $sql1 = self::db()->query($sql1);
+        $nomesAux = array();
+        $nomes = array();
+        if($sql1->rowCount() > 0){  
+            
+            $nomesAux = $sql1->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($nomesAux as $key => $value) {
+                $nomes[] = array(
+                    "id" => $value["id"],
+                    "label" => $value["nome"],
+                    "value" => $value["nome"]
+                );     
+            }
+
+        }
+
+        // fazer foreach e criar um array que cada elemento tenha id: label: e value:
+        // print_r($nomes); exit; 
+        $array = $nomes;
+
+       return $array;
+    }
+
 }

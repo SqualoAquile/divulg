@@ -10,27 +10,31 @@ class Desenvolvimento extends model {
         $this->shared = new Shared($this->table);
     }
     
-    public function buscaTabela($request) {
-        $existe = false;
-        if( !empty($request) ){
-            $nomeTabela = addslashes( $request['tabela'] );
-            $arrayAux = array();
+    // public function buscaTabela($request) {
+        
+    //     $existe = false;
 
-            $sql = "SHOW TABLES";
-            $sql = self::db()->query($sql);
+    //     echo 'lalalala'; exit;
+
+    //     if( !empty($request) ){
+    //         $nomeTabela = addslashes( $request['tabela'] );
+    //         $arrayAux = array();
+
+    //         $sql = "SHOW TABLES";
+    //         $sql = self::db()->query($sql);
             
-            if($sql->rowCount()>0){
-                $tabelas = $sql->fetchAll(PDO::FETCH_ASSOC);
+    //         if($sql->rowCount()>0){
+    //             $tabelas = $sql->fetchAll(PDO::FETCH_ASSOC);
                 
-                foreach ($tabelas as $key => $value) {
-                    if( trim(strtolower( $value['Tables_in_pnp'] )) == trim(strtolower( $nomeTabela ))  ){
-                        $existe = true;
-                    }
-                }
-            }
-        }
-        return $existe; 
-    }
+    //             foreach ($tabelas as $key => $value) {
+    //                 if( trim(strtolower( $value['Tables_in_pnp'] )) == trim(strtolower( $nomeTabela ))  ){
+    //                     $existe = true;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return $existe; 
+    // }
 
     public function buscaTabelasBD() {
         $sql = "SHOW TABLES";
@@ -79,6 +83,7 @@ class Desenvolvimento extends model {
             $segunda =  $request['query2'] ;
             $terceira = $request['query3'] ;
 
+            // print_r($primeira); exit;
             self::db()->query('START TRANSACTION;');
 
             self::db()->query($primeira);
@@ -146,6 +151,7 @@ class Desenvolvimento extends model {
             $nomeTabela = addslashes( $request['tabela'] );
             $primeira = $request['query1'] ;
             
+            // echo $primeira; exit;
             self::db()->query('START TRANSACTION;');
 
             self::db()->query($primeira);

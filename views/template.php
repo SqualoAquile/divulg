@@ -6,44 +6,44 @@
          "permissao" => "%",
          "link" => "/home"
       ],
-      // [
-      //    "text" => "Cadastros",
-      //    "icon" => "fas fa-save",
-      //    "permissao" => "%",
-      //    "link" => "/#",
-      //    "filhos" => [
-      //       [
-      //          "text" => "Vendedores",
-      //          "icon" => "fas fa-handshake",
-      //          "permissao" => "vendedores_ver",
-      //          "link" => "/vendedores"
-      //       ],
-      //       [
-      //          "text" => "Rotas",
-      //          "icon" => "fas fa-users",
-      //          "permissao" => "rotas_ver",
-      //          "link" => "/rotas"
-      //       ],
-      //       [
-      //          "text" => "Produtos",
-      //          "icon" => "fas fa-boxes",
-      //          "permissao" => "produtos_ver",
-      //          "link" => "/produtos"
-      //       ]
-      //    ]
-      // ],
-      // [
-      //    "text" => "Pedidos",
-      //    "icon" => "fas fa-bread-slice",
-      //    "permissao" => "pedidos_ver",
-      //    "link" => "/pedidos",
-      // ],
-      // [
-      //    "text" => "Produção",
-      //    "icon" => "fas fa-table",
-      //    "permissao" => "producao_ver",
-      //    "link" => "/producao",
-      // ],
+      [
+         "text" => "Cadastros",
+         "icon" => "fas fa-save",
+         "permissao" => "%",
+         "link" => "/#",
+         "filhos" => [
+            [
+               "text" => "Clientes",
+               "icon" => "fas fa-handshake",
+               "permissao" => "clientes_ver",
+               "link" => "/clientes"
+            ],
+            [
+               "text" => "Fornecedores",
+               "icon" => "fas fa-users",
+               "permissao" => "fornecedores_ver",
+               "link" => "/fornecedores"
+            ],
+            [
+               "text" => "Funcionários",
+               "icon" => "fas fa-users",
+               "permissao" => "funcionarios_ver",
+               "link" => "/funcionarios"
+            ],
+            [
+               "text" => "Serviços",
+               "icon" => "fas fa-users",
+               "permissao" => "servicos_ver",
+               "link" => "/servicos"
+            ],
+            [
+               "text" => "Produtos",
+               "icon" => "fas fa-boxes",
+               "permissao" => "produtos_ver",
+               "link" => "/produtos"
+            ]
+         ]
+      ],
       [
          "text" => "Financeiro",
          "icon" => "fas fa-money-bill-alt",
@@ -123,13 +123,13 @@
             ],            
          ]
          ]
-         // ,[
-         //    "text" => "Desenvolvimento",
-         //    "icon" => "fas fa-laptop-code",
-         //    "permissao" => "desenvolvimento_ver",
-         //    "link" => "/desenvolvimento"
-         //    // "filhos" => []
-         // ]
+         ,[
+            "text" => "Desenvolvimento",
+            "icon" => "fas fa-laptop-code",
+            "permissao" => "desenvolvimento_ver",
+            "link" => "/desenvolvimento"
+            // "filhos" => []
+         ]
 
    ];
 ?>
@@ -143,26 +143,12 @@
       <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
       <link rel="manifest" href="<?php echo BASE_URL?>/manifest.json">
-
-      <link rel="apple-touch-icon" sizes="57x57" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-57x57.png">
-      <link rel="apple-touch-icon" sizes="60x60" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-60x60.png">
-      <link rel="apple-touch-icon" sizes="72x72" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-72x72.png">
-      <link rel="apple-touch-icon" sizes="76x76" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-76x76.png">
-      <link rel="apple-touch-icon" sizes="114x114" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-114x114.png">
-      <link rel="apple-touch-icon" sizes="120x120" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-120x120.png">
-      <link rel="apple-touch-icon" sizes="144x144" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-144x144.png">
-      <link rel="apple-touch-icon" sizes="152x152" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-152x152.png">
-      <link rel="apple-touch-icon" sizes="180x180" href="<?php echo BASE_URL?>/assets/images/icons/apple-icon-180x180.png">
-      <link rel="icon" type="image/png" sizes="192x192"  href="<?php echo BASE_URL?>/assets/images/icons/android-icon-192x192.png">
-      <link rel="icon" type="image/png" sizes="32x32" href="<?php echo BASE_URL?>/assets/images/icons/favicon-32x32.png">
-      <link rel="icon" type="image/png" sizes="96x96" href="<?php echo BASE_URL?>/assets/images/icons/favicon-96x96.png">
-      <link rel="icon" type="image/png" sizes="16x16" href="<?php echo BASE_URL?>/assets/images/icons/favicon-16x16.png">
       
       <link rel="shortcut icon" href="<?php echo BASE_URL?>/favicon.ico" type="image/x-icon">
       <link rel="icon" href="<?php echo BASE_URL?>/favicon.ico" type="image/x-icon">
 
       <meta name="msapplication-TileColor" content="#212936">
-      <meta name="msapplication-TileImage" content="<?php echo BASE_URL?>/assets/images/icons/ms-icon-144x144.png">
+      <!-- <meta name="msapplication-TileImage" content="<?php echo BASE_URL?>/assets/images/icons/ms-icon-144x144.png"> -->
       <meta name="theme-color" content="#212936">
       
       <link href="<?php echo BASE_URL?>/assets/css/style.css" rel="stylesheet" type="text/css"/>

@@ -38,7 +38,7 @@ class Clientes extends model {
         $values = "'" . implode("','", array_values($this->shared->formataDadosParaBD($request))) . "'";
 
         $sql = "INSERT INTO " . $this->table . " (" . $keys . ") VALUES (" . $values . ")";
-        
+
         self::db()->query($sql);
 
         $erro = self::db()->errorInfo();

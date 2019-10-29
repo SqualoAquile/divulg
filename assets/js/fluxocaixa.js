@@ -16,8 +16,8 @@ for( var i=0; i < colunas.length; i++ ){
 
 $(function () {
     
-    console.log('colunas e form: ', apareceLancamento)
-    console.log('conta_analitica: ', apareceLancamento.indexOf('conta_analitica')) 
+    // console.log('colunas e form: ', apareceLancamento)
+    // console.log('conta_analitica: ', apareceLancamento.indexOf('conta_analitica')) 
 
     $('input[type=radio]').on('change', function(){
         var id_mov = '';
