@@ -21,6 +21,8 @@
   }</style>
 
 <script src="<?php echo BASE_URL?>/assets/js/vendor/jquery-ui.min.js" type="text/javascript"></script>
+<script src="<?php echo BASE_URL?>/assets/js/vendor/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="<?php echo BASE_URL?>/assets/js/vendor/bootstrap-datepicker.pt-BR.min.js" type="text/javascript"></script>
 <!-- Chama o arquivo específico do módulo, caso não exista,  -->
 <!-- Este javaScript serve para fazer verificações inerentes à cada módulo, por exemplo o radio de Clientes -->
 <script src="<?php echo BASE_URL?>/assets/js/<?php echo $modulo?>.js" type="text/javascript"></script>
@@ -264,10 +266,48 @@
         </div>
         <button id="main-form" class="d-none"></button>
     </form>
-    <!-- <div class="ui-widget">
-        <label for="tags">Tags: </label>
-        <input id="tags">
-    </div> -->
+    
+    <div class="card card-body col-lg-12 mb-3">
+        <div class="row">
+            <div class="col-lg-3 mb-2">
+                <label for="folhas" class="font-weight-bold" > Arquivos Folha Ponto</label>
+                <select id="folhas" name="folhas" class="form-control"
+                >
+                    <option value="" selected >Selecione</option>
+                    <?php foreach ($folhas as $key => $value):?> 
+                        <option value='<?php echo $value['hash']?>' ><?php echo ucfirst($value['titulo'])?></option> 
+                    <?php endforeach;?>      
+                </select>
+            </div>
+            <div class="col-lg-3 mb-2 d-flex align-items-end">
+                <a  id='btn_ver' href="" target="_blank" id="btn_form" 
+                    class="btn btn-info btn-block">Ver
+                </a>             
+            </div> 
+            <div class="col-lg-2 d-flex  offset-lg-2 align-items-end mb-2">
+                <div id="btn_excluir" class="btn btn-danger btn-block">Excluir</div>                
+            </div>
+            <div class="col-lg-2 d-flex align-items-end mb-2">
+                <div id="btn_add" class="btn btn-success btn-block">Adicionar</div>                
+            </div>
+        </div>
+    </div>
+    <div class="card card-body col-lg-12 mb-3">
+        <div class="row">
+            <div class="col-lg-3 form-group">
+                <label for="arq" class="font-weight-bold" > Selecionar Arquivo Folha Ponto</label>
+                <input  type="file" id="arq" name="arq" data-mascara_validacao = "false">            
+            </div>
+            <div class="col-lg-3 offset-lg-2 form-group">
+                <label for="mes" class="font-weight-bold" > Mês Referência</label>
+                <input  type="text" class="form-control" id="mes" name="mes" data-mascara_validacao = "data">            
+            </div>
+            <div class="col-lg-3 offset-lg-1 d-flex align-self-center">
+                <div id="btn_adicionar" class="btn btn-primary btn-block">Adicionar</div>                
+            </div>
+            
+        </div>
+    </div>
 
     <?php if($table) include "_contatos_form.php" ?>
     <div class="row">

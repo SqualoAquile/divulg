@@ -47,7 +47,9 @@ class core {
             if(method_exists($a,$currentAction)){
                 // echo 'O Controller existe e o método tbm! ';exit;
                 
-                if(strtolower($currentAction) == 'excluir' || strtolower($currentAction) == 'editar'){
+                if( strtolower($currentAction) == 'excluir' || 
+                    strtolower($currentAction) == 'editar'  || 
+                    strtolower($currentAction) == 'lerpdf'  ){
 
                     if(count($params) != 1 || empty($params[0])){
                         $_SESSION["returnMessage"] = [

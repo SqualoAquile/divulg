@@ -26,6 +26,67 @@ class Funcionarios extends model {
         return $array; 
     }
 
+    public function folhasFuncionario($id) {
+        $array = array();
+        $arrayAux = array();
+
+        $id = addslashes(trim($id));
+        $sql = "SELECT * FROM folhasponto WHERE id_funcionario ='$id' AND situacao = 'ativo'";      
+        $sql = self::db()->query($sql);
+
+        if($sql->rowCount()>0){
+            $array = $sql->fetchAll(PDO::FETCH_ASSOC);
+        }
+        
+        return $array; 
+    }
+
+    public function adicionaFolha($request) {
+        
+        // print_r($_FILES); 
+        // print_r($request); 
+        // print_r(BASE_URL); exit; 
+        $array = array();
+        $arrayAux = array();
+
+        $arquivo = $_FILES['arq'];
+        // print_r( $arquivo ); exit;
+
+        if( isset( $arquivo['tmp_name'] ) && empty( $arquivo['tmp_name'] ) == false ){
+
+            $nomearq = md5( time().rand(0,99) );
+            $destino = BASE_URL."/assets/pdf/".$nomearq.'.pdf';
+            
+            
+            if ( move_uploaded_file( $arquivo['tmp_name'] , $destino ) == false ){
+                echo 'arquivo não foi movido'; exit;
+                return false;
+            
+            }else{
+                // acerta o banco de dados
+                $id_funcionario = addslashes(trim($request['id_funcionario']));
+                $aux = explode("/" , $request['titulo']);
+                $titulo = $aux[1].'/'.$aux[2];
+
+                $ipcliente = $this->permissoes->pegaIPcliente();
+                $alteracoes = ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - UPLOAD";
+                
+                $sql = " INSERT INTO 'folhasponto' ('id', 'id_funcionario', 'titulo', 'hash', 'alteracoes', 'situacao') VALUES (DEFAULT, $id_funcionario , '$titulo' , '$nomearq','$alteracoes', 'ativo' ) ";
+                
+                echo $sql; exit;
+
+                $sql = self::db()->query($sql);
+
+            }
+
+        }else{
+            echo 'deu ruim'; exit;
+        }
+        
+        
+    }
+
+
     public function adicionar($request) {
         
         $ipcliente = $this->permissoes->pegaIPcliente();

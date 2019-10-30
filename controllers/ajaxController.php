@@ -157,6 +157,17 @@ class ajaxController extends controller{
     }
     echo json_encode($dados);
   }
+
+  public function adicionaArquivo(){
+    $dados = array();
+    $fn = new Funcionarios();
+    if(isset($_POST["titulo"]) && !empty($_POST["titulo"]) && isset($_FILES['arq']) ){
+      
+        $dados = $fn->adicionaFolha($_POST);
+    }
+    echo json_encode($dados);
+  }
+  
   
   public function ConfereEmailFuncionario(){
     $dados = array();

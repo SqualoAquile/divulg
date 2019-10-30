@@ -22,10 +22,12 @@ class funcionariosController extends controller{
         // verifica se tem permissão para ver esse módulo
         if(in_array($this->table . "_ver", $_SESSION["permissoesUsuario"]) == false){
             header("Location: " . BASE_URL . "/home"); 
+            exit;
         }
         // Verificar se está logado ou nao
         if($this->usuario->isLogged() == false){
             header("Location: " . BASE_URL . "/login"); 
+            exit;
         }
     }
      
@@ -34,6 +36,7 @@ class funcionariosController extends controller{
         // $file = BASE_URL . "/assets/pdf/";
         // $filename = "teste.pdf";
        
+        // header("Location: " . BASE_URL . "/login");
         // header('Content-type: application/pdf');
         // header('Content-Disposition: inline; filename="' . $filename . '"');
         // header('Content-Transfer-Encoding: binary');
@@ -48,12 +51,15 @@ class funcionariosController extends controller{
             $id = addslashes($_POST['id']);
             if(in_array($this->table . "_exc", $_SESSION["permissoesUsuario"]) == false || empty($id) || !isset($id)){
                 header("Location: " . BASE_URL . "/" . $this->table); 
+                exit;
             }
             if($this->shared->idAtivo($id) == false){
                 header("Location: " . BASE_URL . "/" . $this->table); 
+                exit;
             }
             $this->model->excluir($id);
             header("Location: " . BASE_URL . "/" . $this->table);
+            exit;
         }
         
         $dados['infoUser'] = $_SESSION;
@@ -67,6 +73,7 @@ class funcionariosController extends controller{
         
         if(in_array($this->table. "_add", $_SESSION["permissoesUsuario"]) == false){
             header("Location: " . BASE_URL . "/" . $this->table); 
+            exit;
         }
         
         $dados['infoUser'] = $_SESSION;
@@ -74,6 +81,8 @@ class funcionariosController extends controller{
         if(isset($_POST) && !empty($_POST)){ 
             $this->model->adicionar($_POST);
             header("Location: " . BASE_URL . "/" . $this->table);
+            exit;
+
         }else{ 
             $dados["colunas"] = $this->colunas;
             $dados["viewInfo"] = ["title" => "Adicionar"];
@@ -86,10 +95,12 @@ class funcionariosController extends controller{
 
         if(in_array($this->table . "_edt", $_SESSION["permissoesUsuario"]) == false || empty($id) || !isset($id)){
             header("Location: " . BASE_URL . "/" . $this->table); 
+            exit;
         }
 
         if($this->shared->idAtivo($id) == false){
             header("Location: " . BASE_URL . "/" . $this->table); 
+            exit;
         }
 
         $dados['infoUser'] = $_SESSION;
@@ -97,13 +108,39 @@ class funcionariosController extends controller{
         if(isset($_POST) && !empty($_POST)){
             $this->model->editar($id, $_POST);
             header("Location: " . BASE_URL . "/" . $this->table); 
+
         }else{
+
+            $dados['folhas'] = $this->model->folhasFuncionario($id);
+            // print_r($dados['folhas']); exit;
             $dados["item"] = $this->model->infoItem($id); 
             $dados["colunas"] = $this->colunas;
             $dados["viewInfo"] = ["title" => "Editar"];
             $dados["labelTabela"] = $this->shared->labelTabela();
             $this->loadTemplate($this->table . "-form", $dados); 
         }
+    }
+
+    public function lerpdf($nomearq) {
+
+        if(in_array($this->table . "_edt", $_SESSION["permissoesUsuario"]) == false || empty($nomearq) || !isset($nomearq)){
+            header("Location: " . BASE_URL . "/" . $this->table); 
+            exit;
+
+        }else{
+
+            $file = BASE_URL . "/assets/pdf/";
+            $filename = $nomearq.".pdf";
+           
+            header('Content-type: application/pdf');
+            // header('Content-Disposition: inline; filename="' . $filename . '"');
+            // header('Content-Transfer-Encoding: binary');
+            // header('Content-Length: ' . filesize($file.$filename));
+            // header('Accept-Ranges: bytes');
+            @readfile($file.$filename);
+            exit;   
+        }
+
     }
 }   
 ?>
