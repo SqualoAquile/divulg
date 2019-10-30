@@ -30,7 +30,19 @@ class funcionariosController extends controller{
     }
      
     public function index() {
+
+        // $file = BASE_URL . "/assets/pdf/";
+        // $filename = "teste.pdf";
+       
+        // header('Content-type: application/pdf');
+        // header('Content-Disposition: inline; filename="' . $filename . '"');
+        // header('Content-Transfer-Encoding: binary');
+        // header('Content-Length: ' . filesize($file.$filename));
+        // header('Accept-Ranges: bytes');
+        // @readfile($file.$filename);
         
+        // exit;
+
         if(isset($_POST) && !empty($_POST)){ 
             
             $id = addslashes($_POST['id']);
@@ -47,8 +59,8 @@ class funcionariosController extends controller{
         $dados['infoUser'] = $_SESSION;
         $dados["colunas"] = $this->colunas;
         $dados["labelTabela"] = $this->shared->labelTabela();
-        //print_r($dados["labelTabela"]); exit;
-        $this->loadTemplate($this->table, $dados);      
+
+        $this->loadTemplate($this->table, $dados);
     }
     
     public function adicionar() {
@@ -93,6 +105,5 @@ class funcionariosController extends controller{
             $this->loadTemplate($this->table . "-form", $dados); 
         }
     }
-    
 }   
 ?>
