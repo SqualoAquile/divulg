@@ -123,13 +123,13 @@
             ],            
          ]
          ]
-         ,[
-            "text" => "Desenvolvimento",
-            "icon" => "fas fa-laptop-code",
-            "permissao" => "desenvolvimento_ver",
-            "link" => "/desenvolvimento"
-            // "filhos" => []
-         ]
+         // ,[
+         //    "text" => "Desenvolvimento",
+         //    "icon" => "fas fa-laptop-code",
+         //    "permissao" => "desenvolvimento_ver",
+         //    "link" => "/desenvolvimento"
+         //    // "filhos" => []
+         // ]
 
    ];
 ?>
@@ -152,9 +152,9 @@
       <meta name="theme-color" content="#212936">
       
       <link href="<?php echo BASE_URL?>/assets/css/style.css" rel="stylesheet" type="text/css"/>
-      <link href="<?php echo BASE_URL?>/assets/css/vendor/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css"/>
       <link href="<?php echo BASE_URL?>/assets/css/vendor/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
-
+      <link href="<?php echo BASE_URL?>/assets/css/vendor/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css"/>
+      
       <style>
          .form-control.is-invalid ~ .invalid-feedback:nth-of-type(2) {
             display: none!important;

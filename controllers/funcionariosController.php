@@ -33,19 +33,6 @@ class funcionariosController extends controller{
      
     public function index() {
 
-        // $file = BASE_URL . "/assets/pdf/";
-        // $filename = "teste.pdf";
-       
-        // header("Location: " . BASE_URL . "/login");
-        // header('Content-type: application/pdf');
-        // header('Content-Disposition: inline; filename="' . $filename . '"');
-        // header('Content-Transfer-Encoding: binary');
-        // header('Content-Length: ' . filesize($file.$filename));
-        // header('Accept-Ranges: bytes');
-        // @readfile($file.$filename);
-        
-        // exit;
-
         if(isset($_POST) && !empty($_POST)){ 
             
             $id = addslashes($_POST['id']);
@@ -115,6 +102,7 @@ class funcionariosController extends controller{
             // print_r($dados['folhas']); exit;
             $dados["item"] = $this->model->infoItem($id); 
             $dados["colunas"] = $this->colunas;
+            // print_r($dados['colunas']); exit;
             $dados["viewInfo"] = ["title" => "Editar"];
             $dados["labelTabela"] = $this->shared->labelTabela();
             $this->loadTemplate($this->table . "-form", $dados); 
@@ -133,14 +121,30 @@ class funcionariosController extends controller{
             $filename = $nomearq.".pdf";
            
             header('Content-type: application/pdf');
-            // header('Content-Disposition: inline; filename="' . $filename . '"');
-            // header('Content-Transfer-Encoding: binary');
-            // header('Content-Length: ' . filesize($file.$filename));
-            // header('Accept-Ranges: bytes');
             @readfile($file.$filename);
             exit;   
         }
 
     }
+
+    public function excluirpdf($idfunc, $nomearq) {
+        // echo $idfunc;
+        // echo '<br><br>';
+        // echo $nomearq; exit;
+
+        if(in_array($this->table . "_exc", $_SESSION["permissoesUsuario"]) == false || empty($nomearq) || !isset($nomearq)){
+            echo 'aqui'; exit;
+            header("Location: " . BASE_URL . "/" . $this->table); 
+            exit;
+
+        }else{
+            
+            $this->model->excluirpdf($idfunc, $nomearq);
+            header("Location: " . BASE_URL . "/" . $this->table . "/editar/". $idfunc);
+            exit;
+        }
+             
+        }
+
 }   
 ?>

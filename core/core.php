@@ -49,8 +49,9 @@ class core {
                 
                 if( strtolower($currentAction) == 'excluir' || 
                     strtolower($currentAction) == 'editar'  || 
-                    strtolower($currentAction) == 'lerpdf'  ){
-
+                    strtolower($currentAction) == 'lerpdf'   ){
+                    
+                     
                     if(count($params) != 1 || empty($params[0])){
                         $_SESSION["returnMessage"] = [
                             "mensagem" => "Erro no endereço, você foi redirecionado para ".ucfirst(str_replace("Controller","",$currentController)),
@@ -63,6 +64,17 @@ class core {
                 if(strtolower($currentAction) == 'adicionar'){ 
 
                     if(count($params) != 0){
+                        $_SESSION["returnMessage"] = [
+                            "mensagem" => "Erro no endereço, você foi redirecionado para ".ucfirst(str_replace("Controller","",$currentController)),
+                            "class" => "alert-danger"
+                        ];
+                        $currentAction = "index";   
+                        $params = array();
+                    }
+                }
+                if(strtolower($currentAction) == 'excluirpdf'){ 
+
+                    if(count($params) != 2){
                         $_SESSION["returnMessage"] = [
                             "mensagem" => "Erro no endereço, você foi redirecionado para ".ucfirst(str_replace("Controller","",$currentController)),
                             "class" => "alert-danger"

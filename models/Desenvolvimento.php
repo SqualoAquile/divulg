@@ -37,6 +37,9 @@ class Desenvolvimento extends model {
     // }
 
     public function buscaTabelasBD() {
+        // busca quais as tabelas que existem no BD
+        // busca quais dessas tabelas possuem uma estrutura MVC na pasta
+
         $sql = "SHOW TABLES";
         $sql = self::db()->query($sql);
         
@@ -53,7 +56,7 @@ class Desenvolvimento extends model {
                 
                 $sql = self::db()->query("SHOW FULL COLUMNS FROM " . $tabAtual);
                 $result = $sql->fetchAll(PDO::FETCH_ASSOC);
-
+                 
                 foreach ($result as $chave => $valor ) {
                     // $tabelasDB[$tabAtual][] = [
                     //     'nomecampo' => $valor['Field'],
@@ -75,7 +78,55 @@ class Desenvolvimento extends model {
         }
     }
 
-    public function criaTabela($request) {
+    public function buscaInfoTabelasBD() {
+        
+        $sql = "SHOW TABLES";
+        $sql = self::db()->query($sql);
+        $tabelas = $sql->fetchAll();
+        // print_r($tabelas); exit;
+        $infosTabelas = [];
+        foreach ($tabelas as $key => $value) {
+            $sqlB = "SHOW TABLE STATUS WHERE Name='" . $value[0] . "'";
+            $sqlB = self::db()->query($sqlB);
+            $infoTab = $sqlB->fetchAll();
+            // print_r($infoTab[0]); exit;
+
+            $caminho = __FILE__;
+            // print_r($caminho); exit;
+            // models\Desenvolvimento.php = 26 caracteres
+            $dir = substr($caminho, 0, strlen($caminho) - 26);
+            $dircontroller = $dir.'controllers/'.$infoTab[0]['Name'].'Controller.php';
+            $dirmodel = $dir.'models/'.ucfirst($infoTab[0]['Name']).'.php';
+            $dirview = $dir.'views/'.$infoTab[0]['Name'].'.php';
+            $dirviewform = $dir.'views/'.$infoTab[0]['Name'].'-form.php';
+
+            // echo '<br>'.'controller'.'<br>'; print_r($dircontroller); echo '<br>';
+            // echo '<br>'.'model'.'<br>'; print_r($dirmodel); echo '<br>';
+            // echo '<br>'.'view'.'<br>'; print_r($dirview); echo '<br>';
+            // echo '<br>'.'view'.'<br>'; print_r($dirviewform); echo '<br>';
+            // exit;
+            
+            
+            if ( file_exists($dircontroller) && file_exists($dirmodel) && file_exists($dirview) && file_exists($dirviewform) ){
+                $infosTabelas[ $infoTab[0]['Name'] ] = array(
+                    'comentario' =>  json_decode( $infoTab[0]['Comment'] ),
+                    'mvc_arq' =>  true,
+                ); 
+                 
+            }else{
+                $infosTabelas[ $infoTab[0]['Name'] ] = array(
+                    'comentario' =>  json_decode( $infoTab[0]['Comment'] ),
+                    'mvc_arq' =>  false,
+                ); 
+            }
+         
+           
+        }
+        // print_r($infosTabelas); exit;
+        return $infosTabelas;
+    }
+    
+    public function criaTabelaOriginal($request) {
         
         if( !empty($request) ){
             $nomeTabela = addslashes( $request['tabela'] );
@@ -144,9 +195,133 @@ class Desenvolvimento extends model {
             }
         }
     }
+
+    public function criaTabela($request) {
+        
+        if( !empty($request) ){
+            $nomeTabela = addslashes( $request['tabela'] );
+            $primeira = $request['query1'] ;
+            $segunda =  $request['query2'] ;
+            $terceira = $request['query3'] ;
+
+            // print_r($primeira); exit;
+            self::db()->query('START TRANSACTION;');
+
+            self::db()->query($primeira);
+            $erro1 = self::db()->errorInfo();
+            
+            self::db()->query($segunda);
+            $erro2 = self::db()->errorInfo();
+
+            self::db()->query($terceira);
+            $erro3 = self::db()->errorInfo();
+
+            if( empty($erro1[2]) && empty($erro2[2]) && empty($erro3[2])  ){
+            
+                self::db()->query('COMMIT;');             
+                return true;
+            }else{
+
+                self::db()->query('ROLLBACK;');
+                return false;
+            }
+        }
+    }
+
+    public function excluiTabela($request) {
+        
+        if( !empty($request) ){
+            $nomeTabela = addslashes( $request['tabela'] );
+
+            $primeira = "DROP TABLE `".$nomeTabela."`";
+            // print_r($primeira); exit;
+            self::db()->query('START TRANSACTION;');
+
+            self::db()->query($primeira);
+            $erro1 = self::db()->errorInfo();
+            
+            if( empty($erro1[2]) ){
+            
+                self::db()->query('COMMIT;');             
+                return true;
+            }else{
+
+                self::db()->query('ROLLBACK;');
+                return false;
+            }
+        }
+    }
     
+    public function criaMVC($request) {
+        
+        if( !empty($request) ){
+            $nomeTabela = addslashes( $request['tabela'] );
+            
+            // inserir no permissoes-parâmetros
+             $sql = "INSERT INTO `permissoesparametros`(`id`, `nome`) VALUES (DEFAULT, '".$nomeTabela."_ver'), (DEFAULT, '".$nomeTabela."_add'), (DEFAULT, '".$nomeTabela."_edt'), (DEFAULT, '".$nomeTabela."_exc')";
+
+            self::db()->query('START TRANSACTION;');
+            self::db()->query($sql);
+
+            $erro1 = self::db()->errorInfo();
+    
+            if( empty($erro1[2]) ){
+                
+                self::db()->query('COMMIT;');
+
+                // Após criar no banco de dados os parametros de permissão
+                // código para criar os arquivos padrão do MVC
+
+                //////////////// CONTROLLER
+                $caminho = __FILE__;
+                $controllerGenerico = str_replace('\models\Desenvolvimento.php','\controllers\genericoController.php', $caminho);
+                $controllerNovo = str_replace('generico', $nomeTabela, $controllerGenerico);
+                copy($controllerGenerico, $controllerNovo);
+
+                $arq = file_get_contents($controllerNovo, FILE_TEXT);
+                $arq = str_replace( 'class genericoController extends', 'class '.$nomeTabela.'Controller extends' , $arq);
+                $arq = str_replace( 'protected $table = "generico"', 'protected $table = "'.$nomeTabela.'"', $arq); 
+                file_put_contents($controllerNovo, $arq, FILE_TEXT);
+
+                /////////////////// MODEL
+                $modelGenerico = str_replace('Desenvolvimento', 'Generico', $caminho);
+                $modelNovo = str_replace('Generico', ucfirst( $nomeTabela ), $modelGenerico);
+                copy($modelGenerico, $modelNovo);
+
+                $arq2 = file_get_contents($modelNovo, FILE_TEXT);
+                $arq2 = str_replace( 'class Generico extends', 'class '.ucfirst($nomeTabela).' extends' , $arq2);
+                $arq2 = str_replace( 'protected $table = "generico"', 'protected $table = "'.$nomeTabela.'"', $arq2); 
+                file_put_contents($modelNovo, $arq2, FILE_TEXT);
+
+                /////////////////// VIEW
+                $viewGenerico = str_replace('\models\Desenvolvimento.php','\views\generico.php', $caminho);
+                $viewNovo = str_replace('generico', $nomeTabela, $viewGenerico);
+                copy($viewGenerico, $viewNovo);
+
+                $viewFormGenerico = str_replace('\models\Desenvolvimento.php','\views\generico-form.php', $caminho);
+                $viewFormNovo = str_replace('generico-form', $nomeTabela.'-form', $viewFormGenerico);
+                copy($viewFormGenerico, $viewFormNovo);
+
+                /////////////////// JAVASCRIPT
+
+                /////////////////// RELATÓRIO
+
+                return true;
+            }else{
+
+                self::db()->query('ROLLBACK;');
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
     public function editaTabela($request) {
         
+        //CREATE TABLE new_table LIKE old_table; 
+        //INSERT new_table SELECT * FROM old_table;
+
         if( !empty($request) ){
             $nomeTabela = addslashes( $request['tabela'] );
             $primeira = $request['query1'] ;

@@ -6,6 +6,14 @@ $(function () {
     $( "#campos_tabela" ).sortable();
     $( "#campos_tabela" ).disableSelection();
 
+    $( "#campos_tabela" ).on( "sortchange", function( event, ui ) {
+       
+    } );
+    $( "#campos_tabela" ).on( "sortupdate", function( event, ui ) {
+       
+       acertaOrdemForm();
+    } );
+
     $( "input[type=checkbox]" ).checkboxradio({
       icon: false
     });
@@ -130,52 +138,71 @@ $(function () {
             alert('A tabela deve ter pelo menos um campo.')
             $('#nome_campo').focus();
             return false;
+        }else if( 
+            tabelasINFO[ $('#tabelas').find(':selected').val() ]['comentario']['labelBrowser'] == ''  || tabelasINFO[ $('#tabelas').find(':selected').val() ]['comentario']['labelBrowser'] == undefined  ||
+            tabelasINFO[ $('#tabelas').find(':selected').val() ]['comentario']['labelForm'] == ''  ||
+            tabelasINFO[ $('#tabelas').find(':selected').val() ]['comentario']['labelForm'] == undefined  ){
+            alert('A tabela Não tem os Labels, recriá-la.')
+            return false;
+        
         }else{
             if(confirm('Editar a Tabela?') === true){
+
+            }else{
+                return false;
+            }
+        }    
+        
                 // todos os requisitos estão OK para criar a tabela
                 var query1 = '', nomeTab = '', lblBr = '', lblFm = '';
                 nomeTab = $('#tabelas').find(':selected').val().trim().toLowerCase();
+                lblBr = tabelasINFO[ $('#tabelas').find(':selected').val() ]['comentario']['labelBrowser'].trim().toLowerCase();
+                lblFm =tabelasINFO[ $('#tabelas').find(':selected').val() ]['comentario']['labelForm'].trim().toLowerCase();
 
-                query1 = "ALTER TABLE `"+nomeTab+"` ";
+                query1 = "CREATE TABLE `"+nomeTab+"` ("+"`id`"+" int(11) NOT NULL COMMENT "+`'{"label": "Ações", "form": "false", "type": "acoes", "ver": "true"}',`;
                     
                 //for em todas as <li>
                 for(var i = 0; i < $('#campos_tabela li').length; i++ ){
-                    var nomecampo = '', aux = '', coment = '';
-                    aux = $('#campos_tabela li:eq('+i+')').find('div.col-lg-11').text();
-                    aux = aux.split('`');
-                    // console.log('splitado', aux)
-                    // console.log('aux3:  ', aux[3])
-                    nomecampo = aux[1].trim().toLocaleLowerCase();
-                    coment = aux[3];
-                    // console.log('linha: ', "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + coment + "',")
-                    query1 += "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + coment + "',";
+                    query1 += $('#campos_tabela li:eq('+i+')').find('div.col-lg-11').text() + ",";
                 }
+                
+                query1 += "`alteracoes` text NOT NULL COMMENT "+`'{"ver":"false","form":"true", "type":"hidden", "mascara_validacao":"false"}',`+" `situacao` varchar(8) NOT NULL COMMENT"+` '{"ver": "false", "form": "false"}') ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='{ "labelBrowser":"`+lblBr+`", "labelForm":"`+lblFm+`"}'`;
 
-                query1 = query1.slice(0, -1);
-                // console.log('query1:', query1);
-                // window.location.href = baselink + '/desenvolvimento';
+                // console.log(query1);
+                
 
-                if( query1 !== '' ){
+                var query2 = '', query3 = '';
+                query2 = "ALTER TABLE `"+nomeTab+"` ADD PRIMARY KEY (`id`);";
+                query3 = "ALTER TABLE `"+nomeTab+"` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT "+`'{"label": "Ações", "form": "false", "type": "acoes", "ver": "true"}'`;
+                // console.log(query2);
+                // console.log(query3); 
+
+                if( query1 !== '' && query2 !== '' && query3 !== '' ){
                     // ajax para executar a query e criar a tabela
+                    
                     $.ajax({
                         url: baselink + '/ajax/editaTabela',
                         type: 'POST',
                         data: {
-                            tabela: $('#tabelas').find(':selected').val(),
+                            tabela: nomeTab,
                             query1: query1,
+                            query2: query2,
+                            query3: query3
                         },
                         dataType: 'json',
                         success: function (data) {
                             if( data === true ){
                                 
+                                $('#nome_tabela, #lbl_brownser, #lbl_form, #form_tabela input, #form_tabela select').val('').blur();
+                                $('#campos_tabela li').remove();
+                                
                                 Toast({
-                                    message: 'Tabela editada com sucesso!',
+                                    message: 'Tabela criada com sucesso, Acerte o TEMPLATE!',
                                     class: 'alert-success'
                                 });
-                                window.location.href = baselink + '/desenvolvimento';
                             }else{
                                 Toast({
-                                    message: 'A tabela não foi editada!',
+                                    message: 'A tabela não foi criada!',
                                     class: 'alert-danger'
                                 });
                             }
@@ -186,6 +213,72 @@ $(function () {
             }
         }
     });
+
+    // $('#btn_editar').on('click', function(){
+        
+    //     if( $('#tabelas').find(':selected').val() == ''){
+    //         $('#tabelas').focus();
+    //         return false;
+    //     }else if( $('#campos_tabela li').length <= 0 ){
+    //         alert('A tabela deve ter pelo menos um campo.')
+    //         $('#nome_campo').focus();
+    //         return false;
+    //     }else{
+    //         if(confirm('Editar a Tabela?') === true){
+    //             // todos os requisitos estão OK para criar a tabela
+    //             var query1 = '', nomeTab = '', lblBr = '', lblFm = '';
+    //             nomeTab = $('#tabelas').find(':selected').val().trim().toLowerCase();
+
+    //             query1 = "ALTER TABLE `"+nomeTab+"` ";
+                    
+    //             //for em todas as <li>
+    //             for(var i = 0; i < $('#campos_tabela li').length; i++ ){
+    //                 var nomecampo = '', aux = '', coment = '';
+    //                 aux = $('#campos_tabela li:eq('+i+')').find('div.col-lg-11').text();
+    //                 aux = aux.split('`');
+    //                 // console.log('splitado', aux)
+    //                 // console.log('aux3:  ', aux[3])
+    //                 nomecampo = aux[1].trim().toLocaleLowerCase();
+    //                 coment = aux[3];
+    //                 // console.log('linha: ', "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + coment + "',")
+    //                 query1 += "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + coment + "',";
+    //             }
+
+    //             query1 = query1.slice(0, -1);
+    //             // console.log('query1:', query1);
+    //             // window.location.href = baselink + '/desenvolvimento';
+
+    //             if( query1 !== '' ){
+    //                 // ajax para executar a query e criar a tabela
+    //                 $.ajax({
+    //                     url: baselink + '/ajax/editaTabela',
+    //                     type: 'POST',
+    //                     data: {
+    //                         tabela: $('#tabelas').find(':selected').val(),
+    //                         query1: query1,
+    //                     },
+    //                     dataType: 'json',
+    //                     success: function (data) {
+    //                         if( data === true ){
+                                
+    //                             Toast({
+    //                                 message: 'Tabela editada com sucesso!',
+    //                                 class: 'alert-success'
+    //                             });
+    //                             window.location.href = baselink + '/desenvolvimento';
+    //                         }else{
+    //                             Toast({
+    //                                 message: 'A tabela não foi editada!',
+    //                                 class: 'alert-danger'
+    //                             });
+    //                         }
+    //                     }
+    //                 });
+    //                 // executar a função que cria o MVC dessa tabela
+    //             }        
+    //         }
+    //     }
+    // });
 
     // Adicionar Tabela
     $('#criarTabela').on('show.bs.collapse', function () {
@@ -237,7 +330,7 @@ $(function () {
 
     $('#tabelas').on('change', function(){
         // testa se tem algum elemento que NÃO tá preenchido
-        console.log( tabelasDB[$(this).find(':selected').val()] )
+        // console.log( tabelasDB[$(this).find(':selected').val()] )
         
         $('#btn_form').attr('href', baselink+'/'+$(this).find(':selected').val()+'/adicionar');
 
@@ -249,8 +342,8 @@ $(function () {
                 var linha = '', nomecampo = '', aux='';
                 aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
                 nomecampo = aux[1];
-                console.log('nome campo:', nomecampo);
-                console.log('linha do DB: ', tabelasDB[$(this).find(':selected').val()][j] );
+                // console.log('nome campo:', nomecampo);
+                // console.log('linha do DB: ', tabelasDB[$(this).find(':selected').val()][j] );
 
                 if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
                     linha = `<li class="ui-state-default">
@@ -273,7 +366,7 @@ $(function () {
                 var linha = '', nomecampo = '', aux='';
                 aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
                 nomecampo = aux[1];
-                console.log(nomecampo);
+                // console.log(nomecampo);
                 if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
                     linha = `<li class="ui-state-default" id='`+nomecampo+`'>
                                 <div class="row">
@@ -402,7 +495,21 @@ function edita(elemento){
     $( "#filtro_faixa" ).checkboxradio( "refresh" );
 
 };
-
+function acertaOrdemForm(){
+    if( $('#campos_tabela li').length > 0 ) {
+        for ( var pos = 0; pos < $('#campos_tabela li').length ; pos++ ){
+            var ordemform = '', text='';
+            
+            text = $('#campos_tabela li:eq('+pos+')').text();
+            ordemform =  text.split(',')[3];
+            
+            text = text.replace(ordemform, '"ordem_form":"'+parseInt(pos+1)+'"');
+            $('#campos_tabela li:eq('+pos+')').text(text);
+            
+        }
+    }
+    
+}
 // retorna a linha que deve ser incluida na tabela
 function formPreenchido(){
     var ok = true, coment = '';

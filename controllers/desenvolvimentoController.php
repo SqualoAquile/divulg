@@ -22,10 +22,12 @@ class desenvolvimentoController extends controller{
         // verifica se tem permissão para ver esse módulo
         if(in_array($this->table . "_ver", $_SESSION["permissoesUsuario"]) == false){
             header("Location: " . BASE_URL . "/home"); 
+            exit;
         }
         // Verificar se está logado ou nao
         if($this->usuario->isLogged() == false){
             header("Location: " . BASE_URL . "/login"); 
+            exit;
         }
     }
      
@@ -35,9 +37,11 @@ class desenvolvimentoController extends controller{
         $dados["labelTabela"] = "Desenvolvimento";
 
         $tabs = new Desenvolvimento();
-
+        
         $dados["tabelasDB"] = $tabs->buscaTabelasBD();
         // print_r($dados["tabelasDB"]); exit;
+        $dados["tabelasINFO"] = $tabs->buscaInfoTabelasBD();
+        // print_r($dados["tabelasINFO"]); exit;
 
         $this->loadTemplate($this->table, $dados);
     }

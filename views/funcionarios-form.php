@@ -267,7 +267,7 @@
         <button id="main-form" class="d-none"></button>
     </form>
     
-    <div class="card card-body col-lg-12 mb-3">
+    <div id="folhas_select" class="card card-body col-lg-12 mb-3">
         <div class="row">
             <div class="col-lg-3 mb-2">
                 <label for="folhas" class="font-weight-bold" > Arquivos Folha Ponto</label>
@@ -284,15 +284,17 @@
                     class="btn btn-info btn-block">Ver
                 </a>             
             </div> 
-            <div class="col-lg-2 d-flex  offset-lg-2 align-items-end mb-2">
-                <div id="btn_excluir" class="btn btn-danger btn-block">Excluir</div>                
+            <div class="col-lg-3 d-flex align-items-end mb-2">
+                <a  id='btn_excluir' href="" id="btn_form" 
+                    class="btn btn-danger btn-block">Excluir
+                </a> 
             </div>
-            <div class="col-lg-2 d-flex align-items-end mb-2">
+            <div class="col-lg-2 offset-lg-1 d-flex align-items-end mb-2">
                 <div id="btn_add" class="btn btn-success btn-block">Adicionar</div>                
             </div>
         </div>
     </div>
-    <div class="card card-body col-lg-12 mb-3">
+    <div id="folhas_select_add" class="card card-body col-lg-12 mb-3">
         <div class="row">
             <div class="col-lg-3 form-group">
                 <label for="arq" class="font-weight-bold" > Selecionar Arquivo Folha Ponto</label>

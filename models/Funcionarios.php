@@ -31,7 +31,7 @@ class Funcionarios extends model {
         $arrayAux = array();
 
         $id = addslashes(trim($id));
-        $sql = "SELECT * FROM folhasponto WHERE id_funcionario ='$id' AND situacao = 'ativo'";      
+        $sql = "SELECT * FROM folhasponto WHERE id_funcionario ='$id' AND situacao = 'ativo' ORDER BY id DESC";      
         $sql = self::db()->query($sql);
 
         if($sql->rowCount()>0){
@@ -55,32 +55,49 @@ class Funcionarios extends model {
         if( isset( $arquivo['tmp_name'] ) && empty( $arquivo['tmp_name'] ) == false ){
 
             $nomearq = md5( time().rand(0,99) );
-            $destino = BASE_URL."/assets/pdf/".$nomearq.'.pdf';
+            // $destino = BASE_URL."/assets/pdf/".$nomearq.'.pdf';
+            $destino = "C:/xampp/htdocs/divulg/assets/pdf/".$nomearq.'.pdf';
             
-            
+            // echo $destino; exit;
+
             if ( move_uploaded_file( $arquivo['tmp_name'] , $destino ) == false ){
-                echo 'arquivo não foi movido'; exit;
+                // echo 'arquivo não foi movido'; exit;
                 return false;
             
             }else{
                 // acerta o banco de dados
-                $id_funcionario = addslashes(trim($request['id_funcionario']));
+                
+                $id_funcionario = $request['id_funcionario'];
                 $aux = explode("/" , $request['titulo']);
                 $titulo = $aux[1].'/'.$aux[2];
 
                 $ipcliente = $this->permissoes->pegaIPcliente();
                 $alteracoes = ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - UPLOAD";
                 
-                $sql = " INSERT INTO 'folhasponto' ('id', 'id_funcionario', 'titulo', 'hash', 'alteracoes', 'situacao') VALUES (DEFAULT, $id_funcionario , '$titulo' , '$nomearq','$alteracoes', 'ativo' ) ";
+                $sql = " INSERT INTO folhasponto (id, id_funcionario, titulo, hash, alteracoes, situacao) VALUES (DEFAULT, '$id_funcionario' , '$titulo' , '$nomearq','$alteracoes', 'ativo' ) ";
                 
-                echo $sql; exit;
+                // echo $sql; exit;
 
-                $sql = self::db()->query($sql);
+                self::db()->query('START TRANSACTION;');
 
+                self::db()->query($sql);
+                $erro1 = self::db()->errorInfo();
+
+                if( empty($erro1[2]) ){
+                
+                    self::db()->query('COMMIT;');
+                    return true;
+
+                }else{
+
+                    self::db()->query('ROLLBACK;');
+                    unlink($destino);
+                    return false;
+                }
             }
 
         }else{
-            echo 'deu ruim'; exit;
+            return false;
         }
         
         
@@ -204,6 +221,54 @@ class Funcionarios extends model {
                 }
             }
         }
+    }
+
+    public function excluirpdf($idfunc, $nomearq){
+
+        $file = BASE_URL . "/assets/pdf/";
+        $filename = $nomearq.".pdf";
+        $destino = "C:/xampp/htdocs/divulg/assets/pdf/".$filename;
+        
+        // echo $destino; exit;
+        if( unlink($destino) ){
+            // acertar o banco
+            
+            $sql = "SELECT alteracoes FROM folhasponto WHERE id_funcionario = $idfunc AND hash = '$nomearq' AND situacao = 'ativo'";
+            
+            // echo $sql; exit;
+            $sql = self::db()->query($sql);
+            
+            if($sql->rowCount() > 0){  
+
+                $sql = $sql->fetch();
+                $palter = $sql["alteracoes"];
+                $ipcliente = $this->permissoes->pegaIPcliente();
+                $palter = $palter." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - EXCLUSÃO";
+
+                $sqlA = "UPDATE folhasponto SET alteracoes = '$palter', situacao = 'excluido' WHERE id_funcionario = $idfunc AND  hash = '$nomearq' ";
+                self::db()->query($sqlA);
+
+                $erro = self::db()->errorInfo();
+
+                if (empty($erro[2])){
+
+                    $_SESSION["returnMessage"] = [
+                        "mensagem" => "Arquivo deletado com sucesso!",
+                        "class" => "alert-success"
+                    ];
+                } else {
+                    $_SESSION["returnMessage"] = [
+                        "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
+                        "class" => "alert-danger"
+                    ];
+                }
+            }
+        }else{
+            $_SESSION["returnMessage"] = [
+                "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
+                "class" => "alert-danger"
+            ];
+        }  
     }
 
     public function nomeClientes($termo){

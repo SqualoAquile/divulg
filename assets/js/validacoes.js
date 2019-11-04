@@ -1144,15 +1144,22 @@ $(function () {
     var $requiredRadios = $(':radio[required]');
     $('[type=radio]').on('blur touchstart', function () {
         if ($requiredRadios.is(':checked')) {
-            $(this)
-                .parents('.form-radio')
-                .addClass('is-valid')
-                .removeClass('is-invalid');
-        } else {
-            $(this)
+            if(  $requiredRadios.attr('required') == 'required'  ){
+                $(this)
+                    .parents('.form-radio')
+                    .addClass('is-valid')
+                    .removeClass('is-invalid');
+            }else{
+
+                $(this)
                 .parents('.form-radio')
                 .addClass('is-invalid')
                 .removeClass('is-valid');
+            }        
+        } else {
+            $(this)
+                .parents('.form-radio')
+                .removeClass('is-valid is-invalid');
         }
     });
 

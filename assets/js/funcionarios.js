@@ -1,10 +1,44 @@
 $(function () {
-    
+    // acertar o datepicker para POrt-BR
+    // fazer o toggle do btn adicionar
+    // quando subir tem que mudar o BASE_URL dos controlers models e javascripts
+    // do diretório local para o servidor
+    // acertar o histórico do funcionário / deixar o histórico do funcionário de acordo com o historico do folhasponto (tabela)
+    $('#folhas_select_add').addClass('d-none');
+
+    if( $('#nome').attr('data-anterior') != '' ){ // estamos no editar
+        $('#folhas_select').removeClass('d-none');
+        
+    }else{ // estamos no adicionar
+        $('#folhas_select').addClass('d-none');
+        
+    }
+    $('#cidade').attr('data-unico', '');
+
+    $('#btn_add').on( 'click', function(){
+        console.log('apertei o btn_add')
+        if( $('#folhas_select_add').is(':visible') == true ){
+            $('#folhas_select_add').addClass('d-none');
+        }else{
+            $('#folhas_select_add').removeClass('d-none');
+        }
+    });
+
     $('#folhas').on('change', function(){
         // testa se tem algum elemento que NÃO tá preenchido
         // console.log( $('#folhas').find(':selected').val() )
-        $('#btn_ver').attr('href', baselink+'/funcionarios/lerpdf/'+$(this).find(':selected').val());
-
+        if( $(this).find(':selected').val() != '' ){
+           
+            $('#btn_ver').attr('href', baselink+'/funcionarios/lerpdf/'+$(this).find(':selected').val());
+            
+            aux = window.location.href;
+            aux = aux.split('/');
+            idfunc = aux[ aux.length - 1 ];
+            // console.log(baselink+'/funcionarios/excluirpdf/'+idfunc+'/'+$(this).find(':selected').val())
+            $('#btn_excluir').attr('href', baselink+'/funcionarios/excluirpdf/'+idfunc+'/'+$(this).find(':selected').val());
+           
+        }
+        
     });
 
     $('#btn_adicionar').on('click', function(){
@@ -47,10 +81,22 @@ $(function () {
                 contentType: false,
                 processData: false,
                 success: function( data ) {
-                    if(data == true){
-                        console.log('resposta:', data);
-                        // recarrega a página
+                    
+                    if(data == 'true' ){
+                        alert('PDF adicionado com sucesso!');
+                        // Toast({
+                        //     message: 'PDF adicionado com sucesso!',
+                        //     class: 'alert-success'
+                        // });
+
+                        document.location.reload(true);
+
                     }else{
+
+                        Toast({
+                            message: 'O PDF não foi adicionado! Tente Novamente.',
+                            class: 'alert-danger'
+                        });
 
                     }
                     
@@ -66,6 +112,20 @@ $(function () {
 
        
 
+    });
+
+    $('#btn_ver').on('click', function(){
+        if( $('#folhas').find(':selected').val() == '' ){
+            return false;
+        }
+    });
+    
+    $('#btn_excluir').on('click', function(){
+        if( $('#folhas').find(':selected').val() == '' ){
+            return false;
+        }else{
+
+        }
     });
     
     //  var $cpf_cnpj = $('[name=cpf_cnpj]');
