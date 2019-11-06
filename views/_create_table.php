@@ -97,7 +97,7 @@
                 </select>
             </div>
             <div class="col-lg d-flex align-self-end mb-2">
-                <div id="btn_editar" class="btn btn-success btn-block">Editar BD</div>                
+                <div id="btn_editarBD" class="btn btn-success btn-block">Editar BD</div>                
             </div>
             <div class="col-lg d-flex align-self-end mb-2">
                 <div id="btn_excluirBD" class="btn btn-danger btn-block">Excluir BD</div>                
@@ -109,7 +109,7 @@
                 <div id="btn_excluirMVC" class="btn btn-warning  btn-block">Excluir MVC</div>                
             </div>
             <div class="col-lg d-flex align-self-end mb-2">
-                <a href="<?php echo BASE_URL?>/modulo/adicionar" target="_blank" id="btn_form" class="btn btn-dark btn-block">Ver Form</a>             
+                <a href="<?php echo BASE_URL?>/modulo/adicionar" target="_blank" id="btn_verForm" class="btn btn-dark btn-block">Ver Form</a>             
             </div>
         </div>
     </div>
@@ -167,15 +167,11 @@
     </div>
 </div>
 
-
-
-
 <!-- Estrutura usada tanto para criação da tabela quanto para edição -->
 <div class="row mt-3">
     <!-- formulário das configurações dos campos da tabela -->
-    
         <div class="col-lg-12">
-            <div class="card card-body">
+            <div class="card card-body" >
                 <div class="row">
                     <div class="col-lg-12">
                         <div id="form_tabela" class="row">
@@ -191,7 +187,7 @@
                                     required
                                 >
                             </div>
-                            <div class="col-lg-1 mb-2">
+                            <div class="col-lg-2 mb-2">
                                 <label for="tipo_campo" class="font-weight-bold" >* Tipo BD</label>
                                 <select id="tipo_campo" 
                                         name="tipo_campo"
@@ -208,7 +204,7 @@
                                     <option value="text" >Text</option>                        
                                 </select>
                             </div>
-                            <div class="col-lg-1 mb-2">
+                            <div class="col-lg-2 mb-2">
                                 <label for="tamanho_campo" class="font-weight-bold" >* Tamanho</label>
                                 <input 
                                     type="text" 
@@ -315,7 +311,7 @@
                                     placeholder="relacional ( tabela, campo ) - radio( valor , label)"
                                 >
                             </div>
-                            <div class="col-lg-7 mb-3 align-self-end">
+                            <div class="col-lg-5 mb-3 align-self-end">
                                 <div class="widget row">
                                     <fieldset>
                                         <input name="ver" id="ver" value="ver" type="checkbox" class="form-check-input" />

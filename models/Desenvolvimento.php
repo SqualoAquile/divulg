@@ -10,31 +10,33 @@ class Desenvolvimento extends model {
         $this->shared = new Shared($this->table);
     }
     
-    // public function buscaTabela($request) {
+    public function buscaTabela($request) {
         
-    //     $existe = false;
+        $existe = false;
 
-    //     echo 'lalalala'; exit;
+        // echo 'lalalala'; exit;
 
-    //     if( !empty($request) ){
-    //         $nomeTabela = addslashes( $request['tabela'] );
-    //         $arrayAux = array();
+        if( !empty($request) ){
+            $nomeTabela = addslashes( $request['tabela'] );
+            $arrayAux = array();
 
-    //         $sql = "SHOW TABLES";
-    //         $sql = self::db()->query($sql);
+            $sql = "SHOW TABLES";
+            $sql = self::db()->query($sql);
             
-    //         if($sql->rowCount()>0){
-    //             $tabelas = $sql->fetchAll(PDO::FETCH_ASSOC);
-                
-    //             foreach ($tabelas as $key => $value) {
-    //                 if( trim(strtolower( $value['Tables_in_pnp'] )) == trim(strtolower( $nomeTabela ))  ){
-    //                     $existe = true;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return $existe; 
-    // }
+            if($sql->rowCount()>0){
+                $tabelas = $sql->fetchAll(PDO::FETCH_ASSOC);
+
+                $nome = $GLOBALS['config']['db'];
+
+                foreach ($tabelas as $key => $value) {
+                    if( trim(strtolower( $value['Tables_in_'.$nome] )) == trim(strtolower( $nomeTabela ))  ){
+                        $existe = true;
+                    }
+                }
+            }
+        }
+        return $existe; 
+    }
 
     public function buscaTabelasBD() {
         // busca quais as tabelas que existem no BD
@@ -65,10 +67,10 @@ class Desenvolvimento extends model {
                     //     'comentario' => json_decode($valor['Comment'])
                     // ];
                     if ($valor['Null'] == 'NO'){
-                        $tabelasDB[$tabAtual][] = "`".$valor['Field']."` ".$valor['Type']." NOT NULL COMMENT `".$valor['Comment']."`";
+                        $tabelasDB[$tabAtual][] = "`".$valor['Field']."` ".$valor['Type']." NOT NULL COMMENT '".$valor['Comment']."'";
                          
                     }else{
-                        $tabelasDB[$tabAtual][] = "`".$valor['Field']."` ".$valor['Type']." NULL COMMENT `".$valor['Comment']."`";
+                        $tabelasDB[$tabAtual][] = "`".$valor['Field']."` ".$valor['Type']." NULL COMMENT '".$valor['Comment']."'";
                     } 
                        
                 }
@@ -228,19 +230,82 @@ class Desenvolvimento extends model {
         }
     }
 
-    public function excluiTabela($request) {
-        
+    public function editaTabela($request) {
+        //CREATE TABLE new_table LIKE old_table; 
+        //INSERT new_table SELECT * FROM old_table;
+
         if( !empty($request) ){
             $nomeTabela = addslashes( $request['tabela'] );
+            
 
-            $primeira = "DROP TABLE `".$nomeTabela."`";
+            $nomeNovo = $nomeTabela.'_copia_'.date('dmY_his');
+
+            // echo $nomeNovo; exit;
+
+            $copiaTabela = "CREATE TABLE $nomeNovo LIKE $nomeTabela ";
+            $insereRegistros = "INSERT $nomeNovo SELECT * FROM $nomeTabela ";
+            $deletaTabela = "DROP TABLE `".$nomeTabela."`";;
+
+            // echo '<br>'.$copiaTabela.'<br>';
+            // echo '<br>'.$insereRegistros.'<br>';
+            // echo '<br>'.$deletaTabela.'<br>';
+            
+
+            $recriaTabela = $request['query1'] ;
+            $acertaPrimary =  $request['query2'] ;
+            $acertaAutoIncrem = $request['query3'] ;
+
+            // echo '<br>'.$primeira.'<br>';
+            // echo '<br>'.$segunda.'<br>';
+            // echo '<br>'.$terceira.'<br>';exit;
+
             // print_r($primeira); exit;
             self::db()->query('START TRANSACTION;');
 
-            self::db()->query($primeira);
+            self::db()->query($copiaTabela);
             $erro1 = self::db()->errorInfo();
+
+            self::db()->query($insereRegistros);
+            $erro2 = self::db()->errorInfo();
+
+            self::db()->query($deletaTabela);
+            $erro3 = self::db()->errorInfo();
+
+            self::db()->query($recriaTabela);
+            $erro4 = self::db()->errorInfo();
             
-            if( empty($erro1[2]) ){
+            self::db()->query($acertaPrimary);
+            $erro5 = self::db()->errorInfo();
+
+            self::db()->query($acertaAutoIncrem);
+            $erro6 = self::db()->errorInfo();
+
+            if( empty($erro1[2]) && empty($erro2[2]) && empty($erro3[2]) &&
+                empty($erro4[2]) && empty($erro5[2]) && empty($erro6[2])  ){
+            
+                self::db()->query('COMMIT;');             
+                return true;
+            }else{
+
+                self::db()->query('ROLLBACK;');
+                return false;
+            }
+        }
+    }
+
+    public function excluiTabela($request) {
+        if( !empty($request) ){
+            $nomeTabela = addslashes( $request['tabela'] );
+            
+            $deletaTabela = "DROP TABLE `".$nomeTabela."`";;
+
+            // print_r($deletaTabela); exit;
+            self::db()->query('START TRANSACTION;');
+
+            self::db()->query($deletaTabela);
+            $erro = self::db()->errorInfo();
+
+            if( empty($erro[2]) ){
             
                 self::db()->query('COMMIT;');             
                 return true;
@@ -252,7 +317,7 @@ class Desenvolvimento extends model {
         }
     }
     
-    public function criaMVC($request) {
+    public function criarMVC($request) {
         
         if( !empty($request) ){
             $nomeTabela = addslashes( $request['tabela'] );
@@ -317,10 +382,64 @@ class Desenvolvimento extends model {
         }
     }
 
-    public function editaTabela($request) {
+    public function excluirMVC($request) {
         
-        //CREATE TABLE new_table LIKE old_table; 
-        //INSERT new_table SELECT * FROM old_table;
+        if( !empty($request) ){
+            $nomeTabela = addslashes( $request['tabela'] );
+            // inserir no permissoes-parâmetros
+            $nome1 = $nomeTabela.'_ver';
+            $nome2 = $nomeTabela.'_add';
+            $nome3 = $nomeTabela.'_edt';
+            $nome4 = $nomeTabela.'_exc';
+
+            $sql =  "DELETE FROM permissoesparametros WHERE nome = '$nome1' OR nome = '$nome2' OR nome = '$nome3' OR nome = '$nome4' ";             
+
+            // echo $sql; exit;
+            self::db()->query('START TRANSACTION;');
+            self::db()->query($sql);
+
+            $erro1 = self::db()->errorInfo();
+    
+            if( empty($erro1[2]) ){
+                
+                self::db()->query('COMMIT;');
+
+                // Após excluir no banco de dados os parametros de permissão
+                // código para excluir os arquivos padrão do MVC
+
+                $caminho = __FILE__;
+                // models\Desenvolvimento.php = 26 caracteres
+                $base = substr($caminho, 0, intval( strlen($caminho) - 27 ) );
+        
+                $controller = $base.'/controllers/'.$nomeTabela.'Controller.php';
+                $model = $base.'/models/'.ucfirst($nomeTabela).'.php';
+                $viewbr = $base.'/views/'.$nomeTabela.'.php';
+                $viewfm = $base.'/views/'.$nomeTabela.'-form.php';
+                // echo '<br>'.$controller.'<br>';
+                // echo '<br>'.$model.'<br>';
+                // echo '<br>'.$viewbr.'<br>';
+                // echo '<br>'.$viewfm.'<br>';
+
+                if ( unlink($controller) == true && unlink($model) == true && 
+                        unlink($viewbr) == true && unlink($viewfm) == true ){
+                            return true;
+                }else{
+                    return false;
+                }
+
+            }else{
+
+                self::db()->query('ROLLBACK;');
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    public function editaTabelaAntigo($request) {
+        
+        
 
         if( !empty($request) ){
             $nomeTabela = addslashes( $request['tabela'] );
@@ -345,7 +464,7 @@ class Desenvolvimento extends model {
         }
     }
 
-
+    
 
     
 

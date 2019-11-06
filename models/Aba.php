@@ -1,7 +1,7 @@
 <?php
-class Abar extends model {
+class Aba extends model {
 
-    protected $table = "abar";
+    protected $table = "aba";
     protected $permissoes;
     protected $shared;
 

@@ -2,17 +2,18 @@
 
 $(function () {
 
-    // Inicializando a estrutura da tabela como Sortable e checkbox estilizado
-    $( "#campos_tabela" ).sortable();
-    $( "#campos_tabela" ).disableSelection();
+    $('#btn_editarBD').addClass('disabled');
+    $('#btn_excluirBD').addClass('disabled');
+    $('#btn_verForm').addClass('disabled');
+    $('#btn_criarMVC').addClass('disabled');
+    $('#btn_excluirMVC').addClass('disabled');
 
-    $( "#campos_tabela" ).on( "sortchange", function( event, ui ) {
-       
-    } );
-    $( "#campos_tabela" ).on( "sortupdate", function( event, ui ) {
-       
-       acertaOrdemForm();
-    } );
+    // Inicializando a estrutura da tabela como Sortable e checkbox estilizado
+    $( "#campos_tabela" ).sortable().disableSelection()
+    .on( "sortupdate", function( event, ui ) {   
+        acertaOrdemForm();
+    });
+
 
     $( "input[type=checkbox]" ).checkboxradio({
       icon: false
@@ -51,7 +52,7 @@ $(function () {
         }
     });
     /////////////////////////////
-    $('#btn_criar').on('click', function(){
+    $('#btn_criarBD').on('click', function(){
         
         if( $('#nome_tabela').val() == ''){
             $('#nome_tabela').focus();
@@ -115,6 +116,7 @@ $(function () {
                                     message: 'Tabela criada com sucesso, Acerte o TEMPLATE!',
                                     class: 'alert-success'
                                 });
+                                window.location.href = baselink + '/desenvolvimento';
                             }else{
                                 Toast({
                                     message: 'A tabela não foi criada!',
@@ -129,7 +131,7 @@ $(function () {
         }
     });
 
-    $('#btn_editar').on('click', function(){
+    $('#btn_editarBD').on('click', function(){
         
         if( $('#tabelas').find(':selected').val() == ''){
             $('#tabelas').focus();
@@ -148,11 +150,6 @@ $(function () {
         }else{
             if(confirm('Editar a Tabela?') === true){
 
-            }else{
-                return false;
-            }
-        }    
-        
                 // todos os requisitos estão OK para criar a tabela
                 var query1 = '', nomeTab = '', lblBr = '', lblFm = '';
                 nomeTab = $('#tabelas').find(':selected').val().trim().toLowerCase();
@@ -160,7 +157,7 @@ $(function () {
                 lblFm =tabelasINFO[ $('#tabelas').find(':selected').val() ]['comentario']['labelForm'].trim().toLowerCase();
 
                 query1 = "CREATE TABLE `"+nomeTab+"` ("+"`id`"+" int(11) NOT NULL COMMENT "+`'{"label": "Ações", "form": "false", "type": "acoes", "ver": "true"}',`;
-                    
+
                 //for em todas as <li>
                 for(var i = 0; i < $('#campos_tabela li').length; i++ ){
                     query1 += $('#campos_tabela li:eq('+i+')').find('div.col-lg-11').text() + ",";
@@ -168,15 +165,15 @@ $(function () {
                 
                 query1 += "`alteracoes` text NOT NULL COMMENT "+`'{"ver":"false","form":"true", "type":"hidden", "mascara_validacao":"false"}',`+" `situacao` varchar(8) NOT NULL COMMENT"+` '{"ver": "false", "form": "false"}') ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='{ "labelBrowser":"`+lblBr+`", "labelForm":"`+lblFm+`"}'`;
 
-                // console.log(query1);
-                
+                // console.log('query1:',query1);
 
                 var query2 = '', query3 = '';
                 query2 = "ALTER TABLE `"+nomeTab+"` ADD PRIMARY KEY (`id`);";
                 query3 = "ALTER TABLE `"+nomeTab+"` MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT "+`'{"label": "Ações", "form": "false", "type": "acoes", "ver": "true"}'`;
-                // console.log(query2);
-                // console.log(query3); 
-
+                
+                // console.log('query2:',query2);
+                // console.log('query3:',query3);
+                // return false;
                 if( query1 !== '' && query2 !== '' && query3 !== '' ){
                     // ajax para executar a query e criar a tabela
                     
@@ -192,17 +189,17 @@ $(function () {
                         dataType: 'json',
                         success: function (data) {
                             if( data === true ){
-                                
-                                $('#nome_tabela, #lbl_brownser, #lbl_form, #form_tabela input, #form_tabela select').val('').blur();
+                                $('#tabelas').val('');
                                 $('#campos_tabela li').remove();
                                 
                                 Toast({
-                                    message: 'Tabela criada com sucesso, Acerte o TEMPLATE!',
+                                    message: 'Tabela editada com sucesso, Acerte o TEMPLATE!',
                                     class: 'alert-success'
                                 });
+                                window.location.href = baselink + '/desenvolvimento';
                             }else{
                                 Toast({
-                                    message: 'A tabela não foi criada!',
+                                    message: 'A tabela não foi editada!',
                                     class: 'alert-danger'
                                 });
                             }
@@ -210,93 +207,150 @@ $(function () {
                     });
                     // executar a função que cria o MVC dessa tabela
                 }        
+
+            }else{
+                return false;
             }
-        }
-    });
-
-    // $('#btn_editar').on('click', function(){
+        }    
         
-    //     if( $('#tabelas').find(':selected').val() == ''){
-    //         $('#tabelas').focus();
-    //         return false;
-    //     }else if( $('#campos_tabela li').length <= 0 ){
-    //         alert('A tabela deve ter pelo menos um campo.')
-    //         $('#nome_campo').focus();
-    //         return false;
-    //     }else{
-    //         if(confirm('Editar a Tabela?') === true){
-    //             // todos os requisitos estão OK para criar a tabela
-    //             var query1 = '', nomeTab = '', lblBr = '', lblFm = '';
-    //             nomeTab = $('#tabelas').find(':selected').val().trim().toLowerCase();
-
-    //             query1 = "ALTER TABLE `"+nomeTab+"` ";
-                    
-    //             //for em todas as <li>
-    //             for(var i = 0; i < $('#campos_tabela li').length; i++ ){
-    //                 var nomecampo = '', aux = '', coment = '';
-    //                 aux = $('#campos_tabela li:eq('+i+')').find('div.col-lg-11').text();
-    //                 aux = aux.split('`');
-    //                 // console.log('splitado', aux)
-    //                 // console.log('aux3:  ', aux[3])
-    //                 nomecampo = aux[1].trim().toLocaleLowerCase();
-    //                 coment = aux[3];
-    //                 // console.log('linha: ', "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + coment + "',")
-    //                 query1 += "CHANGE `"+nomecampo+"` " + "`"+nomecampo+"` "+ aux[2] +" '" + coment + "',";
-    //             }
-
-    //             query1 = query1.slice(0, -1);
-    //             // console.log('query1:', query1);
-    //             // window.location.href = baselink + '/desenvolvimento';
-
-    //             if( query1 !== '' ){
-    //                 // ajax para executar a query e criar a tabela
-    //                 $.ajax({
-    //                     url: baselink + '/ajax/editaTabela',
-    //                     type: 'POST',
-    //                     data: {
-    //                         tabela: $('#tabelas').find(':selected').val(),
-    //                         query1: query1,
-    //                     },
-    //                     dataType: 'json',
-    //                     success: function (data) {
-    //                         if( data === true ){
-                                
-    //                             Toast({
-    //                                 message: 'Tabela editada com sucesso!',
-    //                                 class: 'alert-success'
-    //                             });
-    //                             window.location.href = baselink + '/desenvolvimento';
-    //                         }else{
-    //                             Toast({
-    //                                 message: 'A tabela não foi editada!',
-    //                                 class: 'alert-danger'
-    //                             });
-    //                         }
-    //                     }
-    //                 });
-    //                 // executar a função que cria o MVC dessa tabela
-    //             }        
-    //         }
-    //     }
-    // });
-
-    // Adicionar Tabela
-    $('#criarTabela').on('show.bs.collapse', function () {
-        $('#btn_incluir').show();
-        if( $('#editarTabela').is('show') ){
-            $('#editarTabela').hide();
-        }
-    });
-    $('#criarTabela').on('hide.bs.collapse', function () {
-        $('#btn_incluir').hide();
-        if( $('#editarTabela').is('show') ){
-            $('#editarTabela').hide();
-        }
     });
 
-    $('#myCollapsible').collapse({
-        toggle: false
-      })
+    $('#btn_excluirBD').on('click', function(){
+        
+        if( $('#tabelas').find(':selected').val() == ''){
+            $('#tabelas').focus();
+            return false;        
+        }else{
+            if(confirm('Excluir a Tabela?') === true){
+
+                // todos os requisitos estão OK para criar a tabela
+                var nomeTab = '';
+                nomeTab = $('#tabelas').find(':selected').val().trim().toLowerCase();
+                
+                // ajax para executar a query e excluir a tabela
+                
+                $.ajax({
+                    url: baselink + '/ajax/excluiTabela',
+                    type: 'POST',
+                    data: {
+                        tabela: nomeTab
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if( data === true ){
+                            $('#tabelas').val('');
+                            $('#campos_tabela li').remove();
+                            
+                            Toast({
+                                message: 'Tabela excluída com sucesso, Acerte o TEMPLATE!',
+                                class: 'alert-success'
+                            });
+                            window.location.href = baselink + '/desenvolvimento';
+                        }else{
+                            Toast({
+                                message: 'A tabela não foi excluída!',
+                                class: 'alert-danger'
+                            });
+                        }
+                    }
+                });
+            }else{
+                return false;
+            }
+        }    
+        
+    });
+
+    $('#btn_criarMVC').on('click', function(){
+        
+        if( $('#tabelas').find(':selected').val() == ''){
+            $('#tabelas').focus();
+            return false;        
+        }else{
+            if(confirm('Criar a Estrutura MVC dos Arquivos?') === true){
+                // todos os requisitos estão OK para criar a tabela
+                var nomeTab = '';
+                nomeTab = $('#tabelas').find(':selected').val().trim().toLowerCase();
+                
+                $.ajax({
+                    url: baselink + '/ajax/criarMVC',
+                    type: 'POST',
+                    data: {
+                        tabela: nomeTab
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if( data === true ){
+                            $('#tabelas').val('');
+                            $('#campos_tabela li').remove();
+                            
+                            Toast({
+                                message: 'MVC criado com sucesso, Acerte o TEMPLATE!',
+                                class: 'alert-success'
+                            });
+                            window.location.href = baselink + '/desenvolvimento';
+                        }else{
+                            Toast({
+                                message: 'MVC não foi criado!',
+                                class: 'alert-danger'
+                            });
+                        }
+                    }
+                });
+            }else{
+                return false;
+            }
+        }    
+    });
+
+    $('#btn_excluirMVC').on('click', function(){
+        
+        if( $('#tabelas').find(':selected').val() == ''){
+            $('#tabelas').focus();
+            return false;        
+        }else{
+            if(confirm('Criar a Estrutura MVC dos Arquivos?') === true){
+                // todos os requisitos estão OK para criar a tabela
+                var nomeTab = '';
+                nomeTab = $('#tabelas').find(':selected').val().trim().toLowerCase();
+                
+                $.ajax({
+                    url: baselink + '/ajax/excluirMVC',
+                    type: 'POST',
+                    data: {
+                        tabela: nomeTab
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if( data === true ){
+                            $('#tabelas').val('');
+                            $('#campos_tabela li').remove();
+                            
+                            Toast({
+                                message: 'MVC excluído com sucesso, Acerte o TEMPLATE!',
+                                class: 'alert-success'
+                            });
+                            window.location.href = baselink + '/desenvolvimento';
+                        }else{
+                            Toast({
+                                message: 'MVC não foi excluído!',
+                                class: 'alert-danger'
+                            });
+                        }
+                    }
+                });
+            }else{
+                return false;
+            }
+        }    
+    });
+
+    
+    $('.collapse').on('show.bs.collapse hide.bs.collapse', function () {
+        limparTabela();
+        limparCamposPrincipais();
+        limpaCamposForm();  
+    }); 
 
     $('#btn_incluir').on('click', function(){
         // testa se tem algum elemento que NÃO tá preenchido
@@ -331,58 +385,82 @@ $(function () {
     $('#tabelas').on('change', function(){
         // testa se tem algum elemento que NÃO tá preenchido
         // console.log( tabelasDB[$(this).find(':selected').val()] )
-        
-        $('#btn_form').attr('href', baselink+'/'+$(this).find(':selected').val()+'/adicionar');
+        if ( $(this).find(':selected').val() != '' ){
 
-        if( $('#campos_tabela li').length > 0 ){
-            // limpar os campos da tabela
-            $('#campos_tabela').find('li').remove();
-            // remontar a tabela
-            for(var j=0; j < tabelasDB[$(this).find(':selected').val()].length; j++){
-                var linha = '', nomecampo = '', aux='';
-                aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
-                nomecampo = aux[1];
-                // console.log('nome campo:', nomecampo);
-                // console.log('linha do DB: ', tabelasDB[$(this).find(':selected').val()][j] );
+            $('#btn_editarBD').removeClass('disabled');
+            $('#btn_excluirBD').removeClass('disabled');
 
-                if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
-                    linha = `<li class="ui-state-default">
-                                <div class="row" id="`+nomecampo+`">
-                                    <div class="col-lg-1">
-                                        <i class="btn btn-sm btn-primary fas fa-edit" onclick="edita(this)"></i>
-                                        <i class="btn btn-sm btn-danger fas fa-trash-alt" onclick="remove(this)"></i>
-                                    </div>
-                                    <div class="col-lg-11">`+tabelasDB[$(this).find(':selected').val()][j]+`</div>
-                                </div>
-                            </li>`;
-                    $('#campos_tabela').append(linha);
-                }
+            if ( tabelasINFO[ $(this).find(':selected').val() ]['mvc_arq'] == true ){
+                
+                $('#btn_criarMVC').addClass('disabled');
+                $('#btn_excluirMVC').removeClass('disabled');
+                $('#btn_verForm').removeClass('disabled');
+                $('#btn_verForm').attr('href', baselink+'/'+$(this).find(':selected').val()+'/adicionar');
+                
+            }else{
+                $('#btn_criarMVC').removeClass('disabled');
+                $('#btn_excluirMVC').addClass('disabled');
+                $('#btn_verForm').addClass('disabled');
+                $('#btn_verForm').attr('href','');
                 
             }
 
+            if( $('#campos_tabela li').length > 0 ){
+                // limpar os campos da tabela
+                $('#campos_tabela').find('li').remove();
+                // remontar a tabela
+                for(var j=0; j < tabelasDB[$(this).find(':selected').val()].length; j++){
+                    var linha = '', nomecampo = '', aux='';
+                    aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
+                    nomecampo = aux[1];
+                    // console.log('nome campo:', nomecampo);
+                    // console.log('linha do DB: ', tabelasDB[$(this).find(':selected').val()][j] );
+
+                    if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
+                        linha = `<li class="ui-state-default">
+                                    <div class="row" id="`+nomecampo+`">
+                                        <div class="col-lg-1">
+                                            <i class="btn btn-sm btn-primary fas fa-edit" onclick="edita(this)"></i>
+                                            <i class="btn btn-sm btn-danger fas fa-trash-alt" onclick="remove(this)"></i>
+                                        </div>
+                                        <div class="col-lg-11">`+tabelasDB[$(this).find(':selected').val()][j]+`</div>
+                                    </div>
+                                </li>`;
+                        $('#campos_tabela').append(linha);
+                    }
+                    
+                }
+
+            }else{
+                // montar a tabela
+                for(var j=0; j < tabelasDB[$(this).find(':selected').val()].length; j++){
+                    var linha = '', nomecampo = '', aux='';
+                    aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
+                    nomecampo = aux[1];
+                    // console.log(nomecampo);
+                    if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
+                        linha = `<li class="ui-state-default" id='`+nomecampo+`'>
+                                    <div class="row">
+                                        <div class="col-lg-1">
+                                            <i class="btn btn-sm btn-primary fas fa-edit" onclick="edita(this)"></i>
+                                            <i class="btn btn-sm btn-danger fas fa-trash-alt" onclick="remove(this)"></i>
+                                        </div>
+                                        <div class="col-lg-11">`+tabelasDB[$(this).find(':selected').val()][j]+`</div>
+                                    </div>
+                                </li>`;
+                        $('#campos_tabela').append(linha);
+                    }
+                    
+                }
+            }
         }else{
-            // montar a tabela
-            for(var j=0; j < tabelasDB[$(this).find(':selected').val()].length; j++){
-                var linha = '', nomecampo = '', aux='';
-                aux = tabelasDB[$(this).find(':selected').val()][j].split("`");
-                nomecampo = aux[1];
-                // console.log(nomecampo);
-                if(nomecampo != 'id' && nomecampo != 'alteracoes' && nomecampo != 'situacao'){
-                    linha = `<li class="ui-state-default" id='`+nomecampo+`'>
-                                <div class="row">
-                                    <div class="col-lg-1">
-                                        <i class="btn btn-sm btn-primary fas fa-edit" onclick="edita(this)"></i>
-                                        <i class="btn btn-sm btn-danger fas fa-trash-alt" onclick="remove(this)"></i>
-                                    </div>
-                                    <div class="col-lg-11">`+tabelasDB[$(this).find(':selected').val()][j]+`</div>
-                                </div>
-                            </li>`;
-                    $('#campos_tabela').append(linha);
-                }
-                
-            }
-            
-        }
+            $('#btn_editarBD').addClass('disabled');
+            $('#btn_excluirBD').addClass('disabled');
+            $('#btn_criarMVC').addClass('disabled');
+            $('#btn_excluirMVC').addClass('disabled');
+            $('#btn_verForm').addClass('disabled');
+            $('#btn_verForm').attr('href','');
+        }    
         
     });
 
@@ -397,32 +475,34 @@ function remove(elemento){
 function edita(elemento){
     
     var texto = $(elemento).closest('div').siblings().text();
+    console.log(texto)
     texto = texto.split('`');
-    // console.log(texto)
+    console.log(texto)
     var nome = '', tipo = '', tamanho = '', comentario = '', obrigatorio = '', aux1 = '', aux2 = '';
     nome = texto[1].trim();
-    aux1 = texto[2];
-    comentario = JSON.parse(texto[3]);
+    aux1 = texto[2].split("'");
+    console.log('aux1',aux1)
+    comentario = JSON.parse(aux1[1]);
 
-    if ( aux1.indexOf(')') > 0 ){
+    if ( aux1[0].indexOf(')') > 0 ){
 
-        aux2 = aux1.split('(');
+        aux2 = aux1[0].split('(');
         tipo = aux2[0].trim();
         tamanho = aux2[1].split(')')[0];
     
     }else{
 
         tamanho = '';
-        if( aux1.indexOf('NOT') > 0 ){
-            aux2 = aux1.split('NOT');
+        if( aux1[0].indexOf('NOT') > 0 ){
+            aux2 = aux1[0].split('NOT');
             tipo = aux2[0].trim();
         }else{
-            aux2 = aux1.split('NULL');
+            aux2 = aux1[0].split('NULL');
             tipo = aux2[0].trim();
         }
     }
 
-    if( aux1.indexOf('NOT') > 0 ){   
+    if( aux1[0].indexOf('NOT') > 0 ){   
         obrigatorio = true;     
     }else{
         obrigatorio = false;
@@ -464,7 +544,8 @@ function edita(elemento){
         $('#info_relacional').val('');
     }
     
-    
+    limpaCamposForm();
+
     $('#nome_campo').val(nome);
     $('#nome_campo').attr('data-anterior', nome);
     $('#tipo_campo').val(tipo);
@@ -478,38 +559,107 @@ function edita(elemento){
     $( "#obrigatorio" ).attr('checked', obrigatorio);
     $( "#obrigatorio" ).checkboxradio( "refresh" );
 
-    $( "#ver" ).attr('checked', JSON.parse( comentario['ver'] ));
-    $( "#ver" ).checkboxradio( "refresh" );
+    
+    if( JSON.parse( comentario['ver'] ) == true ){
+        if( $( "#ver" ).is(':checked') == false ){
+            $( "#ver" ).click();
+        }
+    }else{
+        if( $( "#ver" ).is(':checked') == true ){
+            $( "#ver" ).click();
+        }
+    }
+
+    if( JSON.parse( comentario['form'] ) == true ){
+        if( $( "#form" ).is(':checked') == false ){
+            $( "#form" ).click();
+        }
+    }else{
+        if( $( "#form" ).is(':checked') == true ){
+            $( "#form" ).click();
+        }
+    }
+
+    if( JSON.parse( obrigatorio ) == true ){
+        if( $( "#obrigatorio" ).is(':checked') == false ){
+            $( "#obrigatorio" ).click();
+        }
+    }else{
+        if( $( "#obrigatorio" ).is(':checked') == true ){
+            $( "#obrigatorio" ).click();
+        }
+    }
+
+    if( JSON.parse( comentario['unico'] ) == true ){
+        if( $( "#unico" ).is(':checked') == false ){
+            $( "#unico" ).click();
+        }
+    }else{
+        if( $( "#unico" ).is(':checked') == true ){
+            $( "#unico" ).click();
+        }
+    }
     
 
-    $( "#form" ).attr('checked', JSON.parse( comentario['form'] ));
-    $( "#form" ).checkboxradio( "refresh" );
+    if( JSON.parse( comentario['pode_zero'] ) == true ){
+        if( $( "#pode_zero" ).is(':checked') == false ){
+            $( "#pode_zero" ).click();
+        }
+    }else{
+        if( $( "#pode_zero" ).is(':checked') == true ){
+            $( "#pode_zero" ).click();
+        }
+    }
 
-    $( "#unico" ).attr('checked', JSON.parse( comentario['unico'] ));
-    $( "#unico" ).checkboxradio( "refresh" );
-
-    $( "#pode_zero" ).attr('checked', JSON.parse( comentario['pode_zero'] ));
-    $( "#pode_zero" ).checkboxradio( "refresh" );
-
-    $( "#filtro_faixa" ).attr('checked', JSON.parse( comentario['filtro_faixa'] ));
-    $( "#filtro_faixa" ).checkboxradio( "refresh" );
+    if( JSON.parse( comentario['filtro_faixa'] ) == true ){
+        if( $( "#filtro_faixa" ).is(':checked') == false ){
+            $( "#filtro_faixa" ).click();
+        }
+    }else{
+        if( $( "#filtro_faixa" ).is(':checked') == true ){
+            $( "#filtro_faixa" ).click();
+        }
+    }
 
 };
 function acertaOrdemForm(){
     if( $('#campos_tabela li').length > 0 ) {
         for ( var pos = 0; pos < $('#campos_tabela li').length ; pos++ ){
-            var ordemform = '', text='';
+            var ordemform = '', text='', aux ='', text2='';
             
-            text = $('#campos_tabela li:eq('+pos+')').text();
-            ordemform =  text.split(',')[3];
-            
-            text = text.replace(ordemform, '"ordem_form":"'+parseInt(pos+1)+'"');
-            $('#campos_tabela li:eq('+pos+')').text(text);
+            text = $('#campos_tabela li:eq('+pos+')').find('.col-lg-11').text();
+            aux =  text.split("'")[1];
+            ordemform = aux.split(',');
+            text2 = text.replace(ordemform[3], '"ordem_form":"'+parseInt(pos+1)+'"');
+            $('#campos_tabela li:eq('+pos+')').find('.col-lg-11').text(text2);
             
         }
     }
     
 }
+
+function limpaCamposForm(){
+    $('#form_tabela').find('input[type=text]').val('').removeClass('is-valid is-invalid');
+    $('#form_tabela').find('select').val('').removeClass('is-valid is-invalid');
+    
+    $('#form_tabela').find('input[type=checkbox]').each(function(){
+        if ( $(this).is(':checked') == true ){
+            $(this).click();
+        }
+    });    
+}
+
+function limparTabela(){
+    $('#campos_tabela li').remove();
+}
+function limparCamposPrincipais(){
+    $('#tabelas').val('').removeClass('is-valid is-invlaid');
+    $('#nome_tabela').val('').removeClass('is-valid is-invlaid');
+    $('#lbl_brownser').val('').removeClass('is-valid is-invlaid');
+    $('#lbl_form').val('').removeClass('is-valid is-invlaid');
+    // campos principais da criação da tabela parâmetros
+}
+
 // retorna a linha que deve ser incluida na tabela
 function formPreenchido(){
     var ok = true, coment = '';
@@ -548,11 +698,11 @@ function formPreenchido(){
         coment += ' DEFAULT NULL ';
     }
     
-    if ( $('#tabelas').find(':selected').val() == '' || $('#tabelas').find(':selected').val() == undefined ){
+    // if ( $('#tabelas').find(':selected').val() == '' || $('#tabelas').find(':selected').val() == undefined ){
         coment += " COMMENT '{ ";
-    }else{
-        coment += " COMMENT `{ ";
-    }
+    // }else{
+    //     coment += " COMMENT `{ ";
+    // }
     
 
     if( $('#label').val() == '' ){
@@ -654,11 +804,11 @@ function formPreenchido(){
     });
 
     coment = coment.substr( 0 , coment.length - 2 );
-    if ( $('#tabelas').find(':selected').val() == '' || $('#tabelas').find(':selected').val() == undefined ){
+    // if ( $('#tabelas').find(':selected').val() == '' || $('#tabelas').find(':selected').val() == undefined ){
         coment += " }'";
-    }else{
-        coment += " }`";
-    }
+    // }else{
+    //     coment += " }`";
+    // }
     
 
     var linha = '';

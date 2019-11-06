@@ -527,6 +527,27 @@ class ajaxController extends controller{
     }
   }
 
+  public function excluiTabela() {
+    if (isset($_POST) && !empty($_POST)) {
+      $p = new Desenvolvimento();
+      echo json_encode($p->excluiTabela($_POST));
+    }
+  }
+
+  public function criarMVC() {
+    if (isset($_POST) && !empty($_POST)) {
+      $p = new Desenvolvimento();
+      echo json_encode($p->criarMVC($_POST));
+    }
+  }
+
+  public function excluirMVC() {
+    if (isset($_POST) && !empty($_POST)) {
+      $p = new Desenvolvimento();
+      echo json_encode($p->excluirMVC($_POST));
+    }
+  }
+
   //
   // SERVICOS
   //
