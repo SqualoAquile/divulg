@@ -311,7 +311,7 @@
         </div>
     </div>
 
-    <?php if($table) include "_contatos_form.php" ?>
+    <?php if($table) include "_ferias_form.php" ?>
     <div class="row">
         <div class="col-xl-2 col-lg-3">
             <label for="main-form" class="btn btn-primary btn-block" tabindex="0">Salvar</label>

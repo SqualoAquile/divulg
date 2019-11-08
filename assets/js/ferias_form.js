@@ -1,6 +1,6 @@
 $(function () {
 
-    var $formContatos = $('table#contatos thead tr[role=form]'),
+    var $formContatos = $('table#ferias thead tr[role=form]'),
         lastInsertId = 0,
         botoes = `
             <td class="col-lg-2">
