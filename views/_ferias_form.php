@@ -1,5 +1,5 @@
 <script src="<?php echo BASE_URL;?>/assets/js/ferias_form.js" type="text/javascript"></script>
-<form id="contatos-form" autocomplete="off" novalidate>
+<form id="ferias-form" autocomplete="off" novalidate>
     <h3 class="mt-5 mb-4">Férias</h3>
     <div class="table-responsive mb-lg-5 mb-3">
         

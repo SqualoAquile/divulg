@@ -475,13 +475,13 @@ function remove(elemento){
 function edita(elemento){
     
     var texto = $(elemento).closest('div').siblings().text();
-    console.log(texto)
+    // console.log(texto)
     texto = texto.split('`');
-    console.log(texto)
+    // console.log(texto)
     var nome = '', tipo = '', tamanho = '', comentario = '', obrigatorio = '', aux1 = '', aux2 = '';
     nome = texto[1].trim();
     aux1 = texto[2].split("'");
-    console.log('aux1',aux1)
+    // console.log('aux1',aux1)
     comentario = JSON.parse(aux1[1]);
 
     if ( aux1[0].indexOf(')') > 0 ){
@@ -508,24 +508,27 @@ function edita(elemento){
         obrigatorio = false;
     }
      
-    console.log('nome', nome)
-    console.log('tipo', tipo)
-    console.log('tamanho', tamanho)
-    console.log('obrigatorio', obrigatorio)
+    // console.log('nome', nome)
+    // console.log('tipo', tipo)
+    // console.log('tamanho', tamanho)
+    // console.log('obrigatorio', obrigatorio)
     
-    console.log('comentario', comentario)
-    console.log('info relacional', JSON.stringify(comentario['info_relacional']) )
-    console.log('teste ver', JSON.parse(comentario['ver']))
-    console.log('label', )
+    // console.log('comentario', comentario)
+    // console.log('info relacional', JSON.stringify(comentario['info_relacional']) )
+    // console.log('teste ver', JSON.parse(comentario['ver']))
+    // console.log('label', )
     
+    var inforelacional = '';
+
     if ( ( comentario['type'] == 'relacional' || comentario['type'] == 'dropdown' ) && comentario['info_relacional'] != undefined && comentario['info_relacional'] != null  && comentario['info_relacional'] != '' ){
-        
-        $('#info_relacional').val("(" + comentario['info_relacional']['tabela'] + "," + comentario['info_relacional']['campo'] + ")" );
-        
+        // console.log('info_relacional ----- ', comentario['info_relacional']);
+        inforelacional =  "(" + comentario['info_relacional']['tabela'] + "," + comentario['info_relacional']['campo'] + ")";
+        // console.log('comentario transformado:', inforelacional );
     }else if ( comentario['options'] != undefined && comentario['options'] != null  && comentario['options'] != '' &&  comentario['type'] == 'radio' ){
 
         var conteudo =  JSON.stringify(comentario['options']);
-        // console.log(conteudo);
+        
+        // console.log('radioooooo:', conteudo);
         conteudo = conteudo.replace("{" , "(");
         conteudo = conteudo.replace("}" , ")");
         conteudo = conteudo.replace('"','').replace('"','').replace('"','').replace('"','');
@@ -535,9 +538,10 @@ function edita(elemento){
 
         conteudo = conteudo.replace(",",")(").replace(",",")(").replace(",",")(").replace(",",")(");
         conteudo = conteudo.replace(":",",").replace(":",",").replace(":",",").replace(":",",");
-        // console.log(conteudo);
+        // console.log('conteudo radio transform:', conteudo);
 
-        $('#info_relacional').val(conteudo);
+        inforelacional = conteudo;
+        $('#info_relacional').val(inforelacional);
 
     }else{
 
@@ -555,6 +559,7 @@ function edita(elemento){
     $('#column').val(comentario['column']);
     $('#ordem_form').val(comentario['ordem_form']);
     $('#type').val(comentario['type']);
+    $('#info_relacional').val(inforelacional);
 
     $( "#obrigatorio" ).attr('checked', obrigatorio);
     $( "#obrigatorio" ).checkboxradio( "refresh" );

@@ -1,9 +1,27 @@
 $(function () {
 
+    /////// INICIANDO OS CAMPOS NECESSÁRIOS
+    ///// campos da clt
+    $('input[name=tipo_func]').on('change', function(){
+        // console.log('valor', $(this).val())
+        if( $('#CLT').is(':checked') == true ){
+            verCamposClt();
+        }else{
+            esconderCamposClt();
+        }
+    });
+
+    $('#FREELANCER').attr('checked', 'checked');
+    $('#CLT').change().removeAttr('checked').change();
+    $('#info_estado_civil').attr('placeholder', 'escrceva o nome e cpf do cônjuge.');
+    $('#info_filhos').attr('placeholder', 'escrceva o nome e cpf de todos os filhos com até 14 anos.');
+    //// tabelas de férias
+    $('#ferias_dias').attr('readonly','readonly');
+
     var $formContatos = $('table#ferias thead tr[role=form]'),
         lastInsertId = 0,
         botoes = `
-            <td class="col-lg-2">
+            <td class="col-lg">
                 <a href="javascript:void(0)" class="editar-contato btn btn-sm btn-primary">
                     <i class="fas fa-edit"></i>
                 </a>
@@ -13,48 +31,18 @@ $(function () {
             </td>
         `;
 
+
     // [Editar] Esse trecho de código abaixo serve para quando a pagina for carregada
     // Ler o campo hidden e montar a tabela com os contatos daquele registro
     Contatos().forEach(function (contato) {
         Popula(contato);
     });
 
-    $('#contatos-form').submit(function (event) {
-        
-        event.preventDefault();
-
-        var $form = $(this)[0],
-            $fields = $($form).find('.form-control');
-
-        // Desfocar os campos para validar
-        $fields.trigger('blur');
-
-        if ($form.checkValidity() && !$($form).find('.is-invalid').length) {
-
-            Save();
-
-            // Limpar formulario
-            $form.reset();
-            $($form).removeClass('was-validated');
-            
-            $fields
-                .removeClass('is-valid is-invalid')
-                .removeAttr('data-anterior');
-
-            $fields.first().focus();
-        } else {
-            $($form).addClass('was-validated');
-
-            // Da foco no primeiro campo com erro
-            $($form).find('.is-invalid, :invalid').first().focus();
-        }
-    });
-
     // Retorna um array de contatos puxados do campo hidden com o atributo nome igual a contatos
     function Contatos() {
         var returnContatos = [];
-        if ($('[name=contatos]') && $('[name=contatos]').val().length) {
-            var contatos = $('[name=contatos]').val().split('[');
+        if ($('[name=ferias]') && $('[name=ferias]').val().length) {
+            var contatos = $('[name=ferias]').val().split('[');
             for (var i = 0; i < contatos.length; i++) {
                 var contato = contatos[i];
                 if (contato.length) {
@@ -84,13 +72,13 @@ $(function () {
             // Auto incrementa os ID's dos contatos
             lastInsertId += 1;
 
-            $('#contatos tbody')
+            $('#ferias tbody')
                 .prepend('<tr class="d-flex flex-column flex-lg-row" data-id="' + lastInsertId + '">' + tds + botoes + '</tr>');
 
         } else {
             // Caso tenha algum valor é por que o contato está sendo editado
 
-            $('#contatos tbody tr[data-id="' + currentId + '"]')
+            $('#ferias tbody tr[data-id="' + currentId + '"]')
                 .html(tds + botoes);
 
             // Seta o data id como undefined para novos contatos poderem ser cadastrados
@@ -104,19 +92,18 @@ $(function () {
     // Pega as linhas da tabela auxiliar e manipula o hidden de contatos
     function SetInput() {
         var content = '';
-        $('#contatos tbody tr').each(function () {
+        $('#ferias tbody tr').each(function () {
             var par = $(this).closest('tr');
-            var tdNome = par.children("td:nth-child(1)");
-            var tdSetor = par.children("td:nth-child(2)");
-            var tdTelefone = par.children("td:nth-child(3)");
-            var tdRamal = par.children("td:nth-child(4)");
-            var tdCelular = par.children("td:nth-child(5)");
-            var tdEmail = par.children("td:nth-child(6)");
+            var tdInicio = par.children("td:nth-child(1)");
+            var tdFim = par.children("td:nth-child(2)");
+            var tdRetorno = par.children("td:nth-child(3)");
+            var tdDias = par.children("td:nth-child(4)");
+            var tdPeriodo = par.children("td:nth-child(5)");
 
-            content += '[' + tdNome.text() + ' * ' + tdSetor.text() + ' * ' + tdTelefone.text() + ' * ' + tdRamal.text() + ' * ' + tdCelular.text() + ' * ' + tdEmail.text() + ']';
+            content += '[' + tdInicio.text() + ' * ' + tdFim.text() + ' * ' + tdRetorno.text() + ' * ' + tdDias.text() + ' * ' + tdPeriodo.text() + ']';
         });
 
-        $('[name=contatos]')
+        $('[name=ferias]')
             .val(content)
             .attr('data-anterior-aux', content)
             .change();
@@ -134,31 +121,29 @@ $(function () {
     function Edit() {
 
         // Volta para válido todos os botoões de editar e excluir
-        $('table#contatos tbody tr .btn')
+        $('table#ferias tbody tr .btn')
             .removeClass('disabled');
 
 
         var $par = $(this).closest('tr'),
-            tdNome = $par.children("td:nth-child(1)"),
-            tdSetor = $par.children("td:nth-child(2)"),
-            tdTelefone = $par.children("td:nth-child(3)"),
-            tdRamal = $par.children("td:nth-child(4)")
-            tdCelular = $par.children("td:nth-child(5)"),
-            tdEmail = $par.children("td:nth-child(6)");
+            tdInicio = $par.children("td:nth-child(1)"),
+            tdFim = $par.children("td:nth-child(2)"),
+            tdRetorno = $par.children("td:nth-child(3)"),
+            tdDias = $par.children("td:nth-child(4)")
+            tdPeriodo = $par.children("td:nth-child(5)"),
 
         // Desabilita ele mesmo e os botões irmãos de editar e excluir da linha atual
         $par
             .find('.btn')
             .addClass('disabled');
 
-        $('input[name=contato_nome]').val(tdNome.text()).attr('data-anterior', tdNome.text()).focus();
-        $('input[name=contato_setor]').val(tdSetor.text()).attr('data-anterior', tdSetor.text());
-        $('input[name=contato_telefone]').val(tdTelefone.text()).attr('data-anterior', tdTelefone.text());
-        $('input[name=contato_ramal]').val(tdRamal.text()).attr('data-anterior', tdRamal.text());
-        $('input[name=contato_celular]').val(tdCelular.text()).attr('data-anterior', tdCelular.text());
-        $('input[name=contato_email]').val(tdEmail.text()).attr('data-anterior', tdEmail.text());
+        $('input[name=ferias_inicio]').val(tdInicio.text()).attr('data-anterior', tdInicio.text()).focus();
+        $('input[name=ferias_fim]').val(tdFim.text()).attr('data-anterior', tdFim.text());
+        $('input[name=ferias_retorno]').val(tdRetorno.text()).attr('data-anterior', tdRetorno.text());
+        $('input[name=ferias_dias]').val(tdDias.text()).attr('data-anterior', tdDias.text());
+        $('input[name=ferias_periodo]').val(tdPeriodo.text()).attr('data-anterior', tdPeriodo.text());
 
-        $('table#contatos thead tr[role=form]')
+        $('table#ferias thead tr[role=form]')
             .attr('data-current-id', $par.attr('data-id'))
             .find('.is-valid, .is-invalid')
             .removeClass('is-valid is-invalid');
@@ -168,19 +153,49 @@ $(function () {
     function Save() {
 
         Popula([
-            $('input[name=contato_nome]').val(),
-            $('input[name=contato_setor]').val(),
-            $('input[name=contato_telefone]').val(),
-            $('input[name=contato_ramal]').val(),
-            $('input[name=contato_celular]').val(),
-            $('input[name=contato_email]').val()
+            $('input[name=ferias_inicio]').val(),
+            $('input[name=ferias_fim]').val(),
+            $('input[name=ferias_retorno]').val(),
+            $('input[name=ferias_dias]').val(),
+            $('input[name=ferias_periodo]').val()
         ]);
 
         SetInput();
     };
 
+    $('#ferias-form').submit(function (event) {
+        console.log('aqui');
+        event.preventDefault();
+
+        var $form = $(this)[0],
+            $fields = $($form).find('.form-control');
+
+        // Desfocar os campos para validar
+        $fields.trigger('blur');
+
+        if ($form.checkValidity() && !$($form).find('.is-invalid').length) {
+
+            Save();
+
+            // Limpar formulario
+            $form.reset();
+            $($form).removeClass('was-validated');
+            
+            $fields
+                .removeClass('is-valid is-invalid')
+                .removeAttr('data-anterior');
+
+            $fields.first().focus();
+        } else {
+            $($form).addClass('was-validated');
+
+            // Da foco no primeiro campo com erro
+            $($form).find('.is-invalid, :invalid').first().focus();
+        }
+    });
+
     // Validação se o nome já existe entre os contatos daquela tabela auxiliar
-    $('[name=contato_nome]').blur(function () {
+    $('[name=ferias_inicio]').blur(function () {
 
         var $this = $(this),
             contatos = Contatos(),
@@ -217,11 +232,85 @@ $(function () {
 
                         $this[0].setCustomValidity('invalid');
 
-                        $this.after('<div class="invalid-feedback">Já existe um contato com este nome</div>');
+                        $this.after('<div class="invalid-feedback">Já existe essa data de início.</div>');
                     }
                 }
             }
 
         }
     });
+
+    $('#ferias_inicio, #ferias_fim').on('change blur',function(){
+        var dtMaior = $('#ferias_fim');
+        var dtMenor = $('#ferias_inicio');
+        var dias = $('#ferias_dias');
+        var diascorridos = diferencaEntreDatas(dtMenor.val(), dtMaior.val() );
+
+        if( diascorridos != -1 ){
+            return dias.val(diascorridos);
+        }
+    });
 });
+
+function diferencaEntreDatas(dtMenor, dtMaior){
+
+    if (dtMenor != '' && dtMenor != undefined && dtMaior != '' && dtMaior != undefined){
+        var date1 = '', dt1aux = '', date2 = '', dt2aux = '';
+        // To set two dates to two variables
+        dt1aux = dtMenor.split('/');
+        dt1aux = dt1aux[1] + '/' + dt1aux[0] + '/' + dt1aux[2];
+        
+        dt2aux = dtMaior.split('/');
+        dt2aux = dt2aux[1] + '/' + dt2aux[0] + '/' + dt2aux[2];
+
+        var date1 = new Date(dt1aux); 
+        var date2 = new Date(dt2aux); 
+    
+        // To calculate the time difference of two dates 
+        var diferenca = date2.getTime() - date1.getTime(); 
+    
+        // To calculate the no. of days between two dates 
+        var diferencaEmDias = diferenca / (1000 * 3600 * 24); 
+    
+        //To display the final no. of days (result) 
+        return diferencaEmDias; 
+    }else{
+        return -1;
+    }
+    
+
+};
+
+function esconderCamposClt(){
+    var $camposCLT = [];
+        $camposCLT = [
+            $('#insalubridade'), $('#valor_insab'), $('#pis'), $('#ctps'), $('#serie'), $('#nro_ponto'), $('#naturalidade'), $('#nacionalidade'), $('#estado_civil'), $('#info_estado_civil'), $('#filhos'), $('#info_filhos')
+        ];
+        
+        $camposCLT.forEach(function(valor,chave){
+            valor
+                .val('')
+                .removeAttr('required')
+                .parent().parent()
+                .addClass('d-none')
+            // console.log(valor.attr('type'), valor.attr('name'))
+        });
+ }
+
+ function verCamposClt(){
+    var $camposCLT = [];
+        $camposCLT = [
+            $('#insalubridade'), $('#valor_insab'), $('#pis'), $('#ctps'), $('#serie'), $('#nro_ponto'), $('#naturalidade'), $('#nacionalidade'), $('#estado_civil'), $('#info_estado_civil'), $('#filhos'), $('#info_filhos')
+        ];
+        console.log($camposCLT);
+        
+        $camposCLT.forEach(function(valor,chave){
+            valor
+                .val('')
+                .removeClass('is-valid is-invalid')
+                .attr('required', 'required')
+                .parent().parent()
+                .removeClass('d-none');
+                // console.log(valor.attr('type'), valor.attr('name'))
+        });
+ }
