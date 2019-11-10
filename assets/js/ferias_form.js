@@ -1,23 +1,6 @@
 $(function () {
 
-    /////// INICIANDO OS CAMPOS NECESSÁRIOS
-    ///// campos da clt
-    $('input[name=tipo_func]').on('change', function(){
-        // console.log('valor', $(this).val())
-        if( $('#CLT').is(':checked') == true ){
-            verCamposClt();
-        }else{
-            esconderCamposClt();
-        }
-    });
-
-    $('#FREELANCER').attr('checked', 'checked');
-    $('#CLT').change().removeAttr('checked').change();
-    $('#info_estado_civil').attr('placeholder', 'escrceva o nome e cpf do cônjuge.');
-    $('#info_filhos').attr('placeholder', 'escrceva o nome e cpf de todos os filhos com até 14 anos.');
     //// tabelas de férias
-    $('#ferias_dias').attr('readonly','readonly');
-
     var $formContatos = $('table#ferias thead tr[role=form]'),
         lastInsertId = 0,
         botoes = `
@@ -281,36 +264,3 @@ function diferencaEntreDatas(dtMenor, dtMaior){
 
 };
 
-function esconderCamposClt(){
-    var $camposCLT = [];
-        $camposCLT = [
-            $('#insalubridade'), $('#valor_insab'), $('#pis'), $('#ctps'), $('#serie'), $('#nro_ponto'), $('#naturalidade'), $('#nacionalidade'), $('#estado_civil'), $('#info_estado_civil'), $('#filhos'), $('#info_filhos')
-        ];
-        
-        $camposCLT.forEach(function(valor,chave){
-            valor
-                .val('')
-                .removeAttr('required')
-                .parent().parent()
-                .addClass('d-none')
-            // console.log(valor.attr('type'), valor.attr('name'))
-        });
- }
-
- function verCamposClt(){
-    var $camposCLT = [];
-        $camposCLT = [
-            $('#insalubridade'), $('#valor_insab'), $('#pis'), $('#ctps'), $('#serie'), $('#nro_ponto'), $('#naturalidade'), $('#nacionalidade'), $('#estado_civil'), $('#info_estado_civil'), $('#filhos'), $('#info_filhos')
-        ];
-        console.log($camposCLT);
-        
-        $camposCLT.forEach(function(valor,chave){
-            valor
-                .val('')
-                .removeClass('is-valid is-invalid')
-                .attr('required', 'required')
-                .parent().parent()
-                .removeClass('d-none');
-                // console.log(valor.attr('type'), valor.attr('name'))
-        });
- }

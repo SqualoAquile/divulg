@@ -930,6 +930,188 @@ $(function () {
         })
         .change();
 
+    //
+    // Campo PIS/PASEP
+    //
+    $('[data-mascara_validacao="pis"]')
+        .mask('000.00000.00-0')
+        .on('blur touchstart keyup', function () {
+
+            var $this = $(this),
+                text_label = $this.siblings('label').find('span').text();
+
+            $this.removeClass('is-valid is-invalid');
+            $this.siblings('.invalid-feedback').remove();
+
+            if ($this.val()) {
+                if ($this.attr('data-anterior') != $this.val()) {
+                    if ($this.validationLength(14)) {
+                        // Valido
+                        if ($this.attr('data-unico')) {
+                            $this.unico(function (json) {
+                                if (!json.length) {
+                                    // Não existe, pode seguir
+
+                                    $this
+                                        .removeClass('is-invalid')
+                                        .addClass('is-valid');
+
+                                    $this[0].setCustomValidity('');
+
+                                } else {
+                                    // Já existe, erro
+
+                                    $this
+                                        .removeClass('is-valid')
+                                        .addClass('is-invalid');
+
+                                    $this[0].setCustomValidity('invalid');
+
+                                    $this.after('<div class="invalid-feedback">Este ' + text_label.toLowerCase() + ' já está sendo usado</div>');
+                                }
+                            });
+                        } else {
+                            $this
+                                .removeClass('is-invalid')
+                                .addClass('is-valid');
+
+                            $this[0].setCustomValidity('');
+                        }
+                    } else {
+                        // Inválido
+                        $this
+                            .removeClass('is-valid')
+                            .addClass('is-invalid');
+
+                        $this[0].setCustomValidity('invalid');
+
+                        $this.after('<div class="invalid-feedback">Preencha o campo no formato: 000.00000.00-0</div>');
+                    }
+                }
+            }
+        });
+    //
+    // Campo CTPS
+    //
+    $('[data-mascara_validacao="ctps"]')
+        .mask('0000000')
+        .on('blur touchstart keyup', function () {
+
+            var $this = $(this),
+                text_label = $this.siblings('label').find('span').text();
+
+            $this.removeClass('is-valid is-invalid');
+            $this.siblings('.invalid-feedback').remove();
+
+            if ($this.val()) {
+                if ($this.attr('data-anterior') != $this.val()) {
+                    if ($this.validationLength(7)) {
+                        // Valido
+                        if ($this.attr('data-unico')) {
+                            $this.unico(function (json) {
+                                if (!json.length) {
+                                    // Não existe, pode seguir
+
+                                    $this
+                                        .removeClass('is-invalid')
+                                        .addClass('is-valid');
+
+                                    $this[0].setCustomValidity('');
+
+                                } else {
+                                    // Já existe, erro
+
+                                    $this
+                                        .removeClass('is-valid')
+                                        .addClass('is-invalid');
+
+                                    $this[0].setCustomValidity('invalid');
+
+                                    $this.after('<div class="invalid-feedback">Este ' + text_label.toLowerCase() + ' já está sendo usado</div>');
+                                }
+                            });
+                        } else {
+                            $this
+                                .removeClass('is-invalid')
+                                .addClass('is-valid');
+
+                            $this[0].setCustomValidity('');
+                        }
+                    } else {
+                        // Inválido
+                        $this
+                            .removeClass('is-valid')
+                            .addClass('is-invalid');
+
+                        $this[0].setCustomValidity('invalid');
+
+                        $this.after('<div class="invalid-feedback">Preencha o campo no formato: 0000000</div>');
+                    }
+                }
+            }
+        });
+    //
+    // Campo Série da CLT
+    //
+    $('[data-mascara_validacao="clt_serie"]')
+        .mask('000-0')
+        .on('blur touchstart keyup', function () {
+
+            var $this = $(this),
+                text_label = $this.siblings('label').find('span').text();
+
+            $this.removeClass('is-valid is-invalid');
+            $this.siblings('.invalid-feedback').remove();
+
+            if ($this.val()) {
+                if ($this.attr('data-anterior') != $this.val()) {
+                    if ($this.validationLength(5)) {
+                        // Valido
+                        if ($this.attr('data-unico')) {
+                            $this.unico(function (json) {
+                                if (!json.length) {
+                                    // Não existe, pode seguir
+
+                                    $this
+                                        .removeClass('is-invalid')
+                                        .addClass('is-valid');
+
+                                    $this[0].setCustomValidity('');
+
+                                } else {
+                                    // Já existe, erro
+
+                                    $this
+                                        .removeClass('is-valid')
+                                        .addClass('is-invalid');
+
+                                    $this[0].setCustomValidity('invalid');
+
+                                    $this.after('<div class="invalid-feedback">Este ' + text_label.toLowerCase() + ' já está sendo usado</div>');
+                                }
+                            });
+                        } else {
+                            $this
+                                .removeClass('is-invalid')
+                                .addClass('is-valid');
+
+                            $this[0].setCustomValidity('');
+                        }
+                    } else {
+                        // Inválido
+                        $this
+                            .removeClass('is-valid')
+                            .addClass('is-invalid');
+
+                        $this[0].setCustomValidity('invalid');
+
+                        $this.after('<div class="invalid-feedback">Preencha o campo no formato: 000-0</div>');
+                    }
+                }
+            }
+        });
+    
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     ///                                                                     
     ///     INTERAÇÕES ENTRE OS ELEMENTOS, FUNCIONALIDADES, EVENTOS

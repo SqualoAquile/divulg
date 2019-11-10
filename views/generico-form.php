@@ -243,7 +243,7 @@
                                         class="form-control" 
                                         name="<?php echo lcfirst($value["Field"]) ?>" 
                                         value="<?php echo isset($item) && !empty($item) ? $item[$value["Field"]] : "" ?>"
-                                        data-unico="<?php echo array_key_exists("unico", $value["Comment"]) && $value["Comment"]["unico"]  == true ? "unico" : "" ?>"
+                                        data-unico="<?php echo ( array_key_exists("unico", $value["Comment"]) && $value["Comment"]["unico"]  == 'true' ) ? "unico" : "" ?>"
                                         data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
                                         id="<?php echo $value['Field'] ?>"
                                         <?php echo $value['Null'] == "NO" ? "required" : "" ?>

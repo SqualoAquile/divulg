@@ -74,7 +74,7 @@ class core {
                 }
                 if(strtolower($currentAction) == 'excluirpdf'){ 
 
-                    if(count($params) != 2){
+                    if(count($params) != 3){
                         $_SESSION["returnMessage"] = [
                             "mensagem" => "Erro no endereço, você foi redirecionado para ".ucfirst(str_replace("Controller","",$currentController)),
                             "class" => "alert-danger"

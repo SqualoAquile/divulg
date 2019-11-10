@@ -52,7 +52,6 @@ class funcionariosController extends controller{
         $dados['infoUser'] = $_SESSION;
         $dados["colunas"] = $this->colunas;
         $dados["labelTabela"] = $this->shared->labelTabela();
-
         $this->loadTemplate($this->table, $dados);
     }
     
@@ -127,7 +126,7 @@ class funcionariosController extends controller{
 
     }
 
-    public function excluirpdf($idfunc, $nomearq) {
+    public function excluirpdf($idfunc, $nomearq, $nomeVisivel) {
         // echo $idfunc;
         // echo '<br><br>';
         // echo $nomearq; exit;
@@ -139,7 +138,7 @@ class funcionariosController extends controller{
 
         }else{
             
-            $this->model->excluirpdf($idfunc, $nomearq);
+            $this->model->excluirpdf($idfunc, $nomearq, $nomeVisivel);
             header("Location: " . BASE_URL . "/" . $this->table . "/editar/". $idfunc);
             exit;
         }
