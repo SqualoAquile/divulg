@@ -1,3 +1,4 @@
+<!-- teste de ok -->
 <script src="<?php echo BASE_URL?>/assets/js/graficos.js" type="text/javascript"></script>
 
 <div class="collapse" id="collapseGraficos">
