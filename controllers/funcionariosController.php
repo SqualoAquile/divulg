@@ -132,7 +132,7 @@ class funcionariosController extends controller{
         // echo $nomearq; exit;
 
         if(in_array($this->table . "_exc", $_SESSION["permissoesUsuario"]) == false || empty($nomearq) || !isset($nomearq)){
-            echo 'aqui'; exit;
+            // echo 'aqui'; exit;
             header("Location: " . BASE_URL . "/" . $this->table); 
             exit;
 
