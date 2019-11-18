@@ -72,17 +72,17 @@ class core {
                         $params = array();
                     }
                 }
-                if(strtolower($currentAction) == 'excluirpdf'){ 
+                // if(strtolower($currentAction) == 'excluirpdf'){ 
 
-                    if(count($params) != 3){
-                        $_SESSION["returnMessage"] = [
-                            "mensagem" => "Erro no endereço, você foi redirecionado para ".ucfirst(str_replace("Controller","",$currentController)),
-                            "class" => "alert-danger"
-                        ];
-                        $currentAction = "index";   
-                        $params = array();
-                    }
-                }
+                //     if(count($params) != 3){
+                //         $_SESSION["returnMessage"] = [
+                //             "mensagem" => "Erro no endereço, você foi redirecionado para ".ucfirst(str_replace("Controller","",$currentController)),
+                //             "class" => "alert-danger"
+                //         ];
+                //         $currentAction = "index";   
+                //         $params = array();
+                //     }
+                // }
 
             }else{
                 //echo 'O Controller existe, mas o método NÂO!';exit;  

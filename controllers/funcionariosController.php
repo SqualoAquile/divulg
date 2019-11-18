@@ -126,24 +126,23 @@ class funcionariosController extends controller{
 
     }
 
-    public function excluirpdf($idfunc, $nomearq, $nomeVisivel) {
-        // echo $idfunc;
-        // echo '<br><br>';
-        // echo $nomearq; exit;
+    // public function excluirpdf($idfunc, $nomearq, $nomeVisivel) {
+    //     echo $idfunc;
+    //     echo '<br><br>';
+    //     echo $nomearq; exit;
 
-        if(in_array($this->table . "_exc", $_SESSION["permissoesUsuario"]) == false || empty($nomearq) || !isset($nomearq)){
-            // echo 'aqui'; exit;
-            header("Location: " . BASE_URL . "/" . $this->table); 
-            exit;
+    //     if(in_array($this->table . "_exc", $_SESSION["permissoesUsuario"]) == false || empty($nomearq) || !isset($nomearq)){
+    //         // echo 'aqui'; exit;
+    //         header("Location: " . BASE_URL . "/" . $this->table); 
+    //         exit;
 
-        }else{
+    //     }else{
             
-            $this->model->excluirpdf($idfunc, $nomearq, $nomeVisivel);
-            header("Location: " . BASE_URL . "/" . $this->table . "/editar/". $idfunc);
-            exit;
-        }
-             
-        }
+    //         $this->model->excluirpdf($idfunc, $nomearq, $nomeVisivel);
+    //         header("Location: " . BASE_URL . "/" . $this->table . "/editar/". $idfunc);
+    //         exit;
+    //     } 
+    // }
 
 }   
 ?>

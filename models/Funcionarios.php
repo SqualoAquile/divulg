@@ -135,69 +135,96 @@ class Funcionarios extends model {
         
     }
 
-    public function excluirpdf($idfunc, $nomearq, $nomeVisivel){
+    public function excluirpdf($idfunc, $nomearq, $nomeVisivel, $senha){
         
-        $caminho = __FILE__;
-        $base = substr($caminho, 0, intval( strlen($caminho) - 23 ) );
-        //models\Funcionarios.php = 23 caracteres
-        // print_r($base); exit;
+        // testa se a senha está correta
+         $senha = MD5($senha);
+         $sql = "SELECT valor FROM parametros WHERE parametro = 'senhaexclusao' AND situacao = 'ativo'";
+         $sql = self::db()->query($sql);
+         
+        if($sql->rowCount() > 0){  
 
-        $file = $base."/assets/pdf/";
-        $filename = $nomearq.".pdf";
-        // $destino = "C:/xampp/htdocs/divulg/assets/pdf/".$filename;
-        $destino = $file.$filename;
-        // $nomeVisivel = str_replace('-','/', $nomeVisivel);
-        // echo $nomeVisivel; exit;
-        // echo $destino; exit;
-        if( unlink($destino) ){
-            // acertar o banco
-            //////////////////////
-            //////////////////////
-            $id_funcionario = $idfunc;
-            $nomeVisivel = str_replace('-','/', $nomeVisivel);
-            // $aux = explode("/" , $request['titulo']);
-            // $titulo = $aux[1].'/'.$aux[2];
-            
-            //busca as informações de alterações do funcionário
-            $sqlA = "SELECT alteracoes FROM ". $this->table ." WHERE id = '$id_funcionario' AND situacao = 'ativo'";
-            
-            self::db()->query('START TRANSACTION;');
-            $sqlA = self::db()->query($sqlA);
-            $erroA = self::db()->errorInfo();
-
-            if( empty($erroA[2]) ){
+             $sql = $sql->fetch();
+             if( $sql['valor'] != $senha ){
+                return false;
+                exit;
+             }else{
+                $caminho = __FILE__;
+                $base = substr($caminho, 0, intval( strlen($caminho) - 23 ) );
+                //models\Funcionarios.php = 23 caracteres
+                // print_r($base); exit;
+                $file = $base."/assets/pdf/";
+                $filename = $nomearq.".pdf";
+                // $destino = "C:/xampp/htdocs/divulg/assets/pdf/".$filename;
+                $destino = $file.$filename;
+                // $nomeVisivel = str_replace('-','/', $nomeVisivel);
+                // echo $nomeVisivel; exit;
+                // echo $destino; exit;
+                if( unlink($destino) ){
+                    // acertar o banco
+                    //////////////////////
+                    //////////////////////
+                    $id_funcionario = $idfunc;
+                    $nomeVisivel = str_replace('-','/', $nomeVisivel);
+                    // $aux = explode("/" , $request['titulo']);
+                    // $titulo = $aux[1].'/'.$aux[2];
                     
-                if($sqlA->rowCount() > 0){  
-    
-                    $sqlA = $sqlA->fetch();
-                    $palter = $sqlA["alteracoes"];
-                    $ipcliente = $this->permissoes->pegaIPcliente();
-                    $palter = $palter." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - EXCLUSÃO DO ARQUIVO >> {NOME DO ARQUIVO $nomeVisivel"."o"." }";
+                    //busca as informações de alterações do funcionário
+                    $sqlA = "SELECT alteracoes FROM ". $this->table ." WHERE id = '$id_funcionario' AND situacao = 'ativo'";
                     
-                    // atualiza o histórico do funcionário
-                    $sqlB = "UPDATE ". $this->table ." SET alteracoes = '$palter' WHERE id = '$id_funcionario' ";
-                    self::db()->query($sqlB);   
-                    $erroB = self::db()->errorInfo();
-
-                    if( empty($erroB[2]) ){
-
-                            //atualiza a tabela folhas ponto que vai ter um histórico igual ao do funcionário
-                        $sql = "UPDATE folhasponto SET alteracoes = '$palter', situacao = 'excluido' WHERE id_funcionario = $idfunc AND  hash = '$nomearq' ";
-
-                        self::db()->query($sql);
-                        $erro1 = self::db()->errorInfo();
-
-                        if( empty($erro1[2]) ){
-                        
-                            self::db()->query('COMMIT;');
-                            $_SESSION["returnMessage"] = [
-                                "mensagem" => "Arquivo deletado com sucesso!",
-                                "class" => "alert-success"
-                            ];
-                            return true;
-
+                    self::db()->query('START TRANSACTION;');
+                    $sqlA = self::db()->query($sqlA);
+                    $erroA = self::db()->errorInfo();
+        
+                    if( empty($erroA[2]) ){
+                            
+                        if($sqlA->rowCount() > 0){  
+            
+                            $sqlA = $sqlA->fetch();
+                            $palter = $sqlA["alteracoes"];
+                            $ipcliente = $this->permissoes->pegaIPcliente();
+                            $palter = $palter." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - EXCLUSÃO DO ARQUIVO >> {NOME DO ARQUIVO $nomeVisivel"."o"." }";
+                            
+                            // atualiza o histórico do funcionário
+                            $sqlB = "UPDATE ". $this->table ." SET alteracoes = '$palter' WHERE id = '$id_funcionario' ";
+                            self::db()->query($sqlB);   
+                            $erroB = self::db()->errorInfo();
+        
+                            if( empty($erroB[2]) ){
+        
+                                    //atualiza a tabela folhas ponto que vai ter um histórico igual ao do funcionário
+                                $sql = "UPDATE folhasponto SET alteracoes = '$palter', situacao = 'excluido' WHERE id_funcionario = $idfunc AND  hash = '$nomearq' ";
+        
+                                self::db()->query($sql);
+                                $erro1 = self::db()->errorInfo();
+        
+                                if( empty($erro1[2]) ){
+                                
+                                    self::db()->query('COMMIT;');
+                                    $_SESSION["returnMessage"] = [
+                                        "mensagem" => "Arquivo deletado com sucesso!",
+                                        "class" => "alert-success"
+                                    ];
+                                    return true;
+        
+                                }else{
+        
+                                    self::db()->query('ROLLBACK;');
+                                    $_SESSION["returnMessage"] = [
+                                        "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
+                                        "class" => "alert-danger"
+                                    ];
+                                    return false;
+                                }
+                            }else{
+                                self::db()->query('ROLLBACK;');
+                                $_SESSION["returnMessage"] = [
+                                    "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
+                                    "class" => "alert-danger"
+                                ];
+                                return false;
+                            }
                         }else{
-
                             self::db()->query('ROLLBACK;');
                             $_SESSION["returnMessage"] = [
                                 "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
@@ -212,61 +239,22 @@ class Funcionarios extends model {
                             "class" => "alert-danger"
                         ];
                         return false;
-                    }
+                    }       
+                    
                 }else{
-                    self::db()->query('ROLLBACK;');
                     $_SESSION["returnMessage"] = [
                         "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
                         "class" => "alert-danger"
                     ];
                     return false;
-                }
-            }else{
-                self::db()->query('ROLLBACK;');
-                $_SESSION["returnMessage"] = [
-                    "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
-                    "class" => "alert-danger"
-                ];
-                return false;
-            }       
-            //////////////////////
-            /////////////////////
-            // $sql = "SELECT alteracoes FROM folhasponto WHERE id_funcionario = $idfunc AND hash = '$nomearq' AND situacao = 'ativo'";
-            
-            // // echo $sql; exit;
-            // $sql = self::db()->query($sql);
-            
-            // if($sql->rowCount() > 0){  
-
-            //     $sql = $sql->fetch();
-            //     $palter = $sql["alteracoes"];
-            //     $ipcliente = $this->permissoes->pegaIPcliente();
-            //     $palter = $palter." | ".ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - EXCLUSÃO";
-
-            //     $sqlA = "UPDATE folhasponto SET alteracoes = '$palter', situacao = 'excluido' WHERE id_funcionario = $idfunc AND  hash = '$nomearq' ";
-            //     self::db()->query($sqlA);
-
-            //     $erro = self::db()->errorInfo();
-
-            //     if (empty($erro[2])){
-
-            //         $_SESSION["returnMessage"] = [
-            //             "mensagem" => "Arquivo deletado com sucesso!",
-            //             "class" => "alert-success"
-            //         ];
-            //     } else {
-            //         $_SESSION["returnMessage"] = [
-            //             "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
-            //             "class" => "alert-danger"
-            //         ];
-            //     }
-            // }
+                }  
+             }
         }else{
-            $_SESSION["returnMessage"] = [
-                "mensagem" => "Houve uma falha, tente novamente! <br /> ".$erro[2],
-                "class" => "alert-danger"
-            ];
-        }  
+            return false;
+            exit;
+        }    
+
+        
     }
 
     public function adicionar($request) {

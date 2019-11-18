@@ -168,6 +168,19 @@ class ajaxController extends controller{
     echo json_encode($dados);
   }
   
+  public function excluirpdf(){
+    $dados = array();
+    $fn = new Funcionarios();
+    // echo 'aqui'; exit;
+    if( isset($_POST) && !empty($_POST) ){
+        $idfunc = $_POST['idfunc'];
+        $nomearq = $_POST['hash'];
+        $nomeVisivel = $_POST['nomearq'];
+        $senha = $_POST['senha'];
+        $dados = $fn->excluirpdf($idfunc, $nomearq, $nomeVisivel, $senha);
+    }
+    echo json_encode($dados);
+  }
   
   public function ConfereEmailFuncionario(){
     $dados = array();

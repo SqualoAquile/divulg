@@ -281,15 +281,18 @@
                     <?php endforeach;?>      
                 </select>
             </div>
-            <div class="col-lg-3 mb-2 d-flex align-items-end">
-                <a  id='btn_ver' href="" target="_blank" id="btn_form" 
-                    class="btn btn-info btn-block">Ver
-                </a>             
+            <div class="col-lg-1 mb-2 d-flex align-items-end">
+                <a  id='btn_ver' href="" target="_blank" class="btn btn-info btn-block">Ver</a>             
+            </div> 
+            <div class="col-lg-1 d-flex align-items-end mb-2">
+                <div  id='btn_excluir' class="btn btn-danger btn-block">Excluir </div> 
             </div> 
             <div class="col-lg-3 d-flex align-items-end mb-2">
-                <a  id='btn_excluir' href="" id="btn_form" 
-                    class="btn btn-danger btn-block">Excluir
-                </a> 
+                <input type="password" class="form-control" id="senha" />
+            </div>
+            <div class="col-lg-1 d-flex align-items-end mb-2">
+                <div id="olhar" class="btn btn-info"> <i class="fas fa-eye-slash"></i></div>
+                <div id="btn_exc" class="btn btn-danger ml-2"><i class="fas fa-trash"></i></div>
             </div>
             <div class="col-lg-2 offset-lg-1 d-flex align-items-end mb-2">
                 <div id="btn_add" class="btn btn-success btn-block">Adicionar</div>                
@@ -298,11 +301,11 @@
     </div>
     <div id="folhas_select_add" class="card card-body col-lg-12 mb-3">
         <div class="row">
-            <div class="col-lg-3 form-group">
+            <div class="col-lg-4 form-group">
                 <label for="arq" class="font-weight-bold" > Selecionar Arquivo Folha Ponto</label>
                 <input  type="file" id="arq" name="arq" data-mascara_validacao = "false">            
             </div>
-            <div class="col-lg-3 offset-lg-2 form-group">
+            <div class="col-lg-3 offset-lg-1 form-group">
                 <label for="mes" class="font-weight-bold" > Mês Referência</label>
                 <input  type="text" class="form-control" id="mes" name="mes" data-mascara_validacao = "data">            
             </div>
