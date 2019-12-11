@@ -1,5 +1,5 @@
 $(function () {
-
+    console.log('entrei aquiii')
     var $cpf_cnpj = $('[name=cpf_cnpj]');
 
     //
@@ -61,7 +61,7 @@ $(function () {
 
                     $dtNascimento
                         .parents('[class^=col-]')
-                        .hide();
+                        .show();
 
                 } else {
                     

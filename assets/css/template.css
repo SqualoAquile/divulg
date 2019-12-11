@@ -1,0 +1,44 @@
+/* Menu Horizontal */
+#nav, #divSair  {
+    background-color: #000 !important;
+    color: yellow !important;
+}
+
+.hamburger-inner, .hamburger-inner::before, .hamburger-inner::after, .hamburger.is-active .hamburger-inner, .hamburger.is-active .hamburger-inner::after {
+    background-color: yellow !important;
+}
+
+.navbar-brand , #navbarDropdown, #divSair > a{
+    color: yellow !important;
+}
+
+.navbar-brand:hover, #navbarDropdown:hover{
+    color: #FFF !important;
+}
+#divSair > a:hover{
+    color: #FFF !important;
+    background-color: #000;
+}
+
+/* menu Horizontal */
+
+#sidebar-wrapper {
+    background-color: #000 !important;
+}
+
+#sidebar-wrapper >ul>li.nav-item a.nav-link{
+    color: yellow !important;
+}
+
+#sidebar-wrapper >ul>li.nav-item:hover{
+    background-color: #635e5e;
+}
+
+#sidebar-wrapper >ul>li>ul> li.nav-item a.nav-link {
+    background-color: #000;
+    color: yellow !important;
+}
+
+#sidebar-wrapper >ul>li>ul> li.nav-item a.nav-link:hover{
+    background-color: #635e5e;
+}

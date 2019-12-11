@@ -154,6 +154,7 @@
       <link href="<?php echo BASE_URL?>/assets/css/style.css" rel="stylesheet" type="text/css"/>
       <link href="<?php echo BASE_URL?>/assets/css/vendor/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
       <link href="<?php echo BASE_URL?>/assets/css/vendor/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css"/>
+      <link href="<?php echo BASE_URL?>/assets/css/template.css" rel="stylesheet" type="text/css"/>
       
       <style>
          .form-control.is-invalid ~ .invalid-feedback:nth-of-type(2) {
@@ -218,8 +219,8 @@
                   <span><?php echo ucfirst($nome) ?></span>
                </a>
                <!-- div que aparece com o botão de sair -->
-               <div class="dropdown-menu text-truncate dropdown-menu-right position-absolute" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item text-danger" onclick="return confirm('Confirmar sua saída?')" href="<?php echo BASE_URL;?>/login/sair">Sair</a>
+               <div id="divSair" class="dropdown-menu text-truncate dropdown-menu-right position-absolute" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" onclick="return confirm('Confirmar sua saída?')" href="<?php echo BASE_URL;?>/login/sair">Sair</a>
                </div>
             </li>
          </ul>
