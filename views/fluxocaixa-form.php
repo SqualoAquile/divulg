@@ -24,8 +24,11 @@
     </div>
 
 <?php endif?>
-<header class="d-lg-flex align-items-center my-5">
-    <h1 class="display-4 m-0 text-capitalize font-weight-bold"><?php echo $viewInfo["title"]." ".ucfirst($labelTabela["labelForm"]); ?></h1>
+<header class="d-lg-flex justify-content-between my-5">
+    
+        <h1 class="display-4 m-0 text-capitalize font-weight-bold"><?php echo $viewInfo["title"]." ".ucfirst($labelTabela["labelForm"]); ?></h1>
+        <div class='btn btn-lg btn-info p-3 ' id='btn_info'> Informações</div>
+    
 </header>
 
 <?php $table = false ?>
@@ -378,3 +381,20 @@
     </div>
     <?php include "_historico.php" ?>
 </section>
+<!-- Modal -->
+<div class="modal fade modais-require" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="modalInfo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0 position-absolute w-100">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert text-center p-2 m-2">
+                   <?php echo $infoParametros['info_centro_custos']?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

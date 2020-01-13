@@ -23,6 +23,13 @@ require "_header_browser_filtros.php";
                     <i class="fas fa-trash-alt mr-2"></i>
                     <span>Excluir</span>
                 </button>
+                <textarea
+                    class="form-control my-2" 
+                    placeholder='Motivo da Exclusão'
+                    id="motivo_exclusao"
+                    data-mascara_validacao = "false"
+                    required
+                ></textarea>
                 <?php endif ?>
             </div>
             <div class="col-lg">    

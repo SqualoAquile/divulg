@@ -42,3 +42,12 @@
 #sidebar-wrapper >ul>li>ul> li.nav-item a.nav-link:hover{
     background-color: #635e5e;
 }
+
+/* Rodapé */
+footer {
+    background-color: #000 !important;
+    color: yellow   !important;
+}
+footer > div.text-muted , #contatoLeme {
+    color: yellow   !important;
+}

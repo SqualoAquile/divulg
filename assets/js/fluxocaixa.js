@@ -15,7 +15,11 @@ for( var i=0; i < colunas.length; i++ ){
 }
 
 $(function () {
+    $("#modalInfo").modal("hide");
     
+    $('#btn_info').on('click', function(){
+        $("#modalInfo").modal("show");
+    });
     // console.log('colunas e form: ', apareceLancamento)
     // console.log('conta_analitica: ', apareceLancamento.indexOf('conta_analitica')) 
 
@@ -24,8 +28,25 @@ $(function () {
         
         if( $('#Despesa').is(':checked') == true ){
             id_mov = 1;
+            
+            $("#nro_parcela").parent().parent().hide();
+            $("#nro_parcela").empty()
+                .val('')
+                .append('<option value="" selected  >Selecione</option>');
+            for (i = 1; i <= 60; i++) {
+                $("#nro_parcela").append('<option value="' + i + '">' + i + '</option>');
+            }
+            
         }else{
             id_mov = 2;
+            
+            $("#nro_parcela").parent().parent().hide();
+            $("#nro_parcela").empty()
+                .val('')
+                .append('<option value="" selected  >Selecione</option>');
+            for (i = 1; i <= 12; i++) {
+                $("#nro_parcela").append('<option value="' + i + '">' + i + '</option>');
+            }
         }
         // console.log(id_mov)
 
@@ -51,8 +72,14 @@ $(function () {
         });
     });
 
+    // não começar com o radio selecionado
+    $('input[type=radio]').attr('checked', false);
+    // pedido de não aparecer o número da NF
+    $('#nro_nf').parent().parent().hide();
+    $('#data_emissao_nf').parent().parent().hide();
+
     //só para teste de programação
-    $('#Receita').click();
+    // $('#Receita').click();
 
     $('#conta_analitica').empty().append('<option value="" selected  >Selecione</option>');
 
@@ -81,13 +108,15 @@ $(function () {
     $("#dia_venc").parent().parent().hide();
     $("#custo_financ").parent().parent().hide();
 
+
+    
     $("#nro_parcela").parent().parent().hide();
-    $("#nro_parcela").empty()
-        .val('')
-        .append('<option value="" selected  >Selecione</option>');
-    for (i = 1; i <= 12; i++) {
-        $("#nro_parcela").append('<option value="' + i + '">' + i + '</option>');
-    }
+    // $("#nro_parcela").empty()
+    //     .val('')
+    //     .append('<option value="" selected  >Selecione</option>');
+    // for (i = 1; i <= 12; i++) {
+    //     $("#nro_parcela").append('<option value="' + i + '">' + i + '</option>');
+    // }
 
     $("#cond_pgto").attr("disabled", "disabled");
 
@@ -569,6 +598,10 @@ $(function () {
 
     function confirmaPreenchimento() {
         // testa se o preenchimento dos campos necessários está ok
+        if( $("#Receita").is(':checked') == false && $("#Despesa").is(':checked') == false ){
+            $("input[type=radio]").focus();
+            return;
+        }
             // if( $("#conta_sintetica").find(':selected').val() == "" ){
             //     $("#conta_sintetica").focus();
             //     return;

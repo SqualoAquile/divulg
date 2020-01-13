@@ -83,11 +83,14 @@ class Fluxocaixa extends model {
     public function excluirChecados($request) {
 
         $checados = $request["checados"];
-        
+        $motivo = addslashes( $request['motivo'] );
+
+        // print_r($request); exit;
         if (!empty($checados)) {
             
             $ipcliente = $this->permissoes->pegaIPcliente();
-            $alteracoes = " | " . ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - EXCLUSÃO";
+            $alteracoes = " | " . ucwords($_SESSION["nomeUsuario"])." - $ipcliente - ".date('d/m/Y H:i:s')." - EXCLUSÃO ( ".$motivo." )";
+            // print_r($alteracoes); exit;
 
             $idImploded = implode(",", $checados);
 

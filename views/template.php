@@ -287,9 +287,9 @@
             </div>
          </main>
       </div>
-      <footer class="py-3 bg-white mt-auto shadow-sm">
+      <footer class="py-3 mt-auto shadow-sm">
          <div class="container-fluid">
-            <div class="text-muted text-center small">Todos os direitos reservados <strong>Leme</strong><br/>Estamos à disposição: <a href="mailto:contato@useleme.com.br" tabindex="-1" class="text-muted font-italic">contato@useleme.com.br</a></div>
+            <div class="text-muted text-center small">Todos os direitos reservados <strong>Leme</strong><br/>Estamos à disposição: <a id="contatoLeme" href="mailto:contato@useleme.com.br" tabindex="-1" class="text-muted font-italic">contato@useleme.com.br</a></div>
          </div>
       </footer>
    </body> 

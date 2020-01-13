@@ -8,6 +8,7 @@ class fluxocaixaController extends controller{
     protected $model;
     protected $shared;
     protected $usuario;
+    protected $param;
 
     public function __construct() {
         
@@ -18,6 +19,8 @@ class fluxocaixaController extends controller{
         $this->usuario = new Usuarios();
     
         $this->colunas = $this->shared->nomeDasColunas();
+
+        $this->param = new Parametros();
 
         // verifica se tem permissão para ver esse módulo
         if(in_array($this->table . "_ver", $_SESSION["permissoesUsuario"]) == false){
@@ -61,11 +64,15 @@ class fluxocaixaController extends controller{
 
         if(isset($_POST) && !empty($_POST)){  
             $this->model->adicionar($_POST);
+            // print_r($_POST); exit;
             header("Location: " . BASE_URL . "/" . $this->table ."/adicionar");
         }else{ 
             $dados["colunas"] = $this->colunas;
             $dados["viewInfo"] = ["title" => "Adicionar"];
             $dados["labelTabela"] = $this->shared->labelTabela();
+            $dados['infoParametros'] = $this->param->buscaParametros();
+            // $dados['infoCentroCustos'] = $dados['infoCentroCustos']['info_centro_custos'];
+            // print_r($dados['infoParametros']); exit;
             $this->loadTemplate($this->table . "-form", $dados);
         }
     }
@@ -104,6 +111,7 @@ class fluxocaixaController extends controller{
     public function excluirChecados () {
 
         if(isset($_POST) && !empty($_POST)){
+            // print_r($_POST); exit;
             echo json_encode($this->model->excluirChecados($_POST));
         }
     }

@@ -214,13 +214,18 @@ $(function () {
         })
         .on('click', '#excluir', function () {
 
+            if( $('#motivo_exclusao').val() == '' ){
+                alert('Preencha o motivo da Exclusão!');
+                return false;
+            }
+
             var arrayChecados = [];
 
             $checados.each(function () {
                 arrayChecados.push($(this).val());
             });
 
-            if (arrayChecados.length) {
+            if (arrayChecados.length && $('#motivo_exclusao').val() != '') {
 
                 if (confirm('Tem Certeza?')) {
 
@@ -228,7 +233,8 @@ $(function () {
                         url: baselink + '/fluxocaixa/excluirChecados',
                         type: 'POST',
                         data: {
-                            checados: arrayChecados
+                            checados: arrayChecados,
+                            motivo: $('#motivo_exclusao').val()
                         },
                         dataType: 'json',
                         success: function (data) {
@@ -348,9 +354,10 @@ $(function () {
             $checados = $trChecados.find('[type=checkbox]:checked');
 
             if ($tbodyChecados.length) {
-
+                
                 aQuitar();
                 resumo();
+                $('#motivo_exclusao').val('').removeClass('is-valid is-invalid');
                 $collapse.collapse('show');
                 $trChecados.addClass('selected');
 
