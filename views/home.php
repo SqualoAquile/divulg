@@ -23,18 +23,20 @@
 
 <!-- <script src="<?php echo BASE_URL?>/assets/js/home.js" type="text/javascript"></script> -->
 <h2 class="display-4 font-weight-bold py-4">Bom dia, <?php echo ucfirst($_SESSION['nomeUsuario'])?> !</h2>
+
+  <?php if ( !empty($infoParametros['aviso_home_func']) ):?>
+    <div class="row my-2">  
+      <div class="col-lg">
+        <div class="alert alert-danger text-center w-100" style="height: auto; max-height: 300px;">
+          <?php echo ucfirst( $infoParametros['aviso_home_func'] ); ?>
+        </div>
+      </div>
+    </div>  
+  <?php endif;?>
 <div class="row my-2">
     <div class="col-lg">
       <img src="<?php echo BASE_URL?>/assets/images/motivacional.jpeg" class="img-fluid w-100" style="height: auto; max-height: 600px; object-fit: fill;">
     </div>
-    <?php if ( !empty($infoParametros['aviso_home_func']) ):?>
-        <div class="col-lg-3">
-          <div class="alert alert-danger text-center" role="alert">
-            <?php echo ucfirst( $infoParametros['aviso_home_func'] ); ?>
-          </div>
-        </div>
-    <?php endif;?>
-    
 </div>  
 <div class="row my-2">
   
