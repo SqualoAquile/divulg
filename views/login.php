@@ -25,7 +25,7 @@
 
     <style>
         body {
-            color: #fff80e;
+            color: #000;
         }
         .btn-primary {
             background-color: #000;

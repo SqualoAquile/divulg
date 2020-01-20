@@ -4,6 +4,7 @@ class homeController extends controller{
     public function __construct() {
 
       $usuario = new Usuarios();
+      $this->param = new Parametros();
       
       // Verificar se está logado ou nao
       if( $usuario->isLogged() == false){
@@ -20,6 +21,7 @@ class homeController extends controller{
       $dados['infoUser'] = $_SESSION;
       $dados["colunas"] = $sharedFinanceiro->nomeDasColunas();
       $dados["meta"] = $relatorioFinanceiro->meta();
+      $dados['infoParametros'] = $this->param->buscaParametros();
       $this->loadTemplate('home', $dados);
     }
 

@@ -51,12 +51,6 @@
          "link" => "/#",
          "filhos" => [
             [
-               "text" => "Administradoras de Cartão",
-               "icon" => "fas fa-credit-card",
-               "permissao" => "administradoras_ver",
-               "link" => "/administradoras"
-            ],
-            [
                "text" => "Lançamentos de Caixa",
                "icon" => "fas fa-cart-plus",
                "permissao" => "fluxocaixa_add",
@@ -67,6 +61,12 @@
                "icon" => "fas fa-calculator",
                "permissao" => "fluxocaixa_ver",
                "link" => "/fluxocaixa"
+            ],
+            [
+               "text" => "Administradoras de Cartão",
+               "icon" => "fas fa-credit-card",
+               "permissao" => "administradoras_ver",
+               "link" => "/administradoras"
             ]
             // ,
       //       [

@@ -369,4 +369,42 @@ class Parametros extends model {
         return $result;
 
     }
+
+    public function adicionaImg() {
+
+        $arquivo = $_FILES['arq'];
+        // print_r( $arquivo ); exit;
+
+        if( isset( $arquivo['tmp_name'] ) && empty( $arquivo['tmp_name'] ) == false ){
+
+            $tipo = explode("/" , $arquivo['type'] )[1];
+
+            $nomearq = md5( time().rand(0,99) );
+            $caminho = __FILE__;
+            $base = substr($caminho, 0, intval( strlen($caminho) - 21 ) );
+            //models\Funcionarios.php = 23 caracteres
+            //models\Parametros.php = 21 caracteres
+            // print_r($base); exit;
+            
+            // $destino = BASE_URL."/assets/pdf/".$nomearq.'.pdf';
+            $destinoAux1 = $base."assets/images/motivacional.jpg";
+            $destino = $base."assets/images/motivacional.".$tipo;
+
+            // print_r($destino); exit;
+            if ( unlink($destino) == false ){
+                unlink($destinoAux1);
+            }
+            
+
+            if ( move_uploaded_file( $arquivo['tmp_name'] , $destino ) == false ){
+                // echo 'arquivo não foi movido'; exit;
+                return false;
+            
+            }else{
+
+                return true;
+            }    
+        }
+        
+    }
 }

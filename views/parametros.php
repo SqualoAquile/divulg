@@ -18,6 +18,26 @@
 </header>
 
 <section class="mb-5">
+    <!-- Subir Foto Home Funcionários -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card card-body my-3">              
+                <label class="font-weight-bold h3" >Imagem da Home dos Funcionários</label>
+                <!-- <form novalidate autocomplete="off" enctype="multipart/form-data" >         -->
+                    <div class="row">
+                        <div class="col-lg-6 form-group">
+                            <label for="arq" class="font-weight-bold" > Selecionar Imagem</label>
+                            <input  type="file" id="arq" name="arq" data-mascara_validacao = "false">            
+                        </div>
+                        
+                        <div class="col-lg-6 d-flex align-self-center">
+                            <div id="btn_adicionar" class="btn btn-primary btn-block">Trocar Imagem</div>
+                        </div>
+                    </div>
+                <!-- </form>     -->
+            </div>
+        </div>
+    </div>        
     <!-- Dropdowns -->
     <div class="row">
         <?php foreach ($tabelas as $key => $value): ?>
@@ -247,10 +267,8 @@
             <div class="col-lg-<?php echo isset($value["comentarios"]["column"]) ? $value["comentarios"]["column"] : "12" ?>">
                 <div class="card card-body my-3">
                     <form novalidate autocomplete="off" class="form-params-fixos">
-
                         <!-- Label Geral -->
                         <label class="<?php echo !array_key_exists("null", $value["comentarios"]) ? "font-weight-bold" : "" ?>" for="<?php echo $value['parametro'] ?>">
-                            
                             <!-- Asterisco de campo obrigatorio -->
                             <?php if (!array_key_exists("null", $value["comentarios"])): ?>
                                 <i class="font-weight-bold" data-toggle="tooltip" data-placement="top" title="Campo Obrigatório">*</i>
@@ -258,39 +276,71 @@
                             <span class="h3"><?php echo array_key_exists("label", $value["comentarios"]) ? $value["comentarios"]["label"] : ucwords(str_replace("_", " ", $value['parametro'])) ?></span>
                         </label>
 
-                        <div class="row">
-                            <div class="col-lg">
-                                <div class="form-group">
-                                    <input 
-                                        type="text" 
-                                        class="form-control input-fixos" 
-                                        name="<?php echo lcfirst($value["parametro"]) ?>" 
-                                        value="<?php echo $value["valor"] ?>"
-                                        data-alteracoes="<?php echo $value["alteracoes"] ?>"
-                                        data-id="<?php echo $value["id"] ?>"
-                                        data-anterior="<?php echo $value["valor"] ?>"
-                                        <?php echo !array_key_exists("null", $value["comentarios"]) ? "required" : "" ?>
-                                        id="<?php echo $value['parametro'] ?>"
-                                        data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["comentarios"]) ? $value["comentarios"]["mascara_validacao"] : "false" ?>"
-                                        <?php if( array_key_exists("mascara_validacao", $value["comentarios"]) && 
-                                                    ( $value["comentarios"]["mascara_validacao"] == "monetario" || $value["comentarios"]["mascara_validacao"] == "porcentagem" )):?>
-                                            data-podeZero="<?php echo array_key_exists("pode_zero", $value["comentarios"]) && $value["comentarios"]["pode_zero"]  == 'true' ? 'true' : 'false' ?>"
-                                        <?php endif?>
-                                        <?php if(array_key_exists("maxlength", $value["comentarios"])):?>
-                                            maxlength="<?php echo $value["comentarios"]["maxlength"] ?>"
-                                        <?php endif?>
-                                    />
+                        <?php if ( array_key_exists("type", $value["comentarios"]) && $value["comentarios"]["type"] == 'textarea' ): ?>
+                            <div class="row">
+                                <div class="col-lg">
+                                    <div class="form-group">
+                                        <textarea
+                                            class="form-control input-fixos" 
+                                            name="<?php echo lcfirst($value["parametro"]) ?>" 
+                                            value="<?php echo $value["valor"] ?>"
+                                            data-alteracoes="<?php echo $value["alteracoes"] ?>"
+                                            data-id="<?php echo $value["id"] ?>"
+                                            data-anterior="<?php echo $value["valor"] ?>"
+                                            id="<?php echo $value['parametro'] ?>"
+                                            data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["comentarios"]) ? $value["comentarios"]["mascara_validacao"] : "false" ?>"
+                                        ><?php echo $value["valor"] ?>
+                                        </textarea>
+                                    </div>    
+                                        <div class="col-lg flex-lg-grow-0">
+                                            <?php if (in_array($modulo . "_edt", $_SESSION["permissoesUsuario"])) : ?>
+                                                <button type="submit" class="btn btn-primary btn-block" disabled="disabled">Salvar</button>
+                                            <?php endif ?>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg flex-lg-grow-0">
-                                <?php if (in_array($modulo . "_edt", $_SESSION["permissoesUsuario"])) : ?>
-                                    <button type="submit" class="btn btn-primary btn-block" disabled="disabled">Salvar</button>
-                                <?php endif ?>
-                            </div>
-                        </div>
+                            </div>    
+
+                        <?php else:?>
+                        
+                                <div class="row">
+                                    <div class="col-lg">
+                                        <div class="form-group">
+                                            <input 
+                                                type="text" 
+                                                class="form-control input-fixos" 
+                                                name="<?php echo lcfirst($value["parametro"]) ?>" 
+                                                value="<?php echo $value["valor"] ?>"
+                                                data-alteracoes="<?php echo $value["alteracoes"] ?>"
+                                                data-id="<?php echo $value["id"] ?>"
+                                                data-anterior="<?php echo $value["valor"] ?>"
+                                                <?php echo !array_key_exists("null", $value["comentarios"]) ? "required" : "" ?>
+                                                id="<?php echo $value['parametro'] ?>"
+                                                data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["comentarios"]) ? $value["comentarios"]["mascara_validacao"] : "false" ?>"
+                                                <?php if( array_key_exists("mascara_validacao", $value["comentarios"]) && 
+                                                            ( $value["comentarios"]["mascara_validacao"] == "monetario" || $value["comentarios"]["mascara_validacao"] == "porcentagem" )):?>
+                                                    data-podeZero="<?php echo array_key_exists("pode_zero", $value["comentarios"]) && $value["comentarios"]["pode_zero"]  == 'true' ? 'true' : 'false' ?>"
+                                                <?php endif?>
+                                                <?php if(array_key_exists("maxlength", $value["comentarios"])):?>
+                                                    maxlength="<?php echo $value["comentarios"]["maxlength"] ?>"
+                                                <?php endif?>
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg flex-lg-grow-0">
+                                        <?php if (in_array($modulo . "_edt", $_SESSION["permissoesUsuario"])) : ?>
+                                            <button type="submit" class="btn btn-primary btn-block" disabled="disabled">Salvar</button>
+                                        <?php endif ?>
+                                    </div>
+                                </div>
+
+                        <?php endif; ?>
+
                     </form>
                 </div>
             </div>
         <?php endforeach ?>
     </div>
+
+    
 </section>

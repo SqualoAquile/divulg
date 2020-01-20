@@ -915,7 +915,7 @@ $(document)
 
         var $this = $(this),
             $input = $this.find('.input-fixos');
-        value = $input.val(),
+            value = $input.val(),
             campos_alterados = '',
             id = $input.attr('data-id'),
             $label = $this.find('label span');
@@ -943,7 +943,7 @@ $(document)
 
             if (confirm('Tem Certeza?')) {
                 Ajax('editarParametrosFixos/' + id, function (data) {
-
+                    console.log(data)
                     if (data.erro[0] == '00000') {
 
                         Toast({
@@ -991,3 +991,68 @@ $(document)
                 .keyup();
         }
     });
+
+// Trocar a Imagem da Home dos Funcionários
+$(function () {
+    $('#btn_adicionar').on('click', function(){
+        var data = new FormData();
+        var arquivo = $('#arq')[0].files;
+
+        if ( arquivo.length <= 0 ){
+            alert('Nenhum arquivo foi selecionado');
+            $('#arq').val('');
+            return false;
+            
+        }else if(  arquivo.item(0).type != 'image/jpeg' ){            
+            alert('O arquivo selecionado deve ser um JPEG.');
+            $('#arq').val('');
+            return false;
+ 
+        }else if( parseInt( arquivo.item(0).size ) > parseInt( 1048576 )  ){
+             alert('O arquivo deve ter um tamanho menor do que 1 Mb');
+             $('#arq').val('');
+             return false;
+        }else {
+            var teste = 'teste';
+
+            data.append( 'teste', teste );
+            data.append( 'arq', arquivo[0] );
+        
+             $.ajax( {
+                 url: baselink + '/ajax/adicionaArquivoParametro',
+                 type:"POST",
+                 data: data,
+                 contentType: false,
+                 processData: false,
+                 success: function( data ) {
+                     
+                     if(data == 'true' ){
+                        //  alert('Imagem alterada com sucesso!');
+                         Toast({
+                             message: 'Imagem alterada com sucesso!',
+                             class: 'alert-success'
+                         });
+                         
+                         $('#arq').val('');
+                         return false;
+
+                        //  document.location.reload(true);
+ 
+                     }else{
+ 
+                         Toast({
+                             message: 'O PDF não foi adicionado! Tente Novamente.',
+                             class: 'alert-danger'
+                         });
+ 
+                     }
+                     
+                     
+                 }
+             }); 
+        }
+     });
+
+
+});
+    

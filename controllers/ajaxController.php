@@ -158,7 +158,7 @@ class ajaxController extends controller{
     echo json_encode($dados);
   }
 
-  public function adicionaArquivo(){
+  public function adicionaArquivo(){  
     $dados = array();
     $fn = new Funcionarios();
     if(isset($_POST["titulo"]) && !empty($_POST["titulo"]) && isset($_FILES['arq']) ){
@@ -455,6 +455,17 @@ class ajaxController extends controller{
   //
   // PARAMETROS
   //
+  public function adicionaArquivoParametro(){
+    // print_r($_FILES); exit;
+    $dados = array();
+    $param = new Parametros();
+    if( isset($_FILES['arq']) ){
+      
+        $dados = $param->adicionaImg();
+    }
+    echo json_encode($dados);
+  }
+
   public function listarParametros() {
     if (isset($_POST) && !empty($_POST)) {
       echo json_encode($this->parametros->listar($_POST));

@@ -28,6 +28,7 @@ class parametrosController extends controller{
         $dados["tabelas"] = $this->model->index();
         // print_r($dados["tabelas"]); exit;
         $dados["registros"] = $this->model->pegarFixos();
+        // print_r($dados["registros"]); exit;
         $dados["labelTabela"] = $this->shared->labelTabela();
 
         $this->loadTemplate($this->table, $dados); 
