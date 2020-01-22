@@ -28,6 +28,12 @@ class Shared extends model {
 
             $stringBtn .= '<form method="POST">';
             
+            if ( $this->table == "clientes" || $this->table == "funcionarios" || $this->table == "fornecedores" ) {
+                if( in_array( $this->table.'_ver' , $_SESSION["permissoesUsuario"]) ){
+                    $stringBtn .=  '<a href="' . BASE_URL . '/' . $this->table . '/ver/' . $id . '" class="btn btn-dark btn-sm mx-1"><i class="fas fa-eye"></i></a>';
+                }
+            }
+
             if( in_array( $this->table.'_edt' , $_SESSION["permissoesUsuario"]) ){
                 $stringBtn .=  '<a href="' . BASE_URL . '/' . $this->table . '/editar/' . $id . '" class="btn btn-primary btn-sm mx-1"><i class="fas fa-edit"></i></a>';
             }

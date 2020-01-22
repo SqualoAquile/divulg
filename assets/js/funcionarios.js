@@ -325,8 +325,6 @@ $(function () {
             esconderCamposClt();
         }
 
-        
-
         // férias
 
         // arquivos folha ponto

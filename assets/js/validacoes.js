@@ -128,6 +128,9 @@ $(function () {
             scrollCollapse: true,
             searchHighlight: true,
             conditionalPaging: true,
+            // fixedColumns: {
+            //     leftColumns: 1
+            // },
             aLengthMenu: [
                 [10, 25, 50, -1],
                 [10, 25, 50, "Mostrar Todos"]

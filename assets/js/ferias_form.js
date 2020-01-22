@@ -254,9 +254,9 @@ function diferencaEntreDatas(dtMenor, dtMaior){
     
         // To calculate the no. of days between two dates 
         var diferencaEmDias = diferenca / (1000 * 3600 * 24); 
-    
+            diferencaEmDias = parseInt(diferencaEmDias + 1);   
         //To display the final no. of days (result) 
-        return diferencaEmDias; 
+        return diferencaEmDias ; 
     }else{
         return -1;
     }

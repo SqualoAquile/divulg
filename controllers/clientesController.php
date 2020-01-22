@@ -106,5 +106,26 @@ class clientesController extends controller{
             $this->loadTemplate($this->table . "-form", $dados); 
         }
     }
+
+    public function ver($id) {
+
+        if(in_array($this->table . "_ver", $_SESSION["permissoesUsuario"]) == false || empty($id) || !isset($id)){
+            header("Location: " . BASE_URL . "/" . $this->table); 
+            exit;
+        }
+
+        if($this->shared->idAtivo($id) == false){
+            header("Location: " . BASE_URL . "/" . $this->table); 
+            exit;
+        }
+
+        $dados['infoUser'] = $_SESSION;
+        $dados["item"] = $this->model->infoItem($id); 
+        $dados["colunas"] = $this->colunas;
+        $dados["viewInfo"] = ["title" => "Ver"];
+        $dados["labelTabela"] = $this->shared->labelTabela();
+        $this->loadTemplate($this->table . "-ver", $dados); 
+        
+    }
 }   
 ?>

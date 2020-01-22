@@ -734,6 +734,17 @@ class ajaxController extends controller{
   //
   // DASHBOARD
   //
+  
+  public function CardsDashBoardFinanceiro(){
+    
+    if(isset($_POST) && !empty($_POST)){
+      // print_r($_POST); exit;
+
+      $relatFC = new Relatoriofluxocaixa();
+      $dados = $relatFC->CardsDashBoardFinanceiro($_POST);
+    }
+    echo json_encode($dados);
+  }
 
   public function graficoFluxoCaixaRealizado(){
     

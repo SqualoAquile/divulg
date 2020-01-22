@@ -11,4 +11,5 @@ require "_table_datatable.php";
         currentModule = '<?php echo $modulo ?>',  // usa o nome da tabela como nome do módulo, necessário para outras interações
         campoPesquisa = '', // aqui vai o campo de id-usuario caso seja necessário filtrar o datatable somente para os registros referentes ao usuário logado
         valorPesquisa = '<?php echo in_array('podetudo_ver', $_SESSION['permissoesUsuario']) ? "" : $_SESSION["idUsuario"]; ?>';
+   
 </script>

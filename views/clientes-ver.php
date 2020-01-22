@@ -1,37 +1,35 @@
-<?php $modulo = str_replace("-form", "", basename(__FILE__, ".php")) ?>
+<?php $modulo = str_replace("-ver", "", basename(__FILE__, ".php")) ?>
+<?php $modulo2 = str_replace($modulo, "", basename(__FILE__, ".php")) ?>
 <script type="text/javascript">
     var baselink = '<?php echo BASE_URL;?>',
         currentModule = '<?php echo $modulo ?>',
-        campoPesquisa = '',
-        valorPesquisa = '',
-        colunas = <?php echo json_encode($colunas);?>,
-        logado = '<?php echo $_SESSION['nomeUsuario']?>';
+        currentModule2 = '<?php echo $modulo2 ?>',
+        campoPesquisa = '', // aqui vai o campo de id-usuario caso seja necessário filtrar o datatable somente para os registros referentes ao usuário logado
+        valorPesquisa = '<?php echo in_array('podetudo_ver', $_SESSION['permissoesUsuario']) ? "" : $_SESSION["idUsuario"]; ?>';    
 </script>
 
-<!-- Chama o arquivo específico do módulo, caso não exista,  -->
-<!-- Este javaScript serve para fazer verificações inerentes à cada módulo, por exemplo o radio de Clientes -->
-<script src="<?php echo BASE_URL?>/assets/js/<?php echo $modulo?>.js" type="text/javascript"></script>
-<?php if (isset($_SESSION["returnMessage"])): ?>
+<script src="<?php echo BASE_URL?>/assets/js/<?php echo $modulo?>-ver.js" type="text/javascript"></script>
 
-    <div class="alert <?php echo $_SESSION["returnMessage"]["class"] ?> alert-dismissible">
-    
-        <?php echo $_SESSION["returnMessage"]["mensagem"] ?>
-    
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
 
-    </div>
+<header class="d-lg-flex align-items-center my-5">
+    <?php if(in_array($modulo . "_ver", $infoUser["permissoesUsuario"])): ?>
+        <a href="<?php echo BASE_URL . '/' . $modulo ?>" class="btn btn-secondary mr-lg-4" title="Voltar">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+    <?php endif ?>
 
-<?php endif?>
-<header class="d-lg-flex justify-content-between my-5">
-    
-        <h1 class="display-4 m-0 text-capitalize font-weight-bold"><?php echo $viewInfo["title"]." ".ucfirst($labelTabela["labelForm"]); ?></h1>
-        <div class='btn btn-lg btn-info p-3 ' id='btn_info'> Informações</div>
-    
+    <?php
+        $title = $viewInfo["title"];
+        if (isset($viewInfoModal)) {
+            $title = $viewInfoModal["title"];
+        }
+    ?>
+
+    <h1 class="display-4 m-0 text-capitalize font-weight-bold"><?php echo $title." ".ucfirst($labelTabela["labelForm"]); ?></h1>
 </header>
 
 <?php $table = false ?>
+
 <?php
 
     //
@@ -46,7 +44,7 @@
 ?>
 
 <section class="mb-5">
-    <form id="form-principal<?php echo $formId ?>" method="DELETE" class="needs-validation" autocomplete="off" novalidate>
+    <form id="form-principal<?php echo $formId ?>" method="POST" class="needs-validation" autocomplete="off" novalidate>
         <div class="row">
             <?php foreach ($colunas as $key => $value): ?>
                 <?php if(isset($value["Comment"]) && array_key_exists("form", $value["Comment"]) && $value["Comment"]["form"] != "false") : ?>
@@ -54,7 +52,7 @@
                     <!-- INÍCIO DOS TESTES PARA VER QUAL O TIPO DE CAMPO -->
                     <!-- CAMPOS DO TIPO TABELA - Ex: CONTATOS -->
                     <?php if(array_key_exists("type", $value["Comment"]) && $value["Comment"]["type"] == "table"): ?> 
-                        
+
                         <!-- Label Geral -->
                         <label class="d-none"><span><?php echo array_key_exists("label", $value["Comment"]) ? $value["Comment"]["label"] : ucwords(str_replace("_", " ", $value['Field'])) ?></span></label>
                         
@@ -63,6 +61,7 @@
                         <input 
                             type="hidden" 
                             name="<?php echo $value["Field"] ?>" 
+                            id="<?php echo $value["Field"] ?>" 
                             value="<?php echo isset($item) && !empty($item) ? $item[$value["Field"]] : "" ?>"
                             data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
                             data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
@@ -72,6 +71,12 @@
 
                     <!-- CAMPOS DO TIPO HIDDEN - Ex: ALTERAÇÕES -->
                     <?php elseif(array_key_exists("type", $value["Comment"]) && $value["Comment"]["type"] == "hidden"): ?>
+
+                        <!-- Label Geral -->
+                        <label class="d-none" for="<?php echo $value['Field'] ?>">
+                            <!-- Asterisco de campo obrigatorio -->
+                            <span><?php echo array_key_exists("label", $value["Comment"]) ? $value["Comment"]["label"] : ucwords(str_replace("_", " ", $value['Field'])) ?></span>
+                        </label>
                         
                         <input 
                             type="hidden" 
@@ -82,12 +87,11 @@
                             <?php echo $value["Null"] == "NO" ? "required" : "" ?>
                         />
                     <?php else: ?>
-                        <div    class="col-lg-<?php echo isset($value["Comment"]["column"]) ? $value["Comment"]["column"] : "12" ?>" 
-                                style="order:<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : 100 ?>;">
+                        <div class="col-lg-<?php echo isset($value["Comment"]["column"]) ? $value["Comment"]["column"] : "12" ?>">
                             <div class="form-group">
 
                                 <!-- Label Geral -->
-                                <label class="fluxocaixa <?php echo $value["Null"] == "NO" ? "font-weight-bold" : "" ?>" for="<?php echo $value['Field'] ?>">
+                                <label class="<?php echo $value["Null"] == "NO" ? "font-weight-bold" : "" ?>" for="<?php echo $value['Field'] ?>">
                                     
                                     <!-- Asterisco de campo obrigatorio -->
                                     <?php if ($value["Null"] == "NO"): ?>
@@ -103,7 +107,6 @@
                                             name="<?php echo lcfirst($value['Field']);?>"
                                             class="form-control"
                                             data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
-                                            tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                             data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                             <?php echo $value['Null'] == "NO" ? "required" : "" ?>
                                             >
@@ -144,7 +147,6 @@
                                                         id="<?php echo $value["Comment"]['info_relacional']['resultado'][$j];?>" 
                                                         type="checkbox" 
                                                         class="form-check-input" 
-                                                        tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                                         value="<?php echo $value["Comment"]['info_relacional']['resultado'][$j];?>"
                                                         data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>" 
                                                         <?php
@@ -158,6 +160,7 @@
                                                     <label class="form-check-label" for="<?php echo $value["Comment"]['info_relacional']['resultado'][$j];?>" ><?php echo $value["Comment"]['info_relacional']['resultado'][$j];?></label>
                                                 </div>
                                             <?php endfor?>
+                                            <label class="d-none"><span><?php echo array_key_exists("label", $value["Comment"]) ? $value["Comment"]["label"] : ucwords(str_replace("_", " ", $value['Field'])) ?></span></label>
                                             <input 
                                                 type="hidden" 
                                                 name="<?php echo lcfirst($value["Field"]) ?>" 
@@ -175,7 +178,6 @@
                                         class="form-control" 
                                         name="<?php echo lcfirst($value['Field']);?>" 
                                         data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
-                                        tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                         id="<?php echo lcfirst($value['Field']);?>"
                                         data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                         <?php echo $value['Null'] == "NO" ? "required" : "" ?>
@@ -187,12 +189,12 @@
                                     <div class="form-check-wrapper form-radio d-table position-relative pr-4" tabindex="0">
                                         <?php foreach ($value["Comment"]["options"] as $valueRadio => $label): ?>
                                             <div class="form-check form-check-inline position-static">
+                                                <label class="d-none"><span><?php echo array_key_exists("label", $value["Comment"]) ? $value["Comment"]["label"] : ucwords(str_replace("_", " ", $value['Field'])) ?></span></label>
                                                 <input 
                                                     type="radio" 
                                                     id="<?php echo $valueRadio ?>" 
                                                     value="<?php echo $valueRadio ?>" 
                                                     name="<?php echo $value["Field"] ?>" 
-                                                    tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                                     data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
                                                     data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                                     class="form-check-input" 
@@ -224,7 +226,6 @@
                                         data-toggle="dropdown" 
                                         aria-haspopup="true" 
                                         aria-expanded="false"
-                                        tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                         maxlength="<?php echo $value["tamanhoMax"] ?>"
                                         value="<?php echo isset($item) && !empty($item) ? $item[$value["Field"]] : "" ?>"
                                         data-tabela="<?php echo $value["Comment"]["info_relacional"]["tabela"] ?>" 
@@ -255,12 +256,11 @@
                                         class="form-control" 
                                         name="<?php echo lcfirst($value["Field"]) ?>" 
                                         value="<?php echo isset($item) && !empty($item) ? $item[$value["Field"]] : "" ?>"
-                                        data-unico="<?php echo array_key_exists("unico", $value["Comment"]) && $value["Comment"]["unico"]  == true ? "unico" : "" ?>"
+                                        data-unico="<?php echo ( array_key_exists("unico", $value["Comment"]) && $value["Comment"]["unico"]  == 'true' ) ? "unico" : "" ?>"
                                         data-anterior="<?php echo isset($item) ? $item[$value["Field"]] : "" ?>"
                                         id="<?php echo $value['Field'] ?>"
                                         <?php echo $value['Null'] == "NO" ? "required" : "" ?>
                                         maxlength="<?php echo $value["tamanhoMax"] ?>"
-                                        tabindex="<?php echo isset($value["Comment"]["ordem_form"]) ? $value["Comment"]["ordem_form"] : "" ?>"
                                         data-mascara_validacao = "<?php echo array_key_exists("mascara_validacao", $value["Comment"]) ? $value["Comment"]["mascara_validacao"] : "false" ?>"
                                         <?php if( array_key_exists("mascara_validacao", $value["Comment"]) && 
                                                  ( $value["Comment"]["mascara_validacao"] == "monetario" || $value["Comment"]["mascara_validacao"] == "porcentagem" )):?>
@@ -273,106 +273,14 @@
                     <?php endif ?>
                 <?php endif ?>
             <?php endforeach ?>
-            <div class="col-lg-6" style="order:14;">
-                <div class="form-group">
-                    <label for="dia_venc" class="fluxocaixa font-weight-bold" ><span>* Dia Vencimento</span></label>
-                    <select id="dia_venc" 
-                            name="dia_venc"
-                            class="form-control"
-                            data-anterior=""
-                            tabindex="14"
-                            data-mascara_validacao = "false"   
-                    >
-                        <option value="" selected >Selecione</option>
-                        <?php for($j = 1; $j <= 31; $j++):?>
-                            <option value="<?php echo $j;?>"><?php echo $j;?></option>        
-                        <?php endfor;?>     
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-lg-6" style="order:16;">
-                <div class="form-group">
-                    <label for="taxa-cartao" class="fluxocaixa font-weight-bold"><span>* Taxa do Cartão</span></label>
-                    <input type="text" class="form-control" name="taxa-cartao" value="" id="taxa-cartao" maxlength="20" tabindex="16" data-mascara_validacao="porcentagem" data-podeZero="true" disabled="disabled" data-anterior=""/>
-                </div>
-            </div>
-
-            <div class="col-lg-6" style="order:16;">
-                <div class="form-group">
-                    <label for="custo_financ" class="fluxocaixa font-weight-bold" ><span>* Custo Financeiro</span></label>
-                    <input type="text" class="form-control" name="custo_financ" value="" id="custo_financ" maxlength="20" tabindex="16" data-mascara_validacao="monetario" data-podeZero="true" disabled="disabled" data-anterior=""/>
-                </div>
-            </div>
-            <div class="col-lg-3" style="order:18;">
-                 <div class="form-group">
-                    <div class="col-lg-6 btn btn-primary btn-block" tabindex="18" id="btn_incluir">Incluir</div>
-                 </div>                                       
-            </div>
-            <div class="offset-xl-9 col-xl-3 col-lg-3 offset-lg-9 text-lg-right order-0 order-lg-0">
-                <div class="form-group">
-                    <div class="btn btn-secondary btn-block mb-5 mb-lg-2" tabindex="-1" role="button" aria-pressed="false" id="btn_limparCampos">
-                        <i class="fas fa-eraser mr-2"></i>
-                        <span>Limpar Campos</span>
-                    </div>
-                </div>
-            </div>
         </div>
-    </form>    
-    <div class="mb-5" id="resumo_lancamento">
-        <div class="card card-body">
-                <div class="col-lg">
-                    <div class="row">
-                        <div class="col-lg">
-                            <div class="card card-body py-2 text-danger text-center">
-                                <p class="m-0">Despesa Total</p>
-                                <h2 id="despesa_lanc"></h2>
-                            </div>
-                        </div>
-                        <div class="col-lg">
-                            <div class="card card-body py-2 text-success text-center">
-                                <p class="m-0">Receita Total</p>
-                                <h2 id="receita_lanc"></h2>
-                            </div>
-                        </div>
-                        <div class="col-lg">
-                            <div class="card card-body py-2 text-center">
-                                <p class="m-0">Total</p>
-                                <h2 id="total_lanc"></h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        </div>
-    </div>
-
-    <div class="my-5 table-responsive" id="tabela_lancamento" style='max-height: 400px; overflow-y:auto'>
-        <form  method="POST" autocomplete="off" novalidate id='form_lancamento'>
-            <table class="table table-striped table-hover bg-white table-nowrap first-column-fixed">
-                <thead>
-                    <tr>
-                        <?php foreach ($colunas as $key => $value): ?> 
-                            <?php if(isset($value["Comment"]) && array_key_exists("ver", $value["Comment"]) && $value["Comment"]["ver"] != "false") : ?>
-                                <th class="border-top-0">
-                                    <span><?php echo (isset($value["Comment"]["label"]) && !is_null($value["Comment"]["label"]) && !empty($value["Comment"]["label"])) ? $value["Comment"]["label"] : ucwords(str_replace("_", " ", $value['Field'])) ?></span>
-                                </th>
-                            <?php endif ?>
-                        <?php endforeach ?>
-                    </tr>
-                </thead>
-                
-                    <tbody>
-
-                    </tbody>                                            
-            
-            </table>
-            <button type="submit" id='btn_salvar<?php echo $formId ?>' class='d-none'></button>
-        </form>
-    </div>
-    <div class="row flex-row-reverse bd-highlight" id='lbl_btn_salvar'>
-        <div class='col-lg-3'><label  for='btn_salvar<?php echo $formId ?>' class='btn btn-primary btn-lg btn-block'>Salvar</label></div>                                               
-    </div>    
+        <button id="main-form<?php echo $formId ?>" class="d-none"></button>
+    </form>
+    <?php if($table) include "_contatos_form.php" ?>
     <div class="row">
+        <div class="col-xl-2 col-lg-3">
+            <label for="main-form<?php echo $formId ?>" class="btn btn-primary btn-block" tabindex="0">Salvar</label>
+        </div>
         <?php if (isset($item)): ?>
         <div class="col-xl-2 col-lg-3">
             <button class="btn btn-dark btn-block" type="button" data-toggle="collapse" data-target="#historico" aria-expanded="false" aria-controls="historico">Histórico de Alterações</button>
@@ -381,20 +289,3 @@
     </div>
     <?php include "_historico.php" ?>
 </section>
-<!-- Modal -->
-<div class="modal fade modais-require" id="modalInfo" tabindex="-1" role="dialog" aria-labelledby="modalInfo" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header border-0 position-absolute w-100">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="alert text-center p-2 m-2">
-                   <?php echo $infoParametros['info_centro_custos']?>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

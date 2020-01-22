@@ -16,7 +16,7 @@ for( var i=0; i < colunas.length; i++ ){
 
 $(function () {
     $("#modalInfo").modal("hide");
-    
+
     $('#btn_info').on('click', function(){
         $("#modalInfo").modal("show");
     });

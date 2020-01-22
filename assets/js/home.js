@@ -1,29 +1,8 @@
-var charts = [];
 
-$(function () {
-   
-    var $selectGrafTemporal = $('#selectGraficosTemporais'),
-        $selectGrafVendas = $('#selectGraficosVendas'),
-        id1 = "#chart-div2",
-        id2 = "#chart-div3",
-        id3 = "#graf_despesa_analitica",
-        id4 = "#graf_receita_analitica",
-        id5 = "#graf_saldos",
-        id6 = "#graf_saldosAno",
-        id7 = "#orcVendas",
-        ctx = document.getElementById(id1.substr(1)).getContext('2d');
+$(function () {   
 
-    $selectGrafTemporal
-        .val(7)
-        .on('change', function() {
-            fluxoCaixa_Realizado_Previsto();
-            receita_despesa_analitica();
-            grafico_saldos();
-            lancamentos_vencidos();
-        })
-        .change();
+    fluxoCaixa_Cards();
     
-
     function fluxoCaixa_Realizado_Previsto() {
         var titulo, titulo2, intervalo = [], intervalo2 = [];
         var $receitaRealizada = $("#receita_realizada");
@@ -253,708 +232,6 @@ $(function () {
             });
 
     }
-
-    function receita_despesa_analitica() {
-        var titulo, titulo2, intervalo = [];
-
-            if (!$selectGrafTemporal.val() ) {
-                $selectGrafTemporal.val($selectGrafTemporal.find('option:not([disabled])').first().val()).change();
-            };
-
-            //// DESPESAS ANALÍTICAS REALIZADAS
-            titulo = 'Despesas Separadas por Conta Analítica de ' + $selectGrafTemporal.children("option:selected").text().trim() +' até hoje.';
-            titulo2 = 'Receitas Separadas por Conta Analítica de ' + $selectGrafTemporal.children("option:selected").text().trim() +' até hoje.';
-            intervalo = intervaloDatasRealizado($selectGrafTemporal.val());
-
-            ///// despesas e receitas agrupadas por conta analítica
-            $.ajax({ 
-                url: baselink + '/ajax/graficoReceitaDespesaAnalitica', 
-                type: 'POST', 
-                data: {
-                    intervalo: intervalo,
-                },
-                dataType: 'json', 
-                success: function (resultado) { 
-                    if (resultado){   
-
-                        var labelsDespesa = [], valoresDespesa = [], coresDespesa = [];
-                        var labelsReceita = [], valoresReceita = [], coresReceita = [];
-                    
-                        labelsDespesa = Object.keys( resultado[0] );
-                        valoresDespesa = Object.values( resultado[0] );
-                        coresDespesa = ['#022346','#359db5','#0b7bff','#1e43af','#17bae8'];
-                        
-                        labelsReceita = Object.keys( resultado[1] );
-                        valoresReceita = Object.values( resultado[1] );
-                        coresReceita = ['#022346','#0b7bff'];
-                        
-                        var config = {
-                            type: 'doughnut',
-                            data: {
-                                datasets: [{
-                                    data: valoresDespesa,
-                                    backgroundColor: coresDespesa,
-                                }],
-                                labels: labelsDespesa
-                            },
-                            options: {
-                                responsive: true,
-                                legend: {
-                                    position: 'right',
-                                },
-                                title: {
-                                    display: true,
-                                    text: titulo
-                                },
-                                animation: {
-                                    animateScale: true,
-                                    animateRotate: true
-                                }
-                            }
-                        };
-    
-                        if(typeof charts[id3] == "undefined") {   
-                            charts[id3]= new (function(){
-                            this.ctx=$(id3); 
-                            this.chart=new Chart(this.ctx, config);
-                            })();     
-                        } else {
-                            charts[id3].chart.destroy();
-                            charts[id3].chart=new Chart(charts[id3].ctx, config); 
-                        }
-
-                        var config = {
-                            type: 'doughnut',
-                            data: {
-                                datasets: [{
-                                    data: valoresReceita,
-                                    backgroundColor: coresReceita,
-                                }],
-                                labels: labelsReceita
-                            },
-                            options: {
-                                responsive: true,
-                                legend: {
-                                    position: 'right',
-                                },
-                                title: {
-                                    display: true,
-                                    text: titulo2
-                                },
-                                animation: {
-                                    animateScale: true,
-                                    animateRotate: true
-                                }
-                            }
-                        };
-    
-                        if(typeof charts[id4] == "undefined") {   
-                            charts[id4]= new (function(){
-                            this.ctx=$(id4); 
-                            this.chart=new Chart(this.ctx, config);
-                            })();     
-                        } else {
-                            charts[id4].chart.destroy();
-                            charts[id4].chart=new Chart(charts[id4].ctx, config); 
-                        }
-                    }
-                }
-            });            
-    }
-
-    function grafico_saldos() {
-        var titulo, titulo2, intervaloDiasMesAtual = [], intervaloMesesAno = [] ;
-
-            if (!$selectGrafTemporal.val() ) {
-                $selectGrafTemporal.val($selectGrafTemporal.find('option:not([disabled])').first().val()).change();
-            };
-
-            //// DESPESAS ANALÍTICAS REALIZADAS
-            titulo = 'Saldo Atual do Mês';
-            titulo2 = 'Saldos do Ano'
-            intervaloDiasMesAtual = intervaloDatasRealizado($selectGrafTemporal.val());
-            intervaloMesesAno = intervaloDatasSaldos(dataAtual());
-            // intervaloMesesAno = intervaloDatasSaldos('13/12/2019');
-            
-            ///// saldos do ano e do mês
-            $.ajax({ 
-                url: baselink + '/ajax/saldosMeseAno', 
-                type: 'POST', 
-                data: {
-                    intervaloDias: intervaloDiasMesAtual,
-                    intervaloMeses: intervaloMesesAno
-                },
-                dataType: 'json', 
-                success: function (resultado) { 
-                    if (resultado){   
-                        // console.log(resultado);
-
-                        var labelSaldos = [], valoresSaldos = [], coresSaldos = [];
-                        var labelSaldosAno = [], valoresSaldosAno = [];
-                    
-                        labelSaldos = ['Saldo Ant.', 'Result. Atual', 'Saldo Atual'];
-                        valoresSaldos = Object.values( resultado[1] );
-                        coresSaldos = ['#359db5','#0b7bff','#022346'];                   
-
-                        var config = {
-                            type: 'bar',
-                            data: {
-                                labels: labelSaldos,
-                                datasets: [{
-                                    type: 'bar',
-                                    label: '',
-                                    backgroundColor: coresSaldos,
-                                    data: valoresSaldos,
-                                    borderColor: 'white',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                title: {
-                                    display: true,
-                                    text: titulo,
-                                    position: "top"
-                                },
-                                legend: {
-                                    display: false,
-                                    position: "top"
-                                },
-                                scales:{
-                                    yAxes:[{
-                                        ticks:{
-                                            beginAtZero: true
-                                        }
-                                    }]
-                                }
-                            }
-                        }
-    
-                        if(typeof charts[id5] == "undefined") {   
-                            charts[id5]= new (function(){
-                            this.ctx=$(id5); 
-                            this.chart=new Chart(this.ctx, config);
-                            })();     
-                        } else {
-                            charts[id5].chart.destroy();
-                            charts[id5].chart=new Chart(charts[id5].ctx, config); 
-                        }
-
-                        var dtAtual = dataAtual();
-                            dtAtual = dtAtual.split('/');
-                            
-                        labelSaldosAno = ['Jan/'+dtAtual[2], 'Fev/'+dtAtual[2], 'Mar/'+dtAtual[2], 'Abr/'+dtAtual[2],'Mai/'+dtAtual[2], 'Jun/'+dtAtual[2], 'Jul/'+dtAtual[2], 'Ago/'+dtAtual[2], 'Set/'+dtAtual[2], 'Out/'+dtAtual[2], 'Nov/'+dtAtual[2], 'Dez/'+dtAtual[2]];
-
-                        valoresSaldosAno = Object.values( resultado[0] );
-
-                        var config = {
-                            type: 'bar',
-                            data: {
-                                labels: labelSaldosAno,
-                                datasets: [{
-                                    type: 'bar',
-                                    label: '',
-                                    backgroundColor: '#022346',
-                                    data: valoresSaldosAno,
-                                    borderColor: 'white',
-                                    borderWidth: 2
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                title: {
-                                    display: true,
-                                    text: titulo2,
-                                    position: "top"
-                                },
-                                legend: {
-                                    display: false,
-                                    position: "top"
-                                },scales:{
-                                    yAxes:[{
-                                        ticks:{
-                                            beginAtZero: true
-                                        }
-                                    }]
-                                }
-                            }
-                        }
-
-                        if(typeof charts[id6] == "undefined") {   
-                            charts[id6]= new (function(){
-                            this.ctx=$(id6); 
-                            this.chart=new Chart(this.ctx, config);
-                            })();     
-                        } else {
-                            charts[id6].chart.destroy();
-                            charts[id6].chart=new Chart(charts[id6].ctx, config); 
-                        }
-
-                    }
-                }
-            });            
-    }
-
-    function lancamentos_vencidos() {
-        var intervalo = [], dtTit;
-        var $tituloVenc = $('#titulo_proxVenc');
-            intervalo = intervaloDatasAQuitar($selectGrafTemporal.val());
-            dtTit = intervalo[ intervalo.length - 1].split('-')
-            dtTit = dtTit[2] + '/' + dtTit[1] + '/' + dtTit[0];
-            $tituloVenc.text('Lançamentos com vencimento a partir de hoje até ' + dtTit );
-
-        // console.log('interv vencidos:', intervalo);
-        $.ajax({ 
-            url: baselink + '/ajax/buscaVencidos', 
-            type: 'POST', 
-            data: {
-                intervalo: intervalo,
-            },
-            dataType: 'json', 
-            success: function (resultado) { 
-                if (resultado){   
-                    // console.log(resultado);
-                    if(resultado){
-                        var dataAux, vencidas = [], proximo = [];
-                        var $tabela = $('#lancamentos_vencidos'), $tabela2 = $('#lancamentos_vencProximo');
-                            vencidas = Object.values(resultado['vencidas']);
-
-                        $tabela.find('tbody tr').remove();
-                        for(var i = 0; i < vencidas.length; i++ ){
-                            linha = "<tr>";
-                            linha += "<td>" + vencidas[i]['despesa_receita'] + "</td>";
-                            linha += "<td>" + vencidas[i]['conta_analitica'] + "</td>";
-                            linha += "<td>" + vencidas[i]['detalhe'] + "</td>";
-                            
-                            dataAux = '';
-                            dataAux = vencidas[i]['data_vencimento'];
-                            dataAux = dataAux.split('-');
-                            dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                            linha += "<td>" + dataAux + "</td>";
-
-                            linha += "<td>" + floatParaPadraoBrasileiro( vencidas[i]['valor_total'] )  + "</td>";
-                            linha += "<tr>" 
-
-                            $tabela.find('tbody').append(linha);
-                        }
-
-                        proximo = Object.values(resultado['proximo']);
-                        // console.log('proximo: ', proximo);
-                        $tabela2.find('tbody tr').remove();
-                        for(var i = 0; i < proximo.length; i++ ){
-                            linha = "<tr>";
-                            linha += "<td>" + proximo[i]['despesa_receita'] + "</td>";
-                            linha += "<td>" + proximo[i]['conta_analitica'] + "</td>";
-                            linha += "<td>" + proximo[i]['detalhe'] + "</td>";
-                            
-                            dataAux = '';
-                            dataAux = proximo[i]['data_vencimento'];
-                            dataAux = dataAux.split('-');
-                            dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                            linha += "<td>" + dataAux + "</td>";
-
-                            linha += "<td>" + floatParaPadraoBrasileiro( proximo[i]['valor_total'] )  + "</td>";
-                            linha += "<tr>" 
-
-                            $tabela2.find('tbody').append(linha);
-                        }
-                    }
-
-                    
-
-
-                }
-            }
-        });            
-    }
-
-    $selectGrafVendas
-        .val(7)
-        .on('change', function() {
-            orcamentosXvendas();
-            orcamentos();
-            ordenServicos();
-            aniversarios();
-        })
-        .change();
-
-    function orcamentos() {
-        var intervalo = intervaloDatasAQuitar($selectGrafVendas.val());
-        var $tabela = $('#orcamentos_abertos'), $tabela2 = $('#orcamentos_retornar');        
-        var dtTit = intervalo[ intervalo.length - 1].split('-')
-            dtTit = dtTit[2] + '/' + dtTit[1] + '/' + dtTit[0];
-            
-        var $tituloProx = $('#titulo_proxOrc');
-            $tituloProx.text('Orçamentos com data de retorno dentro dos próximos ' +  $selectGrafVendas
-            .val() + ' dias');
-
-        // console.log('interv vencidos:', intervalo);
-        $.ajax({ 
-            url: baselink + '/ajax/buscaOrcamentos', 
-            type: 'POST', 
-            data: {
-                intervalo: intervalo,
-            },
-            dataType: 'json', 
-            success: function (resultado) { 
-                if (resultado){   
-                    if(resultado){
-                        var dataAux, vencidas = [], proximo = [];
-
-                            vencidas = Object.values(resultado['abertos']);
-
-                        $tabela.find('tbody tr').remove();
-                        for(var i = 0; i < vencidas.length; i++ ){
-                            linha = "<tr>";
-                            linha += "<td><a class='btn btn-primary btn-sm ml-1' href="+baselink+"/orcamentos/editar/"+vencidas[i]['id']+"><i class='fas fa-edit'></i></a></td>";
-                            linha += "<td>" + vencidas[i]['titulo_orcamento'] + "</td>";
-                            linha += "<td>" + floatParaPadraoBrasileiro( vencidas[i]['valor_total'] )  + "</td>";
-                            linha += "<td>" + vencidas[i]['nome_cliente'] + "</td>";
-                            linha += "<td>" + vencidas[i]['email'] + "</td>";
-                            
-                            dataAux = '';
-                            dataAux = vencidas[i]['data_emissao'];
-                            dataAux = dataAux.split('-');
-                            dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                            linha += "<td>" + dataAux + "</td>";
-                            linha += "<tr>";
-
-                            $tabela.find('tbody').append(linha);
-                        }
-
-                        proximo = Object.values(resultado['retornar']);
-
-                        $tabela2.find('tbody tr').remove();
-                        for(var i = 0; i < proximo.length; i++ ){
-                            linha = "<tr>";
-                            linha += "<td><a class='btn btn-primary btn-sm ml-1' href="+baselink+"/orcamentos/editar/"+proximo[i]['id']+" ><i class='fas fa-edit'></i></a></td>";
-                            linha += "<td>" + proximo[i]['titulo_orcamento'] + "</td>";
-                            linha += "<td>" + floatParaPadraoBrasileiro( proximo[i]['valor_total'] )  + "</td>";
-                            linha += "<td>" + proximo[i]['nome_cliente'] + "</td>";
-                            linha += "<td>" + proximo[i]['email'] + "</td>";
-                            
-                            dataAux = '';
-                            dataAux = proximo[i]['data_emissao'];
-                            dataAux = dataAux.split('-');
-                            dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                            linha += "<td>" + dataAux + "</td>";
-                            linha += "<tr>";
-                            linha += "<tr>"; 
-
-                            $tabela2.find('tbody').append(linha);
-                        }
-                    }
-
-                    
-
-
-                }
-            }
-        });            
-    }
-
-    function ordenServicos() {
-        var intervalo = intervaloDatasAQuitar($selectGrafVendas.val());
-        var $tabela = $('#os_emproducao'), $tabela2 = $('#revisoes');        
-        var dtTit = intervalo[ intervalo.length - 1].split('-')
-            dtTit = dtTit[2] + '/' + dtTit[1] + '/' + dtTit[0];
-            
-        var $tituloOS = $('#titulo_proxRev');
-            $tituloOS.text('O.S. com data de revisão dentro dos próximos ' +  $selectGrafVendas
-            .val() + ' dias');
-
-        // console.log('interv vencidos:', intervalo);
-        $.ajax({ 
-            url: baselink + '/ajax/buscaOrdensServicos', 
-            type: 'POST', 
-            data: {
-                intervalo: intervalo,
-            },
-            dataType: 'json', 
-            success: function (resultado) { 
-                if(resultado){
-                    
-                    var dataAux, dataRevAux, emprod = [];
-
-                    emprod = Object.values(resultado['emproducao']);
-
-                    $tabela.find('tbody tr').remove();
-                    for(var i = 0; i < emprod.length; i++ ){
-                        linha = "<tr>";
-                        linha += "<td><a class='btn btn-primary btn-sm ml-1' href="+baselink+"/ordemservico/editar/"+emprod[i]['id']+"><i class='fas fa-edit'></i></a></td>";
-                        
-                        dataAux = '';
-                        dataAux = emprod[i]['data_aprovacao'];
-                        dataAux = dataAux.split('-');
-                        dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                        linha += "<td>" + dataAux + "</td>";
-
-                        linha += "<td>" + emprod[i]['titulo_orcamento'] + "</td>";
-
-                        linha += "<td>" + floatParaPadraoBrasileiro( emprod[i]['valor_final'] )  + "</td>";
-
-                        linha += "<td>" + emprod[i]['nome_razao_social'] + "</td>";
-                        linha += "<td>" + emprod[i]['tec_responsavel'] + "</td>";
-                        linha += "<tr>";
-
-                        $tabela.find('tbody').append(linha);
-                    }
-
-                    var rev15dias = [], rev30dias = [], rev6meses = [];
-
-                    rev15dias = Object.values(resultado['rev15dias']);
-                    rev30dias = Object.values(resultado['rev30dias']);
-                    rev6meses = Object.values(resultado['rev6meses']);
-
-                    $tabela2.find('tbody tr').remove();
-
-                    for(var i = 0; i < rev15dias.length; i++ ){
-                        linha = "<tr>";
-                        linha += "<td><a class='btn btn-primary btn-sm ml-1' href="+baselink+"/ordemservico/editar/"+rev15dias[i]['id']+"><i class='fas fa-edit'></i></a></td>";
-                        
-                        dataAux = '';
-                        dataAux = rev15dias[i]['data_aprovacao'];
-                        dataAux = dataAux.split('-');
-                        dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                        linha += "<td>" + dataAux + "</td>";
-
-                        dataRevAux = '';
-                        dataRevAux = rev15dias[i]['data_revisao_1'];
-                        dataRevAux = dataRevAux.split('-');
-                        dataRevAux = dataRevAux[2] + '/' + dataRevAux[1] + '/' + dataRevAux[0];
-                        linha += "<td>" + dataRevAux + "</td>";
-
-                        linha += "<td>" + rev15dias[i]['titulo_orcamento'] + "</td>";
-
-                        linha += "<td>" + floatParaPadraoBrasileiro( rev15dias[i]['valor_final'] )  + "</td>";
-
-                        linha += "<td>" + rev15dias[i]['nome_razao_social'] + "</td>";
-                        linha += "<td>" + rev15dias[i]['tec_responsavel'] + "</td>";
-                        linha += "<td> Primeira Revisão </td>";
-                        linha += "<tr>";
-
-                        // console.log('15 dias: ',linha);
-                        $tabela2.find('tbody').append(linha);
-                    }
-
-                    for(var i = 0; i < rev30dias.length; i++ ){
-                        linha = "<tr>";
-                        linha += "<td><a class='btn btn-primary btn-sm ml-1' href="+baselink+"/ordemservico/editar/"+rev30dias[i]['id']+"><i class='fas fa-edit'></i></a></td>";
-                        
-                        dataAux = '';
-                        dataAux = rev30dias[i]['data_aprovacao'];
-                        dataAux = dataAux.split('-');
-                        dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                        linha += "<td>" + dataAux + "</td>";
-
-                        dataRevAux = '';
-                        dataRevAux = rev30dias[i]['data_revisao_2'];
-                        dataRevAux = dataRevAux.split('-');
-                        dataRevAux = dataRevAux[2] + '/' + dataRevAux[1] + '/' + dataRevAux[0];
-                        linha += "<td>" + dataRevAux + "</td>";
-
-                        linha += "<td>" + rev30dias[i]['titulo_orcamento'] + "</td>";
-
-                        linha += "<td>" + floatParaPadraoBrasileiro( rev30dias[i]['valor_final'] )  + "</td>";
-
-                        linha += "<td>" + rev30dias[i]['nome_razao_social'] + "</td>";
-                        linha += "<td>" + rev30dias[i]['tec_responsavel'] + "</td>";
-                        linha += "<td> Segunda Revisão </td>";
-                        linha += "<tr>";
-
-                        // console.log('30 dias: ',linha);
-                        $tabela2.find('tbody').append(linha);
-                    }
-
-                    for(var i = 0; i < rev6meses.length; i++ ){
-                        linha = "<tr>";
-                        linha += "<td><a class='btn btn-primary btn-sm ml-1' href="+baselink+"/ordemservico/editar/"+rev6meses[i]['id']+"><i class='fas fa-edit'></i></a></td>";
-                        
-                        dataAux = '';
-                        dataAux = rev6meses[i]['data_aprovacao'];
-                        dataAux = dataAux.split('-');
-                        dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                        linha += "<td>" + dataAux + "</td>";
-
-                        dataRevAux = '';
-                        dataRevAux = rev6meses[i]['data_revisao_3'];
-                        dataRevAux = dataRevAux.split('-');
-                        dataRevAux = dataRevAux[2] + '/' + dataRevAux[1] + '/' + dataRevAux[0];
-                        linha += "<td>" + dataRevAux + "</td>";
-
-                        linha += "<td>" + rev6meses[i]['titulo_orcamento'] + "</td>";
-
-                        linha += "<td>" + floatParaPadraoBrasileiro( rev6meses[i]['valor_final'] )  + "</td>";
-
-                        linha += "<td>" + rev6meses[i]['nome_razao_social'] + "</td>";
-                        linha += "<td>" + rev6meses[i]['tec_responsavel'] + "</td>";
-                        linha += "<td> Terceira Revisão </td>";
-                        linha += "<tr>";
-
-                        // console.log('6 meses: ',linha);
-                        $tabela2.find('tbody').append(linha);
-                    }
-                }
-
-            }
-        });            
-    }
-
-    function aniversarios() {
-        var intervalo = intervaloDatasAQuitar($selectGrafVendas.val());
-        var $tabela = $('#anivers');        
-        var dtTit = intervalo[ intervalo.length - 1].split('-')
-            dtTit = dtTit[2] + '/' + dtTit[1] + '/' + dtTit[0];
-            
-        var $tituloOS = $('#tit_aniver');
-            $tituloOS.text('Clientes de aniversário no mês');
-
-        // console.log('interv vencidos:', intervalo);
-        $.ajax({ 
-            url: baselink + '/ajax/buscaAniversariantes', 
-            type: 'POST', 
-            data: {
-                intervalo: intervalo,
-            },
-            dataType: 'json', 
-            success: function (resultado) { 
-                if(resultado){
-                    // console.log(resultado);
-                    var dataAux, anivers = [];
-
-                    anivers = Object.values(resultado['anivers']);
-
-                    $tabela.find('tbody tr').remove();
-                    for(var i = 0; i < anivers.length; i++ ){
-                        linha = "<tr>";
-                        linha += "<td>" + anivers[i]['nome'] + "</td>";
-
-                        dataAux = '';
-                        dataAux = anivers[i]['data_nascimento'];
-                        dataAux = dataAux.split('-');
-                        dataAux = dataAux[2] + '/' + dataAux[1] + '/' + dataAux[0];
-                        linha += "<td>" + dataAux + "</td>";
-
-                        linha += "<td>" + anivers[i]['celular'] + "</td>";
-                        linha += "<td>" + anivers[i]['email'] + "</td>";
-                        linha += "<tr>";
-
-                        $tabela.find('tbody').append(linha);
-                    }
-                }
-
-            }
-        });            
-    }
-
-    function orcamentosXvendas() {
-        var titulo, intervalo = [];
-        var $qtdOrc = $("#qtd_orc");
-        var $valorOrc = $("#valor_orc");
-        var $qtdVenda = $("#qtd_venda");
-        var $valorVenda = $("#valor_venda");
-
-
-            if (!$selectGrafVendas.val() ) {
-                $selectGrafVendas.val($selectGrafVendas.find('option:not([disabled])').first().val()).change();
-            };
-
-            //// FLUXO DE CAIXA REALIZADO
-            titulo = 'Orçamento X Vendas dos últimos ' + $selectGrafVendas.children("option:selected").text().trim() +' dias até hoje.';
-
-            intervalo = intervaloDatasRealizado($selectGrafVendas.val());
-
-            ///// GRÁFICO FLUXO CAIXA REALIZADO
-            $.ajax({ 
-                url: baselink + '/ajax/graficoOrcamentosXvendas', 
-                type: 'POST', 
-                data: {
-                    intervalo: intervalo,
-                },
-                dataType: 'json', 
-                success: function (resultado) { 
-                    if (resultado){   
-                        //  console.log(resultado)
-                        var eixoDatas = [], orcamentos = [], vendas = [], qtdorcamentos = [], qtdvendas = [];
-                        var valorOrcado = parseFloat(0), valorVendido = parseFloat(0), qtdOrcs = parseInt(0), qtdVnd = parseInt(0);
-
-                        eixoDatas = Object.keys(resultado[0]);
-                        orcamentos = Object.values(resultado[0]);
-                        qtdorcamentos = Object.values(resultado[1])
-                        vendas = Object.values(resultado[2]);
-                        qtdvendas = Object.values(resultado[3]);
-
-                        for (var i = 0; i < orcamentos.length; i++) {
-                            valorOrcado = valorOrcado + parseFloat( orcamentos[i] );
-                            valorVendido = valorVendido + parseFloat( vendas[i] );
-                            qtdOrcs = qtdOrcs + parseInt( qtdorcamentos[i] );
-                            qtdVnd = qtdVnd + parseInt( qtdvendas[i] );                         
-                        }
-
-                        $qtdOrc.text( qtdOrcs );
-                        $valorOrc.text( 'R$ ' + floatParaPadraoBrasileiro(valorOrcado) );
-                        $qtdVenda.text( qtdVnd );
-                        $valorVenda.text( 'R$ ' + floatParaPadraoBrasileiro(valorVendido) );                      
-
-                        var config = {
-                            type: 'bar',
-                            data: {
-                                labels: eixoDatas,
-                                datasets: [{
-                                    type: 'bar',
-                                    label: 'Orçamentos',
-                                    backgroundColor: '#418fe2',
-                                    data: orcamentos,
-                                    borderColor: 'white',
-                                    borderWidth: 1
-                                }, {
-                                    type: 'bar',
-                                    label: 'Vendas',
-                                    backgroundColor: '#064c92',
-                                    data: vendas,
-                                    borderColor: 'white',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                title: {
-                                    display: true,
-                                    text: titulo,
-                                    position: "top"
-                                },
-                                legend: {
-                                    display: true,
-                                    position: "top"
-                                },
-                                scales:{
-                                    yAxes:[{
-                                        ticks:{
-                                            beginAtZero: true
-                                        }
-                                    }]
-                                }
-                            }
-                        }
-                        
-                        if(typeof charts[id7] == "undefined") {
-                            charts[id7]= new (function(){
-                            this.ctx=$(id7); 
-                            this.chart=new Chart(this.ctx, config);
-                            })();     
-                        } else {
-                            charts[id7].chart.destroy();
-                            charts[id7].chart=new Chart(charts[id7].ctx, config); 
-                        }
-                    }
-                }
-            });
-
-    }
-
 
 });
 
@@ -1192,4 +469,145 @@ function intervaloDatasSaldos(dtAtual) {
 
 function aleatorioEntre(min, max){
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function somaDiasHoje(dias){
+    var dtaux, dtaux1, dia, mes, ano, dia1, mes1, ano1, retorno = '';
+
+        // calculando o valor de HOJE
+        dtaux = new Date();
+        
+        dia = dtaux.getDate();
+        if (dia.toString().length == 1) {
+            dia = "0" + dtaux.getDate();
+        }
+
+        mes = dtaux.getMonth() + 1;
+        if (mes.toString().length == 1) {
+            mes = "0" + mes;
+        }
+        ano = dtaux.getFullYear();
+
+        hoje = ano + '-' + mes + '-' + dia;
+
+        // criando o array de DATAS
+
+        if(parseInt(dias) != parseInt(0)){
+            
+            dtaux1 = new Date(ano, parseInt(mes) - 1, dia); 
+            dtaux1.setDate(dtaux1.getDate() + dias);
+            
+            dia1 = dtaux1.getDate();
+            if (dia1.toString().length == 1) {
+                dia1 = "0" + dtaux1.getDate();
+            }
+            
+            mes1 = dtaux1.getMonth() + 1;
+            if (mes1.toString().length == 1) {
+                mes1 = "0" + mes1;
+            }
+            ano1 = dtaux1.getFullYear();
+                
+            retorno = ano1 + '-' + mes1 + '-' + dia1;    
+        }
+        
+        return retorno;
+}
+
+function inicioMesAtualAteDia(diaX) {
+    var hoje, dtaux, dtaux1, dia, mes, ano, dia1, mes1, ano1, retorno = [];
+    var d1;
+        // calculando o valor de HOJE
+        dtaux = new Date();
+        
+        dia = dtaux.getDate();
+        if (dia.toString().length == 1) {
+            dia = "0" + dtaux.getDate();
+        }
+
+        mes = dtaux.getMonth() + 1;
+        if (mes.toString().length == 1) {
+            mes = "0" + mes;
+        }
+        ano = dtaux.getFullYear();
+
+        hoje = ano + '-' + mes + '-' + dia;
+        d1 = ano + '-' + mes + '-01';
+        // criando o array de DATAS
+
+        if(parseInt(diaX) != parseInt(0)){
+            k=1;
+            for(i = 1; i < parseInt(diaX)  ; i++){
+                dtaux1 = new Date(ano, parseInt(mes) - 1, 1); 
+                dtaux1.setDate(dtaux1.getDate() + i);
+                
+                dia1 = dtaux1.getDate();
+                if (dia1.toString().length == 1) {
+                    dia1 = "0" + dtaux1.getDate();
+                }
+                
+                mes1 = dtaux1.getMonth() + 1;
+                if (mes1.toString().length == 1) {
+                    mes1 = "0" + mes1;
+                }
+                ano1 = dtaux1.getFullYear();
+                
+                retorno[k] = ano1 + '-' + mes1 + '-' + dia1;
+                k++;
+            }
+        }
+        
+        retorno[0] = d1;
+        
+        return retorno;
+
+}
+
+function fluxoCaixa_Cards() {
+        
+    var $despesaHoje = $("#despesa_hoje");
+    var $despesa7dias = $("#despesa_7dias");
+    var $despesa15dias = $("#despesa_15dias");
+    var $despesaDe1ate10 = $("#despesa_atedia10");
+    var $despesaDe1ate25 = $("#despesa_atedia25");
+
+    var $receitaHoje = $("#receita_hoje");
+    var $receita7dias = $("#receita_7dias");
+    var $receita15dias = $("#receita_15dias");
+    var $receitaDe1ate9 = $("#receita_atedia9");
+    var $receitaDe1ate24 = $("#receita_atedia24");
+
+    intervaloVar = intervaloDatasAQuitar(16);
+    intervaloFix = inicioMesAtualAteDia(25)
+
+        ///// GRÁFICO FLUXO CAIXA REALIZADO
+        $.ajax({ 
+            url: baselink + '/ajax/CardsDashBoardFinanceiro', 
+            type: 'POST', 
+            data: {
+                intervaloVar: intervaloVar,
+                intervaloFix: intervaloFix,
+            },
+            dataType: 'json', 
+            success: function (resultado) { 
+                if (resultado){   
+
+                    console.log(resultado)
+                    $despesaHoje.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d0']) );            
+                    $despesa7dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d7']) );                
+                    $despesa15dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d15']) );
+                    $despesaDe1ate10.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['ate10']) );
+                    $despesaDe1ate25.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['ate25']) );
+
+                    $receitaHoje.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d0']) );
+                    $receita7dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d7']) );
+                    $receita15dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d15']) );
+                    $receitaDe1ate9.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['ate10']) );
+                    $receitaDe1ate24.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['ate25']) );
+
+                   
+                }
+            }
+        });
+
 }
