@@ -69,19 +69,85 @@
             <!-- inicio financeiro -->
                 <!-- Header com o Select de opções de intervalo de dias -->
                 <div class="card my-1">
-                    <div class="card-header alert-danger">
+                    <div class="card-header bg-dark">
                         <div class="row">
                             <div class="col-lg">
-                                <h4 class="text-weight-bold text-dark">Previsão de Despesas do Mês Atual</h4>
+                                <h4 class="text-weight-bold text-white">Previsão de Despesas e Receitas Hoje e Próximos 7 e 15 Dias</h4>
                             </div>
                         </div>        
                     </div>
                 </div>
             
                 <!-- Fluxo de caxia realizado -->
-                <div class="card card-body my-2">
+                <div class="card card-body py-2 ">
                   <div class="row">
-                    <div class="col-lg-2">
+                    <div class="col-lg">
+                      <div class="card text-center mb-0 alert alert-danger">
+                        <div class="card-body">
+                          <small class="card-title">Hoje</small>
+                          <h5 class="card-text" id="despesa_hoje">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0 alert alert-danger">
+                        <div class="card-body">
+                          <small class="card-title">Próximos 7 dias</small>
+                          <h5 class="card-text" id="despesa_7dias">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0 alert alert-danger">
+                        <div class="card-body">
+                          <small class="card-title">Próximos 15 dias</small>
+                          <h5 class="card-text" id="despesa_15dias">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg">
+                      <div class="card text-center mb-0 alert alert-success">
+                        <div class="card-body">
+                          <small class="card-title">Hoje</small>
+                          <h5 class="card-text" id="receita_hoje">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0 alert alert-success">
+                        <div class="card-body">
+                          <small class="card-title">+ 7 dias</small>
+                          <h5 class="card-text" id="receita_7dias">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0 alert alert-success">
+                        <div class="card-body">
+                          <small class="card-title">+ 15 dias</small>
+                          <h5 class="card-text" id="receita_15dias">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+                <!-- teste de outras disposição -->
+                <div class="card my-1">
+                    <div class="card-header bg-dark">
+                        <div class="row">
+                            <div class="col-lg">
+                                <h4 class="text-weight-bold text-white" id="titulo_desp">Previsão de Despesas</h4>
+                            </div>
+                        </div>        
+                    </div>
+                </div>
+            
+                <!-- Fluxo de caxia realizado -->
+                <div class="card card-body py-2 my-1 alert-danger">
+                  <div class="row">
+                    <!-- <div class="col-lg">
                       <div class="card text-center mb-3">
                         <div class="card-body">
                           <small class="card-title">Hoje</small>
@@ -89,7 +155,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg">
                       <div class="card text-center mb-3">
                         <div class="card-body">
                           <small class="card-title">Próximos 7 dias</small>
@@ -97,47 +163,80 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg">
                       <div class="card text-center mb-3">
                         <div class="card-body">
                           <small class="card-title">Próximos 15 dias</small>
                           <h5 class="card-text" id="despesa_15dias">R$ 0,00</h5>
                         </div>
                       </div>
-                    </div>
-                    <div class="col-lg-2">
-                      <div class="card text-center mb-3">
+                    </div> -->
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
                         <div class="card-body">
-                          <small class="card-title">até dia 10</small>
-                          <h5 class="card-text" id="despesa_atedia10">R$ 0,00</h5>
+                          <small class="card-title">até dia 10/m0</small>
+                          <h5 class="card-text" id="despesa_d10m0">R$ 0,00</h5>
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-2">
-                      <div class="card text-center mb-3">
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
                         <div class="card-body">
-                          <small class="card-title">até dia 25</small>
-                          <h5 class="card-text" id="despesa_atedia25">R$ 0,00</h5>
+                          <small class="card-title">até dia 25/m0</small>
+                          <h5 class="card-text" id="despesa_d25m0">R$ 0,00</h5>
                         </div>
                       </div>
                     </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
+                        <div class="card-body">
+                          <small class="card-title">até dia 10/m1</small>
+                          <h5 class="card-text" id="despesa_d10m1">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
+                        <div class="card-body">
+                          <small class="card-title">até dia 25/m1</small>
+                          <h5 class="card-text" id="despesa_d25m1">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
+                        <div class="card-body">
+                          <small class="card-title">até dia 10/m2</small>
+                          <h5 class="card-text" id="despesa_d10m2">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
+                        <div class="card-body">
+                          <small class="card-title">até dia 25/m2</small>
+                          <h5 class="card-text" id="despesa_d25m2">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 
                 <div class="card my-2">
-                    <div class="card-header alert-success">
+                    <div class="card-header bg-dark">
                         <div class="row">
                             <div class="col-lg">
-                                <h4 class="text-weight-bold text-dark">Previsão de Receitas do Mês Atual</h4>
+                                <h4 class="text-weight-bold text-white" id="titulo_rece" >Previsão de Receitas</h4>
                             </div>
                         </div>        
                     </div>
                 </div>
             
                 <!-- Fluxo de caxia realizado -->
-                <div class="card card-body my-1">
+                <div class="card card-body py-2 my-1 alert-success">
                   <div class="row">
-                    <div class="col-lg-2">
+                    <!-- <div class="col-lg">
                       <div class="card text-center mb-3">
                         <div class="card-body">
                           <small class="card-title">Hoje</small>
@@ -145,38 +244,71 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg">
                       <div class="card text-center mb-3">
                         <div class="card-body">
-                          <small class="card-title">Próximos 7 dias</small>
+                          <small class="card-title">+ 7 dias</small>
                           <h5 class="card-text" id="receita_7dias">R$ 0,00</h5>
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg">
                       <div class="card text-center mb-3">
                         <div class="card-body">
-                          <small class="card-title">Próximos 15 dias</small>
+                          <small class="card-title">+ 15 dias</small>
                           <h5 class="card-text" id="receita_15dias">R$ 0,00</h5>
                         </div>
                       </div>
-                    </div>
-                    <div class="col-lg-2">
-                      <div class="card text-center mb-3">
+                    </div> -->
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
                         <div class="card-body">
-                          <small class="card-title">até dia 10</small>
-                          <h5 class="card-text" id="receita_atedia9">R$ 0,00</h5>
+                          <small class="card-title">até dia 10/m0</small>
+                          <h5 class="card-text" id="receita_d10m0">R$ 0,00</h5>
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-2">
-                      <div class="card text-center mb-3">
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
                         <div class="card-body">
-                          <small class="card-title">até dia 25</small>
-                          <h5 class="card-text" id="receita_atedia24">R$ 0,00</h5>
+                          <small class="card-title">até dia 25/m0</small>
+                          <h5 class="card-text" id="receita_d25m0">R$ 0,00</h5>
                         </div>
                       </div>
                     </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
+                        <div class="card-body">
+                          <small class="card-title">até dia 10/m1</small>
+                          <h5 class="card-text" id="receita_d10m1">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
+                        <div class="card-body">
+                          <small class="card-title">até dia 25/m1</small>
+                          <h5 class="card-text" id="receita_d25m1">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
+                        <div class="card-body">
+                          <small class="card-title">até dia 10/m2</small>
+                          <h5 class="card-text" id="receita_d10m2">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg">
+                      <div class="card text-center mb-0">
+                        <div class="card-body">
+                          <small class="card-title">até dia 25/m2</small>
+                          <h5 class="card-text" id="receita_d25m2">R$ 0,00</h5>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
             

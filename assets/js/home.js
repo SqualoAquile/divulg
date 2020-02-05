@@ -563,22 +563,83 @@ function inicioMesAtualAteDia(diaX) {
 
 }
 
+function dia10edia25proximos3meses() {
+    var m0d0, m0d10, m0d25, m1d10, m1d25, m2d10, m2d25;
+    var m0, m1, m2, a0, a1, a2, dtaux, dtaux1, dtaux2, retorno = [];
+
+        // calculando os dias do mês vigente
+        dtaux = new Date();
+
+        m0 = dtaux.getMonth() + 1;
+        if (m0.toString().length == 1) {
+            m0 = "0" + m0;
+        }
+        a0 = dtaux.getFullYear();
+
+        m0d0 = a0 + '-' + m0 + '-01';
+        m0d10 = a0 + '-' + m0 + '-10';
+        m0d25 = a0 + '-' + m0 + '-25';
+        
+        // calculando os dias mês seguinte
+        dtaux1 = new Date(a0, parseInt(m0), '1'); 
+        m1 = dtaux1.getMonth() + 1;
+        if (m1.toString().length == 1) {
+            m1 = "0" + m1;
+        }
+        a1 = dtaux1.getFullYear();
+
+        m1d10 = a1 + '-' + m1 + '-10';
+        m1d25 = a1 + '-' + m1 + '-25';
+
+        // calculando os dias de 2 meses
+        dtaux2 = new Date(a0, parseInt(m0) + 1, '1');                 
+        m2 = dtaux2.getMonth() + 1;
+        if (m2.toString().length == 1) {
+            m2 = "0" + m2;
+        }
+        a2 = dtaux2.getFullYear();
+
+        m2d10 = a2 + '-' + m2 + '-10';
+        m2d25 = a2 + '-' + m2 + '-25';
+        
+        retorno[0] = m0d0; // primeiro dia do mês vigente
+        retorno[1] = m0d10; // dia 10 do mês vigente
+        retorno[2] = m0d25; // dia 25 do mês vigente
+        retorno[3] = m1d10; // dia 10 do mês seguinte
+        retorno[4] = m1d25; // dia 25 do mês seguinte
+        retorno[5] = m2d10; // dia 10 do mês seguinte
+        retorno[6] = m2d25; // dia 25 do mês seguinte
+        
+
+        
+        return retorno;
+
+}
+
 function fluxoCaixa_Cards() {
         
     var $despesaHoje = $("#despesa_hoje");
     var $despesa7dias = $("#despesa_7dias");
     var $despesa15dias = $("#despesa_15dias");
-    var $despesaDe1ate10 = $("#despesa_atedia10");
-    var $despesaDe1ate25 = $("#despesa_atedia25");
+    var $despesad10m0 = $("#despesa_d10m0");
+    var $despesad25m0 = $("#despesa_d25m0");
+    var $despesad10m1 = $("#despesa_d10m1");
+    var $despesad25m1 = $("#despesa_d25m1");
+    var $despesad10m2 = $("#despesa_d10m2");
+    var $despesad25m2 = $("#despesa_d25m2");
 
     var $receitaHoje = $("#receita_hoje");
     var $receita7dias = $("#receita_7dias");
     var $receita15dias = $("#receita_15dias");
-    var $receitaDe1ate9 = $("#receita_atedia9");
-    var $receitaDe1ate24 = $("#receita_atedia24");
+    var $receitad10m0 = $("#receita_d10m0");
+    var $receitad25m0 = $("#receita_d25m0");
+    var $receitad10m1 = $("#receita_d10m1");
+    var $receitad25m1 = $("#receita_d25m1");
+    var $receitad10m2 = $("#receita_d10m2");
+    var $receitad25m2 = $("#receita_d25m2");
 
     intervaloVar = intervaloDatasAQuitar(16);
-    intervaloFix = inicioMesAtualAteDia(25)
+    intervaloFix = dia10edia25proximos3meses();
 
         ///// GRÁFICO FLUXO CAIXA REALIZADO
         $.ajax({ 
@@ -593,17 +654,123 @@ function fluxoCaixa_Cards() {
                 if (resultado){   
 
                     console.log(resultado)
-                    $despesaHoje.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d0']) );            
-                    $despesa7dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d7']) );                
-                    $despesa15dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d15']) );
-                    $despesaDe1ate10.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['ate10']) );
-                    $despesaDe1ate25.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['ate25']) );
+                    var dtat = dataAtual();
+                        dtat = dtat.split('/');
+                        dtat = '01/'+dtat[1]+'/'+dtat[2];
 
+                    $('#titulo_desp').text('Previsão de Despesas de '+ dtat);
+                    $('#titulo_rece').text('Previsão de Receitas de '+ dtat);
+
+                    ///////DESPESAS ////////////////////
+                    var dtaux = '';
+                    dtaux = intervaloVar[0].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesaHoje.siblings('small').text(dtaux);
+                    $despesaHoje.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d0']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloVar[ intervaloVar.length - 9 ].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesa7dias.siblings('small').text(dtaux);
+                    $despesa7dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d7']) );   
+                    
+                    var dtaux = '';
+                    dtaux = intervaloVar[ intervaloVar.length - 1 ].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesa15dias.siblings('small').text(dtaux);
+                    $despesa15dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d15']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[1].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesad10m0.siblings('small').text('até: '+dtaux);
+                    $despesad10m0.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d10m0']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[2].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesad25m0.siblings('small').text('até: '+dtaux);
+                    $despesad25m0.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d25m0']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[3].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesad10m1.siblings('small').text('até: '+dtaux);
+                    $despesad10m1.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d10m1']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[4].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesad25m1.siblings('small').text('até: '+dtaux);
+                    $despesad25m1.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d25m1']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[5].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesad10m2.siblings('small').text('até: '+dtaux);
+                    $despesad10m2.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d10m2']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[6].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $despesad25m2.siblings('small').text('até: '+dtaux);
+                    $despesad25m2.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d25m2']) );
+                    
+
+                    ///////RECEITAS ////////////////////
+                    var dtaux = '';
+                    dtaux = intervaloVar[0].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receitaHoje.siblings('small').text(dtaux);
                     $receitaHoje.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d0']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloVar[ intervaloVar.length - 9 ].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receita7dias.siblings('small').text(dtaux);
                     $receita7dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d7']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloVar[ intervaloVar.length - 1 ].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receita15dias.siblings('small').text(dtaux);
                     $receita15dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d15']) );
-                    $receitaDe1ate9.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['ate10']) );
-                    $receitaDe1ate24.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['ate25']) );
+                    
+                    var dtaux = '';
+                    dtaux = intervaloFix[1].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receitad10m0.siblings('small').text('até: '+dtaux);
+                    $receitad10m0.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d10m0']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[2].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receitad25m0.siblings('small').text('até: '+dtaux);
+                    $receitad25m0.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d25m0']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[3].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receitad10m1.siblings('small').text('até: '+dtaux);
+                    $receitad10m1.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d10m1']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[4].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receitad25m1.siblings('small').text('até: '+dtaux);
+                    $receitad25m1.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d25m1']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[5].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receitad10m2.siblings('small').text('até: '+dtaux);
+                    $receitad10m2.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d10m2']) );
+
+                    var dtaux = '';
+                    dtaux = intervaloFix[6].split('-')
+                    dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
+                    $receitad25m2.siblings('small').text('até: '+dtaux);
+                    $receitad25m2.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d25m2']) );
 
                    
                 }

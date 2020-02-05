@@ -1,7 +1,8 @@
 $(function () {
-    console.log('entrei aquiii')
+    // console.log('entrei aquiii')
     var $cpf_cnpj = $('[name=cpf_cnpj]');
 
+    
     //
     // Escuta o clique dos radios CPF/CPNJ pra mostra e esconder os inputs de CPF/CNPJ
     //

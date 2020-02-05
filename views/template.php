@@ -20,25 +20,25 @@
             ],
             [
                "text" => "Fornecedores",
-               "icon" => "fas fa-users",
+               "icon" => "fas fa-industry",
                "permissao" => "fornecedores_ver",
                "link" => "/fornecedores"
             ],
             [
                "text" => "Funcionários",
-               "icon" => "fas fa-users",
+               "icon" => "fas fa-user-friends",
                "permissao" => "funcionarios_ver",
                "link" => "/funcionarios"
             ],
             [
                "text" => "Serviços",
-               "icon" => "fas fa-users",
+               "icon" => "fas fa-hand-pointer",
                "permissao" => "servicos_ver",
                "link" => "/servicos"
             ],
             [
                "text" => "Produtos",
-               "icon" => "fas fa-boxes",
+               "icon" => "fas fa-cart-arrow-down",
                "permissao" => "produtos_ver",
                "link" => "/produtos"
             ]
@@ -52,7 +52,7 @@
          "filhos" => [
             [
                "text" => "Lançamentos de Caixa",
-               "icon" => "fas fa-cart-plus",
+               "icon" => "fas fa-money-bill-wave",
                "permissao" => "fluxocaixa_add",
                "link" => "/fluxocaixa/adicionar"
             ],
@@ -67,14 +67,21 @@
                "icon" => "fas fa-credit-card",
                "permissao" => "administradoras_ver",
                "link" => "/administradoras"
-            ]
-            // ,
-      //       [
-      //          "text" => "Controle de Saldos",
-      //          "icon" => "fas fa-chart-line",
-      //          "permissao" => "controlesaldos_ver",
-      //          "link" => "/controlesaldos"
-      //       ]
+            ] 
+         ]
+      ],
+      [
+         "text" => "Operação",
+         "icon" => "fas fa-tape",
+         "permissao" => "%",
+         "link" => "/#",
+         "filhos" => [
+            [
+               "text" => "Orçamentos",
+               "icon" => "fas fa-clipboard-list",
+               "permissao" => "orcamentos_ver",
+               "link" => "/orcamentos"
+            ] 
          ]
       ],
       // [

@@ -407,4 +407,23 @@ class Parametros extends model {
         }
         
     }
+
+    public function buscaParametrosMaterial($requisicao){
+        $result = array();
+
+        $this->table = addslashes($requisicao['tabela']);
+        
+        $sql = "SELECT parametro, valor FROM " . $this->table . " WHERE situacao = 'ativo'";
+        $sql = self::db()->query($sql);
+
+        if ($sql->rowCount() > 0) {
+
+            $sql = $sql->fetchAll(PDO::FETCH_ASSOC);         
+            foreach ($sql as $key => $value) {
+                $result[ $value['parametro'] ] = $value['valor'];
+            }
+        }
+        return $result;
+
+    }
 }

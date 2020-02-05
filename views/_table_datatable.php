@@ -11,7 +11,7 @@
     </div>
 
 <?php endif?>
-
+<!-- <table class="table table-striped table-hover dataTable bg-white table-nowrap first-column-fixed"> -->
 <table class="table table-striped table-hover dataTable bg-white table-nowrap first-column-fixed">
     <thead>
         <tr>

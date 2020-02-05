@@ -24,11 +24,13 @@ class orcamentosController extends controller{
 
         // verifica se tem permissão para ver esse módulo
         if(in_array($this->table . "_ver", $_SESSION["permissoesUsuario"]) == false){
-            header("Location: " . BASE_URL . "/home"); 
+            header("Location: " . BASE_URL . "/home");
+            exit; 
         }
         // Verificar se está logado ou nao
         if($this->usuario->isLogged() == false){
             header("Location: " . BASE_URL . "/login"); 
+            exit;
         }
     }
      
@@ -38,13 +40,16 @@ class orcamentosController extends controller{
             
             $id = addslashes($_POST['id']);
             if(in_array($this->table . "_exc", $_SESSION["permissoesUsuario"]) == false || empty($id) || !isset($id)){
-                header("Location: " . BASE_URL . "/" . $this->table); 
+                header("Location: " . BASE_URL . "/" . $this->table);
+                exit; 
             }
             if($this->shared->idAtivo($id) == false){
                 header("Location: " . BASE_URL . "/" . $this->table); 
+                exit;
             }
             $this->model->excluir($id);
             header("Location: " . BASE_URL . "/" . $this->table);
+            exit;
         }
         
         $dados['infoUser'] = $_SESSION;

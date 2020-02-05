@@ -9,10 +9,7 @@ $(function () {
   // Inicializa os inputs da página - parte do orçamento
   //
 
-  $("#motivo_desistencia")
-    .parent()
-    .parent("[class^=col-]")
-    .addClass("d-none col-lg-12");
+  $("#motivo_desistencia").parent().parent("[class^=col-]").addClass("d-none col-lg-12");
 
   $(
     "#status, #custo_total, #sub_total, #valor_total, #custo_deslocamento, #desconto_porcent"
@@ -21,30 +18,16 @@ $(function () {
   $("#titulo_orcamento").attr("placeholder", "Nome - Trabalho...");
 
   if ($('[name="alteracoes"]').val() == '') {
-
-    //
-    // Só seta as datas se for adicionar
-    //
-
-    $("#data_emissao")
-      .val(dataAtual())
-      .datepicker("update");
-  
-    $("#data_validade")
-      .val(proximoDiaUtil($("#data_emissao").val(), 15))
-      .datepicker("update");
-  
-    $("#data_retorno")
-      .val(proximoDiaUtil(dataAtual(), 3))
-      .datepicker("update");
+      //
+      // Só seta as datas se for adicionar
+      $("#data_emissao").val(dataAtual()).datepicker("update");
+      $("#data_validade").val(proximoDiaUtil($("#data_emissao").val(), 15)).datepicker("update");
+      $("#data_retorno").val(proximoDiaUtil(dataAtual(), 3)).datepicker("update");
     
   }
-
-
   //
   // Tipo Material
   //
-
   let $tipoMaterialBody = $("#tipo_material").parent(".form-group");
 
   $tipoMaterialBody.find("#tipo_material").remove();
@@ -127,31 +110,22 @@ $(function () {
       tabindex();
     }
   });
-
-  //
   //
   // SELECT tipo_servico_produto
   //
-  //
-  //
-
   // coloca as opções de produtos/serviços
   let htmlTipoServicoProduto = `
     <option value="produtos" selected>Produtos</option>
     <option value="servicos">Serviços</option>
-    <option value="servicoscomplementares">Serviços Complementares</option>
   `;
 
   $("#tipo_servico_produto")
     .append(htmlTipoServicoProduto)
     .on("change", function () {
-      changeTipoServicoProduto();
+      changeTipoServicoProduto(); 
       toggleTipoMaterial();
 
-      $("#unidade, #custo_tot_subitem, #preco_tot_subitem")
-        .removeClass("is-valid is-invalid")
-        .val("");
-
+      $("#unidade, #custo_tot_subitem, #preco_tot_subitem").removeClass("is-valid is-invalid").val("");
       $('#camposOrc').find('#largura, #comprimento').removeAttr('disabled');
       
     });
@@ -413,23 +387,13 @@ $(function () {
         var $this = $(this),
           $esquerda = $("#esquerda");
 
-        $this
-          .siblings(".relacional-dropdown-element-cliente")
-          .removeClass("active");
+        $this.siblings(".relacional-dropdown-element-cliente").removeClass("active");
         $this.addClass("active");
 
         $esquerda.find("[name=faturado_para]").val($this.text());
-
-        $esquerda
-          .find("[name=telefone]")
-          .val($this.attr("data-telefone"));
-
-        $esquerda
-          .find("[name=celular]")
-          .val($this.attr("data-celular"));
-
+        $esquerda.find("[name=telefone]").val($this.attr("data-telefone"));
+        $esquerda.find("[name=celular]").val($this.attr("data-celular"));
         $esquerda.find("[name=email]").val($this.attr("data-email"));
-
         $esquerda.find("[name=id_cliente]").val($this.attr("data-id"));
 
         if ($this.attr("data-comoconheceu") === 'Contato') {

@@ -123,4 +123,6 @@ $(function () {
         .off('click.DT')
         .find('.fas')
         .remove();
+
+        
 });

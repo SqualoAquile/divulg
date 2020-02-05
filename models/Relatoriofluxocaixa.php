@@ -579,7 +579,7 @@ class Relatoriofluxocaixa extends model {
 
     
     public function CardsDashBoardFinanceiro($request){
-        
+        // print_r($request); exit;
         $intervaloVar = $request['intervaloVar'];
         $intervaloFix = $request['intervaloFix'];
 
@@ -593,26 +593,21 @@ class Relatoriofluxocaixa extends model {
             $dt3 = $intervaloVar[count($intervaloVar)-1];
         }
         
-        if(count($intervaloFix) == 1){
-			$dt1F = 	$intervaloFix[0];
-            $dt2F =  $intervaloFix[0];
-            $dt3F =  $intervaloFix[0];
-		}else{
-			$dt1F = $intervaloFix[0];
-            $dt2F = $intervaloFix[count($intervaloFix)-16];
-            $dt3F = $intervaloFix[count($intervaloFix)-1];
-            $dt4F = $intervaloFix[count($intervaloFix)-17];
-            $dt5F = $intervaloFix[count($intervaloFix)-2];
+        if(!empty($intervaloFix)){
+            $d0m0 = $intervaloFix[0];
+            $d10m0 = $intervaloFix[1];
+            $d25m0 = $intervaloFix[2];
+            $d10m1 = $intervaloFix[3];
+            $d25m1 = $intervaloFix[4];
+            $d10m2 = $intervaloFix[5];
+            $d25m2 = $intervaloFix[6];
 		}
-        
         // echo $dt1." -- ".$dt2." -- ".$dt3." -- ".$dt1F." -- ".$dt2F." -- ".$dt3F." -- ".$dt4F." -- ".$dt5F; exit;
-
+        // Despesas //////////
         $despesas = array();
 
         //previsto de hoje
         $sql1 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1' AND '$dt1'";
-        
-        
 
         $sql1 = self::db()->query($sql1);
         
@@ -623,7 +618,7 @@ class Relatoriofluxocaixa extends model {
             $despesas['d0'] = floatval(0);
         }
 
-        //previsto de 7
+        //previsto de 7 pra frente
         $sql2 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1' AND '$dt2'";
         
         
@@ -636,9 +631,8 @@ class Relatoriofluxocaixa extends model {
             $despesas['d7'] = floatval(0);
         }
 
-        //previsto de 15
+        //previsto de 15 pra frente
         $sql3 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1' AND '$dt3'";
-        
         
         $sql3 = self::db()->query($sql3);
         
@@ -649,40 +643,86 @@ class Relatoriofluxocaixa extends model {
             $despesas['d15'] = floatval(0);
         }
 
-        //previsto ate dia 10
-        $sql4 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1F' AND '$dt2F'";
-        
+        //previsto ate dia 10 mês vigente
+        $sql4 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d10m0'";
         
         $sql4 = self::db()->query($sql4);
         
         if($sql4->rowCount()>0){
             $aux = $sql4->fetch();
-            $despesas['ate10'] = floatval( $aux[0] );
+            $despesas['d10m0'] = floatval( $aux[0] );
         }else{
-            $despesas['ate10'] = floatval(0);
+            $despesas['d10m0'] = floatval(0);
         }
 
-        //previsto ate dia 25
-        $sql5 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1F' AND '$dt3F'";
+        //previsto ate dia 25 do mês vigente
+        $sql5 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d25m0'";
         
-
         $sql5 = self::db()->query($sql5);
         
         if($sql5->rowCount()>0){
             $aux = $sql5->fetch();
-            $despesas['ate25'] = floatval( $aux[0] );
+            $despesas['d25m0'] = floatval( $aux[0] );
         }else{
-            $despesas['ate25'] = floatval(0);
+            $despesas['d25m0'] = floatval(0);
         }
         
+        //previsto ate dia 10 do mês seguinte
+        $sql6 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d10m1'";
+        
+        $sql6 = self::db()->query($sql6);
+        
+        if($sql6->rowCount()>0){
+            $aux = $sql6->fetch();
+            $despesas['d10m1'] = floatval( $aux[0] );
+        }else{
+            $despesas['d10m1'] = floatval(0);
+        }
+
+        //previsto ate dia 25 do mês seguinte
+        $sql7 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d25m1'";
+        
+        $sql7 = self::db()->query($sql7);
+        
+        if($sql7->rowCount()>0){
+            $aux = $sql7->fetch();
+            $despesas['d25m1'] = floatval( $aux[0] );
+        }else{
+            $despesas['d25m1'] = floatval(0);
+        }
+
+        //previsto ate dia 10 dois meses pra frente
+        $sql8 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d10m2'";
+        
+        $sql8 = self::db()->query($sql8);
+        
+        if($sql8->rowCount()>0){
+            $aux = $sql8->fetch();
+            $despesas['d10m2'] = floatval( $aux[0] );
+        }else{
+            $despesas['d10m2'] = floatval(0);
+        }
+
+        //previsto ate dia 25 dois meses pra frente
+        $sql8 = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Despesa' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d25m2'";
+        
+        $sql8 = self::db()->query($sql8);
+        
+        if($sql8->rowCount()>0){
+            $aux = $sql8->fetch();
+            $despesas['d25m2'] = floatval( $aux[0] );
+        }else{
+            $despesas['d25m2'] = floatval(0);
+        }
+
         // print_r($despesas); exit;
-        ///// RECEITAS
+
+        ///// RECEITAS ////////////////
 
         $receitas = array();
 
         //previsto de hoje
         $sql1r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1' AND '$dt1'";
-        
 
         $sql1r = self::db()->query($sql1r);
         
@@ -693,9 +733,8 @@ class Relatoriofluxocaixa extends model {
             $receitas['d0'] = floatval(0);
         }
 
-        //previsto de 7
+        //previsto de 7 dias pra frente
         $sql2r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1' AND '$dt2'";
-        
         
         $sql2r = self::db()->query($sql2r);
         
@@ -706,9 +745,8 @@ class Relatoriofluxocaixa extends model {
             $receitas['d7'] = floatval(0);
         }
 
-        //previsto de 15
+        //previsto de 15 dias pra frente
         $sql3r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1' AND '$dt3'";
-        
         
         $sql3r = self::db()->query($sql3r);
         
@@ -719,30 +757,76 @@ class Relatoriofluxocaixa extends model {
             $receitas['d15'] = floatval(0);
         }
 
-        //previsto ate dia 10
-        $sql4r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1F' AND '$dt4F'";
-        
+        //previsto ate dia 10 do mês vigente
+        $sql4r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d10m0'";
         
         $sql4r = self::db()->query($sql4r);
         
         if($sql4r->rowCount()>0){
             $aux = $sql4r->fetch();
-            $receitas['ate10'] = floatval( $aux[0] );
+            $receitas['d10m0'] = floatval( $aux[0] );
         }else{
-            $receitas['ate10'] = floatval(0);
+            $receitas['d10m0'] = floatval(0);
         }
 
-        //previsto ate dia 25
-        $sql5r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$dt1F' AND '$dt5F'";
+        //previsto ate dia 25 do mês vigente
+        $sql5r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d25m0'";
         
-
         $sql5r = self::db()->query($sql5r);
         
         if($sql5r->rowCount()>0){
             $aux = $sql5r->fetch();
-            $receitas['ate25'] = floatval( $aux[0] );
+            $receitas['d25m0'] = floatval( $aux[0] );
         }else{
-            $receitas['ate25'] = floatval(0);
+            $receitas['d25m0'] = floatval(0);
+        }
+
+        //previsto ate dia 10 do mês seguinte
+        $sql6r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d10m1'";
+        
+        $sql6r = self::db()->query($sql6r);
+        
+        if($sql6r->rowCount()>0){
+            $aux = $sql6r->fetch();
+            $receitas['d10m1'] = floatval( $aux[0] );
+        }else{
+            $receitas['d10m1'] = floatval(0);
+        }
+
+        //previsto ate dia 25 do mês seguinte
+        $sql7r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d25m1'";
+        
+        $sql7r = self::db()->query($sql7r);
+        
+        if($sql7r->rowCount()>0){
+            $aux = $sql7r->fetch();
+            $receitas['d25m1'] = floatval( $aux[0] );
+        }else{
+            $receitas['d25m1'] = floatval(0);
+        }
+
+        //previsto ate dia 10 de dois meses pra frente
+        $sql8r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d10m2'";
+        
+        $sql8r = self::db()->query($sql8r);
+        
+        if($sql8r->rowCount()>0){
+            $aux = $sql8r->fetch();
+            $receitas['d10m2'] = floatval( $aux[0] );
+        }else{
+            $receitas['d10m2'] = floatval(0);
+        }
+
+        //previsto ate dia 25 de dois meses pra frente
+        $sql9r = "SELECT SUM(valor_total) as total FROM `fluxocaixa` WHERE situacao='ativo' AND despesa_receita = 'Receita' AND status = 'A Quitar' AND data_vencimento BETWEEN '$d0m0' AND '$d25m2'";
+        
+        $sql9r = self::db()->query($sql9r);
+        
+        if($sql9r->rowCount()>0){
+            $aux = $sql9r->fetch();
+            $receitas['d25m2'] = floatval( $aux[0] );
+        }else{
+            $receitas['d25m2'] = floatval(0);
         }
 
         // print_r($receitas); exit;
