@@ -145,12 +145,14 @@ class Fornecedores extends model {
         }
     }
 
-    public function nomeClientes($termo){
+    public function nomeFornecedores($termo){
+        // print_r($termo); exit;
         // echo "aquiiii"; exit;
         $array = array();
         // 
-        $sql1 = "SELECT `id`, `nome` FROM `generico` WHERE situacao = 'ativo' AND nome LIKE '%$termo%' ORDER BY nome ASC";
+        $sql1 = "SELECT * FROM `fornecedores` WHERE situacao = 'ativo' AND ( nome_fantasia LIKE '%$termo%' OR razao_social LIKE '%$termo%' ) ORDER BY nome_fantasia ASC";
 
+        // echo $sql1; exit;
         $sql1 = self::db()->query($sql1);
         $nomesAux = array();
         $nomes = array();
@@ -158,21 +160,22 @@ class Fornecedores extends model {
             
             $nomesAux = $sql1->fetchAll(PDO::FETCH_ASSOC);
 
+            // print_r($nomesAux); exit;
             foreach ($nomesAux as $key => $value) {
                 $nomes[] = array(
                     "id" => $value["id"],
-                    "label" => $value["nome"],
-                    "value" => $value["nome"]
+                    "label" => $value["nome_fantasia"]." -- ".$value["razao_social"],
+                    "value" => $value["nome_fantasia"],
                 );     
             }
-
         }
 
-        // fazer foreach e criar um array que cada elemento tenha id: label: e value:
+        //fazer foreach e criar um array que cada elemento tenha id: label: e value:
         // print_r($nomes); exit; 
         $array = $nomes;
+        // $array = $nomesAux;
 
        return $array;
-    }
+    } 
 
 }

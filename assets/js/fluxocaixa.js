@@ -141,34 +141,35 @@ $(function () {
             //troca a base de informações do dropdown do favorecido
             $('#favorecido').parent().parent().find('span').text('Pago Por');
 
-            $('.relacional-dropdown-input').each(function () {
-
-                var $this = $(this),
-                    $relacionalDropdown = $this.parents('.relacional-dropdown-wrapper').find('.relacional-dropdown'),
-                    campo = 'nome';
-                    tabela = 'clientes';
-
-                    $.ajax({
-                        url: baselink + '/ajax/getRelacionalDropdown',
-                        type: 'POST',
-                        data: {
-                            tabela: tabela,
-                            campo: campo
-                        },
-                        dataType: 'json',
-                        success: function (data) {
-
-                            var htmlDropdown = '';
-                            data.forEach(element => {
-                                htmlDropdown += `
-                                    <div class="list-group-item list-group-item-action relacional-dropdown-element">` + element[campo] + `</div>
-                                `;
-                            });
-
-                            $relacionalDropdown.find('.dropdown-menu-wrapper').html(htmlDropdown);
-                        }
-                    });
-                });
+            $( "#favorecido" ).autocomplete({
+                source: function( request, response ) {
+                $.ajax( {
+                    url: baselink + '/ajax/nomeClientes',
+                    type:"POST",
+                    dataType: "json",
+                    data: {
+                    term: request.term
+                    },
+                    success: function( data ) {
+                        response( data );
+                    }
+                } );
+                },
+                minLength: 2,
+                select: function( event, ui ) {
+                },
+                response: function( event, ui ) {
+                }
+            }).focus(function(event) {
+                var termo = "";
+                termo = $(this).val().trim();
+                $(this).autocomplete( "search" , termo );
+            });
+          
+            $( "#favorecido" ).parent('div').addClass('ui-widget');
+            $("#favorecido").on('click',function(){
+                $("#favorecido").keyup();
+            });
 
 
         } else {
@@ -176,33 +177,34 @@ $(function () {
             //troca a base de informações do dropdown do favorecido
             $('#favorecido').parent().parent().find('span').text('Favorecido');
 
-            $('.relacional-dropdown-input').each(function () {
-
-                var $this = $(this),
-                    $relacionalDropdown = $this.parents('.relacional-dropdown-wrapper').find('.relacional-dropdown'),
-                    campo = 'nome_fantasia';
-                    tabela = 'fornecedores';
-
-                $.ajax({
-                    url: baselink + '/ajax/getRelacionalDropdown',
-                    type: 'POST',
+            $( "#favorecido" ).autocomplete({
+                source: function( request, response ) {
+                $.ajax( {
+                    url: baselink + '/ajax/nomeFornecedores',
+                    type:"POST",
+                    dataType: "json",
                     data: {
-                        tabela: tabela,
-                        campo: campo
+                    term: request.term
                     },
-                    dataType: 'json',
-                    success: function (data) {
-
-                        var htmlDropdown = '';
-                        data.forEach(element => {
-                            htmlDropdown += `
-                                <div class="list-group-item list-group-item-action relacional-dropdown-element">` + element[campo] + `</div>
-                            `;
-                        });
-
-                        $relacionalDropdown.find('.dropdown-menu-wrapper').html(htmlDropdown);
+                    success: function( data ) {
+                        response( data );
                     }
-                });
+                } );
+                },
+                minLength: 2,
+                select: function( event, ui ) {
+                },
+                response: function( event, ui ) {
+                }
+            }).focus(function(event) {
+                var termo = "";
+                termo = $(this).val().trim();
+                $(this).autocomplete( "search" , termo );
+            });
+          
+            $( "#favorecido" ).parent('div').addClass('ui-widget');
+            $("#favorecido").on('click',function(){
+                $("#favorecido").keyup();
             });
         }
     });

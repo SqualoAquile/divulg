@@ -208,5 +208,37 @@ class Clientes extends model {
        return $array;
     }
 
-    
+    public function nomeClientes($termo){
+        // print_r($termo); exit;
+        // echo "aquiiii"; exit;
+        $array = array();
+        // 
+        $sql1 = "SELECT * FROM `clientes` WHERE situacao = 'ativo' AND ( nome LIKE '%$termo%' OR razao_social LIKE '%$termo%' ) ORDER BY nome ASC";
+
+        // echo $sql1; exit;
+        $sql1 = self::db()->query($sql1);
+        $nomesAux = array();
+        $nomes = array();
+        if($sql1->rowCount() > 0){  
+            
+            $nomesAux = $sql1->fetchAll(PDO::FETCH_ASSOC);
+
+            // print_r($nomesAux); exit;
+            foreach ($nomesAux as $key => $value) {
+                $nomes[] = array(
+                    "id" => $value["id"],
+                    "label" => $value["nome"]." -- ".$value["razao_social"],
+                    "value" => $value["nome"],
+                );     
+            }
+        }
+
+        //fazer foreach e criar um array que cada elemento tenha id: label: e value:
+        // print_r($nomes); exit; 
+        $array = $nomes;
+        // $array = $nomesAux;
+
+       return $array;
+    }  
+
 }

@@ -7,6 +7,20 @@
          "link" => "/home"
       ],
       [
+         "text" => "Operação",
+         "icon" => "fas fa-tape",
+         "permissao" => "%",
+         "link" => "/#",
+         "filhos" => [
+            [
+               "text" => "Orçamentos",
+               "icon" => "fas fa-clipboard-list",
+               "permissao" => "orcamentos_ver",
+               "link" => "/orcamentos"
+            ] 
+         ]
+      ],
+      [
          "text" => "Cadastros",
          "icon" => "fas fa-save",
          "permissao" => "%",
@@ -70,20 +84,7 @@
             ] 
          ]
       ],
-      [
-         "text" => "Operação",
-         "icon" => "fas fa-tape",
-         "permissao" => "%",
-         "link" => "/#",
-         "filhos" => [
-            [
-               "text" => "Orçamentos",
-               "icon" => "fas fa-clipboard-list",
-               "permissao" => "orcamentos_ver",
-               "link" => "/orcamentos"
-            ] 
-         ]
-      ],
+      
       // [
       //    "text" => "Relatórios",
       //    "icon" => "fas fa-table",

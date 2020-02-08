@@ -3,236 +3,8 @@ $(function () {
 
     fluxoCaixa_Cards();
     
-    function fluxoCaixa_Realizado_Previsto() {
-        var titulo, titulo2, intervalo = [], intervalo2 = [];
-        var $receitaRealizada = $("#receita_realizada");
-        var $despesaRealizada = $("#despesa_realizada");
-        var $lucroRealizado = $("#lucro_realizado");
-        var $lucratividadeRealizada = $("#lucratividade_realizada");
-
-        var $receitaPrevista = $("#receita_prevista");
-        var $despesaPrevista = $("#despesa_prevista");
-        var $lucroPrevisto = $("#lucro_previsto");
-        var $lucratividadePrevista = $("#lucratividade_prevista");
-
-
-            if (!$selectGrafTemporal.val() ) {
-                $selectGrafTemporal.val($selectGrafTemporal.find('option:not([disabled])').first().val()).change();
-            };
-
-            //// FLUXO DE CAIXA REALIZADO
-            titulo = 'Fluxo de Caixa Realizado de ' + $selectGrafTemporal.children("option:selected").text().trim() +' até hoje.';
-            intervalo = intervaloDatasRealizado($selectGrafTemporal.val());
-
-            ///// GRÁFICO FLUXO CAIXA REALIZADO
-            $.ajax({ 
-                url: baselink + '/ajax/graficoFluxoCaixaRealizado', 
-                type: 'POST', 
-                data: {
-                    intervalo: intervalo,
-                },
-                dataType: 'json', 
-                success: function (resultado) { 
-                    if (resultado){   
-                         
-                        var eixoDatas = [], receitas = [], despesas = [], result = [], resultAcul = [];
-                        var recReal = parseFloat(0), despReal = parseFloat(0), lucroReal = parseFloat(0), lucrativReal = parseFloat(0);
-                        
-                        for (var i = 0; i < Object.keys(resultado[0]).length; i++) {
-                            eixoDatas[i] = Object.keys(resultado[0])[i];
-                            despesas[i] =  parseFloat(parseFloat(-1) * parseFloat(Object.values(resultado[0])[i]));
-                            receitas[i] = parseFloat(Object.values(resultado[1])[i]);
-                            result[i] = parseFloat(parseFloat(Object.values(resultado[1])[i]) - parseFloat(Object.values(resultado[0])[i]));
-                            if(i == 0){
-                                resultAcul[i] = parseFloat(result[i]).toFixed(2);    
-                            }else{
-                                resultAcul[i] = parseFloat(parseFloat(resultAcul[i-1]) + parseFloat(result[i])).toFixed(2);      
-                            }
-                            
-                            despReal = despReal + parseFloat(Object.values(resultado[0])[i]);
-                            recReal = recReal + parseFloat(Object.values(resultado[1])[i]);                         
-                        }
-
-                        lucroReal = recReal - despReal;
-                        lucrativReal = parseFloat(lucroReal / recReal) * 100;
-
-                        $receitaRealizada.text( 'R$ ' + floatParaPadraoBrasileiro(recReal) );
-                        $despesaRealizada.text( 'R$ ' + floatParaPadraoBrasileiro(despReal) );
-                        $lucroRealizado.text( 'R$ ' + floatParaPadraoBrasileiro(lucroReal) );
-                        $lucratividadeRealizada.text( floatParaPadraoBrasileiro(lucrativReal) + ' %' );
-
-                        var config = {
-                            type: 'bar',
-                            data: {
-                                labels: eixoDatas,
-                                datasets: [{
-                                    type: 'line',
-                                    label: 'Resultado Acumulado',
-                                    backgroundColor: '#020627',
-                                    fill:false,
-                                    data: resultAcul,
-                                    borderColor: '#020627',
-                                    borderWidth: 3
-                                },{
-                                    type: 'line',
-                                    label: 'Resultado',
-                                    backgroundColor: '#17bae8',
-                                    fill:false,
-                                    data: result,
-                                    borderDash: [10,5],
-                                    borderColor: '#17bae8',
-                                    borderWidth: 2
-                                }, {
-                                    type: 'bar',
-                                    label: 'Despesas',
-                                    backgroundColor: '#418fe2',
-                                    data: despesas,
-                                    borderColor: 'white',
-                                    borderWidth: 1
-                                }, {
-                                    type: 'bar',
-                                    label: 'Receitas',
-                                    backgroundColor: '#064c92',
-                                    data: receitas,
-                                    borderColor: 'white',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                title: {
-                                    display: true,
-                                    text: titulo,
-                                    position: "top"
-                                },
-                                legend: {
-                                    display: true,
-                                    position: "top"
-                                },
-                            }
-                        }
-    
-                        if(typeof charts[id1] == "undefined") {   
-                            charts[id1]= new (function(){
-                            this.ctx=$(id1); 
-                            this.chart=new Chart(this.ctx, config);
-                            })();     
-                        } else {
-                            charts[id1].chart.destroy();
-                            charts[id1].chart=new Chart(charts[id1].ctx, config); 
-                        }
-                    }
-                }
-            });
-
-            /////  FLUXO DE CAIXA PREVISTO
-            titulo2 = 'Fluxo de Caixa Previsto de hoje até ' + $selectGrafTemporal.children("option:selected").text().trim() +'.';
-            intervalo2 = intervaloDatasAQuitar($selectGrafTemporal.val());
-
-            $.ajax({ 
-                url: baselink + '/ajax/graficoFluxoCaixaPrevisto', 
-                type: 'POST', 
-                data: {
-                    intervalo: intervalo2,
-                },
-                dataType: 'json', 
-                success: function (resultado) { 
-                    if (resultado){   
-                         
-                        var eixoDatas2 = [], receitas2 = [], despesas2 = [], result2 = [], resultAcul2 = [];
-                        var recPrev = parseFloat(0), despPrev = parseFloat(0), lucroPrev = parseFloat(0), lucrativPrev = parseFloat(0);
-                        
-                        for (var i = 0; i < Object.keys(resultado[0]).length; i++) {
-                            eixoDatas2[i] = Object.keys(resultado[0])[i];
-                            despesas2[i] =  parseFloat(parseFloat(-1) * parseFloat(Object.values(resultado[0])[i]));
-                            receitas2[i] = parseFloat(Object.values(resultado[1])[i]);
-                            result2[i] = parseFloat(parseFloat(Object.values(resultado[1])[i]) - parseFloat(Object.values(resultado[0])[i]));
-                            if(i == 0){
-                                resultAcul2[i] = parseFloat(result2[i]).toFixed(2);    
-                            }else{
-                                resultAcul2[i] = parseFloat(parseFloat(resultAcul2[i-1]) + parseFloat(result2[i])).toFixed(2);      
-                            }   
-                            
-                            despPrev = despPrev + parseFloat(Object.values(resultado[0])[i]);
-                            recPrev = recPrev + parseFloat(Object.values(resultado[1])[i]);                         
-                        }
-
-                        lucroPrev = recPrev - despPrev;
-                        lucrativPrev = parseFloat(lucroPrev / recPrev) * 100;
-
-                        $receitaPrevista.text( 'R$ ' + floatParaPadraoBrasileiro(recPrev) );
-                        $despesaPrevista.text( 'R$ ' + floatParaPadraoBrasileiro(despPrev) );
-                        $lucroPrevisto.text( 'R$ ' + floatParaPadraoBrasileiro(lucroPrev) );
-                        $lucratividadePrevista.text( floatParaPadraoBrasileiro(lucrativPrev) + ' %' );
-
-                        var config = {
-                            type: 'bar',
-                            data: {
-                                labels: eixoDatas2,
-                                datasets: [{
-                                    type: 'line',
-                                    label: 'Resultado Acumulado',
-                                    backgroundColor: '#020627',
-                                    fill:false,
-                                    data: resultAcul2,
-                                    borderColor: '#020627',
-                                    borderWidth: 3
-                                },{
-                                    type: 'line',
-                                    label: 'Resultado',
-                                    backgroundColor: '#17bae8',
-                                    fill:false,
-                                    data: result2,
-                                    borderDash: [10,5],
-                                    borderColor: '#17bae8',
-                                    borderWidth: 2
-                                }, {
-                                    type: 'bar',
-                                    label: 'Despesas',
-                                    backgroundColor: '#418fe2',
-                                    data: despesas2,
-                                    borderColor: 'white',
-                                    borderWidth: 1
-                                }, {
-                                    type: 'bar',
-                                    label: 'Receitas',
-                                    backgroundColor: '#064c92',
-                                    data: receitas2,
-                                    borderColor: 'white',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                title: {
-                                    display: true,
-                                    text: titulo2,
-                                    position: "top"
-                                },
-                                legend: {
-                                    display: true,
-                                    position: "top"
-                                },
-                            }
-                        }
-    
-                        if(typeof charts[id2] == "undefined") {   
-                            charts[id2]= new (function(){
-                            this.ctx=$(id2); 
-                            this.chart=new Chart(this.ctx, config);
-                            })();     
-                        } else {
-                            charts[id2].chart.destroy();
-                            charts[id2].chart=new Chart(charts[id2].ctx, config); 
-                        }
-                    }
-                }
-            });
-
-    }
-
+    $('#dashequipe-tab').click();
+    // $('#financ-tab').click();
 });
 
 function dataAtual() {
@@ -665,19 +437,19 @@ function fluxoCaixa_Cards() {
                     var dtaux = '';
                     dtaux = intervaloVar[0].split('-')
                     dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
-                    $despesaHoje.siblings('small').text(dtaux);
+                    $despesaHoje.siblings('small').text('Hoje: '+ dtaux);
                     $despesaHoje.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d0']) );
 
                     var dtaux = '';
                     dtaux = intervaloVar[ intervaloVar.length - 9 ].split('-')
                     dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
-                    $despesa7dias.siblings('small').text(dtaux);
+                    $despesa7dias.siblings('small').text('+ 7 dias: '+dtaux);
                     $despesa7dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d7']) );   
                     
                     var dtaux = '';
                     dtaux = intervaloVar[ intervaloVar.length - 1 ].split('-')
                     dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
-                    $despesa15dias.siblings('small').text(dtaux);
+                    $despesa15dias.siblings('small').text('+ 15 dias: '+dtaux);
                     $despesa15dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[0]['d15']) );
 
                     var dtaux = '';
@@ -721,19 +493,19 @@ function fluxoCaixa_Cards() {
                     var dtaux = '';
                     dtaux = intervaloVar[0].split('-')
                     dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
-                    $receitaHoje.siblings('small').text(dtaux);
+                    $receitaHoje.siblings('small').text('Hoje: '+dtaux);
                     $receitaHoje.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d0']) );
 
                     var dtaux = '';
                     dtaux = intervaloVar[ intervaloVar.length - 9 ].split('-')
                     dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
-                    $receita7dias.siblings('small').text(dtaux);
+                    $receita7dias.siblings('small').text('+ 7 dias: '+dtaux);
                     $receita7dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d7']) );
 
                     var dtaux = '';
                     dtaux = intervaloVar[ intervaloVar.length - 1 ].split('-')
                     dtaux = dtaux[2]+'/'+dtaux[1]+'/'+dtaux[0];
-                    $receita15dias.siblings('small').text(dtaux);
+                    $receita15dias.siblings('small').text('+ 15 dias: '+dtaux);
                     $receita15dias.text( 'R$ ' + floatParaPadraoBrasileiro(resultado[1]['d15']) );
                     
                     var dtaux = '';
