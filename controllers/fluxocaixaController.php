@@ -23,17 +23,22 @@ class fluxocaixaController extends controller{
         $this->param = new Parametros();
 
         // verifica se tem permissão para ver esse módulo
-        if(in_array($this->table . "_ver", $_SESSION["permissoesUsuario"]) == false){
+        if(in_array($this->table . "_ver", $_SESSION["permissoesUsuario"]) == false && in_array($this->table . "_add", $_SESSION["permissoesUsuario"]) == false){
             header("Location: " . BASE_URL . "/home"); 
+            exit;
         }
         // Verificar se está logado ou nao
         if($this->usuario->isLogged() == false){
             header("Location: " . BASE_URL . "/login"); 
+            exit;
         }
     }
      
     public function index() {
-        
+        if(in_array($this->table . "_ver", $_SESSION["permissoesUsuario"]) == false ){
+            header("Location: " . BASE_URL . "/home"); 
+            exit;
+        }
         if(isset($_POST) && !empty($_POST)){ 
             
             $id = addslashes($_POST['id']);
