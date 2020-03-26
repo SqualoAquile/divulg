@@ -84,27 +84,27 @@
             ] 
          ]
       ],
-      
-      // [
-      //    "text" => "Relatórios",
-      //    "icon" => "fas fa-table",
-      //    "permissao" => "%",
-      //    "link" => "/#",
-      //    "filhos" => [
-      //       [
-      //          "text" => "Fluxo de Caixa",
-      //          "icon" => "fas fa-chart-line",
-      //          "permissao" => "relatoriofluxocaixa_ver",
-      //          "link" => "/relatoriofluxocaixa"
-      //       ],
-      //       [
-      //          "text" => "Produtos Pedidos",
-      //          "icon" => "fas fa-dollar-sign",
-      //          "permissao" => "relatoriopedidositens_ver",
-      //          "link" => "/relatoriopedidositens"
-      //       ]
-      //    ]
-      // ],
+      [
+         "text" => "Relatórios",
+         "icon" => "fas fa-table",
+         "permissao" => "%",
+         "link" => "/#",
+         "filhos" => [
+            [
+               "text" => "Fluxo de Caixa",
+               "icon" => "fas fa-chart-line",
+               "permissao" => "relatoriofluxocaixa_ver",
+               "link" => "/relatoriofluxocaixa"
+            ]
+            // ,
+            // [
+            //    "text" => "Produtos Pedidos",
+            //    "icon" => "fas fa-dollar-sign",
+            //    "permissao" => "relatoriopedidositens_ver",
+            //    "link" => "/relatoriopedidositens"
+            // ]
+         ]
+      ],
       [
          "text" => "Configurações",
          "icon" => "fas fa-cogs",
